@@ -43,7 +43,7 @@ public abstract class TextureProvider extends ConfigObject implements AutoClosea
             String.format("Texture provider has been already registered: '%s'", name));
     }
 
-    static {
+    public static void registerProviders() {
         registerProvider("null", NullTextureProvider::new);
         registerProvider("void", VoidTextureProvider::new);
 

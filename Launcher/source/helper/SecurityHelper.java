@@ -413,9 +413,7 @@ public final class SecurityHelper {
         // IDK Why, but collapsing catch blocks makes ProGuard generate invalid stackmap
         try {
             return Cipher.getInstance(algo);
-        } catch (NoSuchAlgorithmException e) {
-            throw new InternalError(e);
-        } catch (NoSuchPaddingException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new InternalError(e);
         }
     }

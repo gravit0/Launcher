@@ -1,6 +1,5 @@
 package launcher.request;
 
-import launcher.Launcher;
 import launcher.Launcher.Config;
 import launcher.LauncherAPI;
 import launcher.helper.VerifyHelper;

@@ -183,6 +183,11 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         }
         syncProfilesDir();
 
+        //Registration handlers and providers
+        AuthHandler.registerHandlers();
+        AuthProvider.registerProviders();
+        TextureProvider.registerProviders();
+
         // Set server socket thread
         serverSocketHandler = new ServerSocketHandler(this);
     }

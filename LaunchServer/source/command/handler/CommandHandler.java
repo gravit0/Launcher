@@ -203,6 +203,6 @@ public abstract class CommandHandler implements Runnable {
         }
 
         // Return result as array
-        return result.toArray(new String[result.size()]);
+        return result.toArray(new String[0]);
     }
 }

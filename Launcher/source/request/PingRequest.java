@@ -2,7 +2,6 @@ package launcher.request;
 
 import java.io.IOException;
 
-import launcher.Launcher;
 import launcher.Launcher.Config;
 import launcher.LauncherAPI;
 import launcher.serialize.HInput;

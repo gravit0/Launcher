@@ -3,7 +3,6 @@ package launcher.request.auth;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import launcher.Launcher;
 import launcher.Launcher.Config;
 import launcher.LauncherAPI;
 import launcher.helper.SecurityHelper;

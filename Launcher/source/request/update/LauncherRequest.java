@@ -89,7 +89,7 @@ public final class LauncherRequest extends Request<Result> {
         }
         args.add("-jar");
         args.add(BINARY_PATH.toString());
-        ProcessBuilder builder = new ProcessBuilder(args.toArray(new String[args.size()]));
+        ProcessBuilder builder = new ProcessBuilder(args.toArray(new String[0]));
         builder.inheritIO();
 
         // Rewrite and start new instance
