@@ -54,5 +54,6 @@ public abstract class AuthProvider extends ConfigObject implements AutoCloseable
         registerProvider("mysql", MySQLAuthProvider::new);
         registerProvider("file", FileAuthProvider::new);
         registerProvider("request", RequestAuthProvider::new);
+        registerProvider("json", JsonAuthProvider::new);
     }
 }

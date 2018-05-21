@@ -697,4 +697,13 @@ public final class IOHelper {
             return visitor.visitFileFailed(file, exc);
         }
     }
+
+    @LauncherAPI
+    public static URL convertToURL(String url) {
+        try {
+            return new URL(url);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL", e);
+        }
+    }
 }
