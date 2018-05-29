@@ -39,7 +39,7 @@ public final class JoinServerRequest extends Request<Boolean> {
 
     @Override
     protected Boolean requestDo(HInput input, HOutput output) throws IOException {
-        output.writeASCII(username, 16);
+        output.writeString(username, 64);
         output.writeASCII(accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
         output.writeASCII(serverID, 41); // 1 char for minus sign
         output.flush();
