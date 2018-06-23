@@ -131,6 +131,7 @@ public final class ClientLauncher {
             classPathString.append(":").append(path.toString()); //TODO separator
         }
         Collections.addAll(args, profile.object.getJvmArgs());
+        Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString()));
         Collections.addAll(args, "-classpath", classPathString.toString(), ClientLauncher.class.getName());
         args.add(paramsFile.toString()); // Add params file path to args
 
@@ -309,7 +310,7 @@ public final class ClientLauncher {
 
     private static void launch(ClientProfile profile, Params params) throws Throwable {
         // Add natives path
-        JVMHelper.addNativePath(params.clientDir.resolve(NATIVES_DIR));
+        //JVMHelper.addNativePath(params.clientDir.resolve(NATIVES_DIR));
 
         // Add client args
         Collection<String> args = new LinkedList<>();
