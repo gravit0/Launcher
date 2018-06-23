@@ -372,7 +372,7 @@ public final class SecurityHelper {
     @LauncherAPI
     public static void verifyCertificates(Class<?> clazz) {
         if (!isValidCertificates(clazz)) {
-            //throw new SecurityException("Invalid certificates");
+            throw new SecurityException("Invalid certificates");
         }
     }
 

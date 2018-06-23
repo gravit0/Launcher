@@ -5,6 +5,7 @@ import java.lang.ProcessBuilder.Redirect;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -124,8 +125,13 @@ public final class ClientLauncher {
         }
 
         // Add classpath and main class
+        StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
+        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
+        for (Path path : classPath) {
+            classPathString.append(":").append(path.toString()); //TODO separator
+        }
         Collections.addAll(args, profile.object.getJvmArgs());
-        Collections.addAll(args, "-classpath", IOHelper.getCodeSource(ClientLauncher.class).toString(), ClientLauncher.class.getName());
+        Collections.addAll(args, "-classpath", classPathString.toString(), ClientLauncher.class.getName());
         args.add(paramsFile.toString()); // Add params file path to args
 
         // Print commandline debug message
@@ -177,13 +183,24 @@ public final class ClientLauncher {
         LogHelper.debug("Verifying ClientLauncher sign and classpath");
         SecurityHelper.verifySign(LauncherRequest.BINARY_PATH, params.launcherSign, publicKey);
         URL[] classpath = JVMHelper.getClassPath();
+        URL[] classPath = resolveClassPath(params.clientDir, profile.object.getClassPath());
+        int counter = classPath.length;
         for (URL classpathURL : classpath) {
             Path file = Paths.get(classpathURL.toURI());
-            if (!file.startsWith(IOHelper.JVM_DIR) && !file.equals(LauncherRequest.BINARY_PATH)) {
-                throw new SecurityException(String.format("Forbidden classpath entry: '%s'", file));
+            if (!file.startsWith(IOHelper.JVM_DIR)) {
+                for (URL classPathURL : classPath)
+                {
+                    if(classpathURL.equals(classPathURL)) {
+                        counter--;
+                        break;
+                    }
+                }
             }
         }
-
+        if(counter != 0)
+        {
+            throw new SecurityException(String.format("Forbidden classpath entry, %d != 0",counter));
+        }
         // Start client with WatchService monitoring
         boolean digest = !profile.object.isUpdateFastCheck();
         LogHelper.debug("Starting JVM and client WatchService");
@@ -304,12 +321,12 @@ public final class ClientLauncher {
         Collections.addAll(args, profile.getClientArgs());
         LogHelper.debug("Args: " + args);
 
+
         // Add client classpath
         URL[] classPath = resolveClassPath(params.clientDir, profile.getClassPath());
         for (URL url : classPath) {
-            JVMHelper.addClassPath(url);
+            //JVMHelper.addClassPath(url);
         }
-
         // Resolve main class and method
         Class<?> mainClass = Class.forName(profile.getMainClass());
         MethodHandle mainMethod = JVMHelper.LOOKUP.findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
@@ -332,6 +349,18 @@ public final class ClientLauncher {
             result.add(path);
         }
         return result.stream().map(IOHelper::toURL).toArray(URL[]::new);
+    }
+    private static LinkedList<Path> resolveClassPathList(Path clientDir, String... classPath) throws IOException {
+        Collection<Path> result = new LinkedList<>();
+        for (String classPathEntry : classPath) {
+            Path path = clientDir.resolve(IOHelper.toPath(classPathEntry));
+            if (IOHelper.isDir(path)) { // Recursive walking and adding
+                IOHelper.walk(path, new ClassPathFileVisitor(result), false);
+                continue;
+            }
+            result.add(path);
+        }
+        return (LinkedList<Path>) result;
     }
 
     public static final class Params extends StreamObject {

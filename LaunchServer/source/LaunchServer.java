@@ -115,6 +115,11 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         updatesDir = dir.resolve("updates");
         profilesDir = dir.resolve("profiles");
 
+        //Registration handlers and providers
+        AuthHandler.registerHandlers();
+        AuthProvider.registerProviders();
+        TextureProvider.registerProviders();
+
         // Set command handler
         CommandHandler localCommandHandler;
         if (portable) {
@@ -183,10 +188,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         }
         syncProfilesDir();
 
-        //Registration handlers and providers
-        AuthHandler.registerHandlers();
-        AuthProvider.registerProviders();
-        TextureProvider.registerProviders();
+
 
         // Set server socket thread
         serverSocketHandler = new ServerSocketHandler(this);

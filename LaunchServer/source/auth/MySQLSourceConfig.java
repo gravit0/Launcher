@@ -3,8 +3,7 @@ package launchserver.auth;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-
-import com.mysql.cj.jdbc.MysqlDataSource;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 import launcher.LauncherAPI;
 import launcher.helper.LogHelper;

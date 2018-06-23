@@ -62,7 +62,6 @@ public final class JVMHelper {
     @LauncherAPI
     public static void addNativePath(Path path) {
         String stringPath = path.toString();
-
         // Add to library path
         String libraryPath = System.getProperty(JAVA_LIBRARY_PATH);
         if (libraryPath == null || libraryPath.isEmpty()) {
