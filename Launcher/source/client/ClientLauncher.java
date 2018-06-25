@@ -1,5 +1,6 @@
 package launcher.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.lang.invoke.MethodHandle;
@@ -128,10 +129,10 @@ public final class ClientLauncher {
         StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
         LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
         for (Path path : classPath) {
-            classPathString.append(":").append(path.toString()); //TODO separator
+            classPathString.append(File.pathSeparatorChar).append(path.toString());
         }
         Collections.addAll(args, profile.object.getJvmArgs());
-        Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString()));
+        Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
         Collections.addAll(args, "-classpath", classPathString.toString(), ClientLauncher.class.getName());
         args.add(paramsFile.toString()); // Add params file path to args
 
@@ -321,13 +322,6 @@ public final class ClientLauncher {
         }
         Collections.addAll(args, profile.getClientArgs());
         LogHelper.debug("Args: " + args);
-
-
-        // Add client classpath
-        URL[] classPath = resolveClassPath(params.clientDir, profile.getClassPath());
-        for (URL url : classPath) {
-            //JVMHelper.addClassPath(url);
-        }
         // Resolve main class and method
         Class<?> mainClass = Class.forName(profile.getMainClass());
         MethodHandle mainMethod = JVMHelper.LOOKUP.findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));

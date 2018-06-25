@@ -52,7 +52,7 @@ public final class LogHelper {
     }
 
     @LauncherAPI
-    public static void addOutput(Writer writer) throws IOException {
+    public static void addOutput(Writer writer) {
         addOutput(new WriterOutput(writer));
     }
 
@@ -302,7 +302,7 @@ public final class LogHelper {
     }
 
     private static final class JAnsiOutput extends WriterOutput {
-        private JAnsiOutput(OutputStream output) throws IOException {
+        private JAnsiOutput(OutputStream output) {
             super(IOHelper.newWriter(new AnsiOutputStream(output)));
         }
     }

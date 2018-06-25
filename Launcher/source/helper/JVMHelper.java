@@ -38,46 +38,22 @@ public final class JVMHelper {
     @LauncherAPI public static final ClassLoader LOADER = ClassLoader.getSystemClassLoader();
 
     // Useful internal fields and constants
-    private static final String JAVA_LIBRARY_PATH = "java.library.path";
-    private static final MethodHandle MH_SET_USR_PATHS;
-    private static final MethodHandle MH_SET_SYS_PATHS;
     private static final Object UCP;
-    private static final MethodHandle MH_UCP_ADDURL_METHOD;
     private static final MethodHandle MH_UCP_GETURLS_METHOD;
     private static final MethodHandle MH_UCP_GETRESOURCE_METHOD;
     private static final MethodHandle MH_RESOURCE_GETCERTS_METHOD;
 
     private JVMHelper() {
     }
-
+    @Deprecated
     @LauncherAPI
     public static void addClassPath(URL url) {
-        try {
-            MH_UCP_ADDURL_METHOD.invoke(UCP, url);
-        } catch (Throwable exc) {
-            throw new InternalError(exc);
-        }
+        throw new IllegalArgumentException("Method Deprecated");
     }
-
+    @Deprecated
     @LauncherAPI
     public static void addNativePath(Path path) {
-        String stringPath = path.toString();
-        // Add to library path
-        String libraryPath = System.getProperty(JAVA_LIBRARY_PATH);
-        if (libraryPath == null || libraryPath.isEmpty()) {
-            libraryPath = stringPath;
-        } else {
-            libraryPath += File.pathSeparatorChar + stringPath;
-        }
-        System.setProperty(JAVA_LIBRARY_PATH, libraryPath);
-
-        // Reset usrPaths and sysPaths cache
-        try {
-            MH_SET_USR_PATHS.invoke((Object) null);
-            MH_SET_SYS_PATHS.invoke((Object) null);
-        } catch (Throwable exc) {
-            throw new InternalError(exc);
-        }
+        throw new IllegalArgumentException("Method Deprecated");
     }
 
     @LauncherAPI
@@ -179,23 +155,21 @@ public final class JVMHelper {
             // Get trusted lookup and other stuff
             Field implLookupField = Lookup.class.getDeclaredField("IMPL_LOOKUP");
             LOOKUP = (Lookup) UNSAFE.getObject(UNSAFE.staticFieldBase(implLookupField), UNSAFE.staticFieldOffset(implLookupField));
-            MH_SET_USR_PATHS = LOOKUP.findStaticSetter(ClassLoader.class, "usr_paths", String[].class);
-            MH_SET_SYS_PATHS = LOOKUP.findStaticSetter(ClassLoader.class, "sys_paths", String[].class);
 
             // Get UCP stuff1
             Class<?> ucpClass = firstClass("jdk.internal.loader.URLClassPath", "sun.misc.URLClassPath");
             Class<?> loaderClass = firstClass("jdk.internal.loader.ClassLoaders$AppClassLoader", "java.net.URLClassLoader");
             Class<?> resourceClass = firstClass("jdk.internal.loader.Resource", "sun.misc.Resource");
             UCP = LOOKUP.findGetter(loaderClass, "ucp", ucpClass).invoke(LOADER);
-            MH_UCP_ADDURL_METHOD = LOOKUP.findVirtual(ucpClass, "addURL", MethodType.methodType(void.class, URL.class));
             MH_UCP_GETURLS_METHOD = LOOKUP.findVirtual(ucpClass, "getURLs", MethodType.methodType(URL[].class));
             MH_UCP_GETRESOURCE_METHOD = LOOKUP.findVirtual(ucpClass, "getResource", MethodType.methodType(resourceClass, String.class));
             MH_RESOURCE_GETCERTS_METHOD = LOOKUP.findVirtual(resourceClass, "getCertificates", MethodType.methodType(Certificate[].class));
         } catch (Throwable exc) {
+            LogHelper.error("Unsafe field is not initialized");
             throw new InternalError(exc);
         }
     }
-
+    @SuppressWarnings("unused")
     @LauncherAPI
     public enum OS {
         MUSTDIE("mustdie"), LINUX("linux"), MACOSX("macosx");

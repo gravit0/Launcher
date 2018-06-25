@@ -7,6 +7,7 @@ import launcher.client.ClientLauncher;
 import launcher.client.PlayerProfile;
 import launcher.helper.SecurityHelper;
 
+@SuppressWarnings("unused")
 @LauncherAPI
 public final class CompatProfile {
     public static final String SKIN_URL_PROPERTY = ClientLauncher.SKIN_URL_PROPERTY;
