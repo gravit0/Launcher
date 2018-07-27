@@ -35,8 +35,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import launcher.Launcher;
 import launcher.LauncherAPI;
+import launcher.LauncherEngine;
 import launcher.client.ClientProfile;
 import launcher.hasher.HashedDir;
 import launcher.helper.CommonHelper;
@@ -104,7 +104,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     private volatile Map<String, SignedObjectHolder<HashedDir>> updatesDirMap;
 
     public LaunchServer(Path dir, boolean portable) throws IOException, InvalidKeySpecException {
-        setScriptBindings();
+        //setScriptBindings();
         this.portable = portable;
 
         // Setup config locations
@@ -386,7 +386,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         bindings.put("server", this);
 
         // Add launcher and launchserver class bindings
-        Launcher.addLauncherClassBindings(bindings);
+        LauncherEngine.addLauncherClassBindings(bindings);
         addLaunchServerClassBindings(bindings);
     }
 

@@ -8,7 +8,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchEvent.Kind;
-import java.nio.file.WatchEvent.Modifier;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -16,8 +15,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import com.sun.nio.file.ExtendedWatchEventModifier;
-import com.sun.nio.file.SensitivityWatchEventModifier;
 import launcher.LauncherAPI;
 import launcher.hasher.HashedEntry.Type;
 import launcher.helper.IOHelper;
@@ -29,12 +26,6 @@ public final class DirWatcher implements Runnable, AutoCloseable {
     private static final boolean FILE_TREE_SUPPORTED = JVMHelper.OS_TYPE == OS.MUSTDIE;
 
     // Constants
-    private static final Modifier[] MODIFIERS = {
-        SensitivityWatchEventModifier.HIGH
-    };
-    private static final Modifier[] FILE_TREE_MODIFIERS = {
-        ExtendedWatchEventModifier.FILE_TREE, SensitivityWatchEventModifier.HIGH
-    };
     private static final Kind<?>[] KINDS = {
         StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE
     };
@@ -53,12 +44,6 @@ public final class DirWatcher implements Runnable, AutoCloseable {
         this.matcher = matcher;
         this.digest = digest;
         service = dir.getFileSystem().newWatchService();
-
-        // Use FILE_TREE if supported
-        if (FILE_TREE_SUPPORTED) {
-            dir.register(service, KINDS, FILE_TREE_MODIFIERS);
-            return;
-        }
 
         // Register dirs recursively
         IOHelper.walk(dir, new RegisterFileVisitor(), true);
@@ -122,7 +107,6 @@ public final class DirWatcher implements Runnable, AutoCloseable {
 
     private static void handleError(Throwable e) {
         LogHelper.error(e);
-        JVMHelper.halt0(0x0BADFEE1);
     }
 
     private static Deque<String> toPath(Iterable<Path> path) {
@@ -149,7 +133,7 @@ public final class DirWatcher implements Runnable, AutoCloseable {
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             FileVisitResult result = super.preVisitDirectory(dir, attrs);
             if (DirWatcher.this.dir.equals(dir)) {
-                dir.register(service, KINDS, MODIFIERS);
+                dir.register(service, KINDS);
                 return result;
             }
 
@@ -160,7 +144,7 @@ public final class DirWatcher implements Runnable, AutoCloseable {
             }
 
             // Register
-            dir.register(service, KINDS, MODIFIERS);
+            dir.register(service, KINDS);
             return result;
         }
     }

@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,7 +60,6 @@ public final class ClientLauncher {
     // Constants
     private static final Path NATIVES_DIR = IOHelper.toPath("natives");
     private static final Path RESOURCEPACKS_DIR = IOHelper.toPath("resourcepacks");
-    private static final Pattern UUID_PATTERN = Pattern.compile("-", Pattern.LITERAL);
 
     // Authlib constants
     @LauncherAPI public static final String SKIN_URL_PROPERTY = "skinURL";
@@ -77,10 +76,6 @@ public final class ClientLauncher {
     @LauncherAPI
     public static boolean isLaunched() {
         return LAUNCHED.get();
-    }
-
-    public static String jvmProperty(String name, String value) {
-        return String.format("-D%s=%s", name, value);
     }
 
     @LauncherAPI
@@ -115,14 +110,14 @@ public final class ClientLauncher {
             args.add("-Xms" + params.ram + 'M');
             args.add("-Xmx" + params.ram + 'M');
         }
-        args.add(jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
+        args.add(Launcher.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
         if (Config.ADDRESS_OVERRIDE != null) {
-            args.add(jvmProperty(Config.ADDRESS_OVERRIDE_PROPERTY, Config.ADDRESS_OVERRIDE));
+            args.add(Launcher.jvmProperty(Config.ADDRESS_OVERRIDE_PROPERTY, Config.ADDRESS_OVERRIDE));
         }
         if (JVMHelper.OS_TYPE == OS.MUSTDIE && JVMHelper.OS_VERSION.startsWith("10.")) {
             LogHelper.debug("MustDie 10 fix is applied");
-            args.add(jvmProperty("os.name", "Windows 10"));
-            args.add(jvmProperty("os.version", "10.0"));
+            args.add(Launcher.jvmProperty("os.name", "Windows 10"));
+            args.add(Launcher.jvmProperty("os.version", "10.0"));
         }
 
         // Add classpath and main class
@@ -184,15 +179,15 @@ public final class ClientLauncher {
         // Verify ClientLauncher sign and classpath
         LogHelper.debug("Verifying ClientLauncher sign and classpath");
         SecurityHelper.verifySign(LauncherRequest.BINARY_PATH, params.launcherSign, publicKey);
-        URL[] classpath = JVMHelper.getClassPath();
-        URL[] classPath = resolveClassPath(params.clientDir, profile.object.getClassPath());
-        int counter = classPath.length;
-        for (URL classpathURL : classpath) {
-            Path file = Paths.get(classpathURL.toURI());
+        String[] classpath = JVMHelper.getClassPath();
+        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
+        int counter = classPath.size();
+        for (String classpathURL : classpath) {
+            Path file = Paths.get(classpathURL);
             if (!file.startsWith(IOHelper.JVM_DIR)) {
-                for (URL classPathURL : classPath)
+                for (Path classPathURL : classPath)
                 {
-                    if(classpathURL.equals(classPathURL)) {
+                    if(classpathURL.equals(classPathURL.toString())) {
                         counter--;
                         break;
                     }
@@ -225,11 +220,6 @@ public final class ClientLauncher {
     }
 
     @LauncherAPI
-    public static String toHash(UUID uuid) {
-        return UUID_PATTERN.matcher(uuid.toString()).replaceAll("");
-    }
-
-    @LauncherAPI
     public static void verifyHDir(Path dir, HashedDir hdir, FileNameMatcher matcher, boolean digest) throws IOException {
         if (matcher != null) {
             matcher = matcher.verifyOnly();
@@ -249,7 +239,7 @@ public final class ClientLauncher {
         Version version = profile.getVersion();
         Collections.addAll(args, "--username", pp.username);
         if (version.compareTo(Version.MC172) >= 0) {
-            Collections.addAll(args, "--uuid", toHash(pp.uuid));
+            Collections.addAll(args, "--uuid", Launcher.toHash(pp.uuid));
             Collections.addAll(args, "--accessToken", params.accessToken);
 
             // Add 1.7.10+ args (user properties, asset index)
@@ -324,7 +314,7 @@ public final class ClientLauncher {
         LogHelper.debug("Args: " + args);
         // Resolve main class and method
         Class<?> mainClass = Class.forName(profile.getMainClass());
-        MethodHandle mainMethod = JVMHelper.LOOKUP.findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
+        MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
 
         // Invoke main method with exception wrapping
         LAUNCHED.set(true);

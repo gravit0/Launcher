@@ -2,6 +2,7 @@ package com.mojang.authlib.yggdrasil;
 
 import java.util.UUID;
 
+import launcher.Launcher;
 import launcher.LauncherAPI;
 import launcher.client.ClientLauncher;
 import launcher.client.PlayerProfile;
@@ -23,7 +24,7 @@ public final class CompatProfile {
 
     public CompatProfile(UUID uuid, String username, String skinURL, String skinDigest, String cloakURL, String cloakDigest) {
         this.uuid = uuid;
-        uuidHash = ClientLauncher.toHash(uuid);
+        uuidHash = Launcher.toHash(uuid);
         this.username = username;
         this.skinURL = skinURL;
         this.skinDigest = skinDigest;

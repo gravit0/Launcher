@@ -10,7 +10,6 @@ import java.util.UUID;
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 import launcher.helper.SecurityHelper;
-import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
@@ -64,7 +63,7 @@ public final class PlayerProfile extends StreamObject {
     }
 
     public static final class Texture extends StreamObject {
-        private static final DigestAlgorithm DIGEST_ALGO = DigestAlgorithm.SHA256;
+        private static final SecurityHelper.DigestAlgorithm DIGEST_ALGO = SecurityHelper.DigestAlgorithm.SHA256;
 
         // Instance
         @LauncherAPI public final String url;

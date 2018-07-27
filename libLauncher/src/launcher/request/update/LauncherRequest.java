@@ -11,7 +11,6 @@ import java.util.List;
 import launcher.Launcher;
 import launcher.Launcher.Config;
 import launcher.LauncherAPI;
-import launcher.client.ClientLauncher;
 import launcher.client.ClientProfile;
 import launcher.helper.IOHelper;
 import launcher.helper.JVMHelper;
@@ -82,10 +81,10 @@ public final class LauncherRequest extends Request<Result> {
         List<String> args = new ArrayList<>(8);
         args.add(IOHelper.resolveJavaBin(null).toString());
         if (LogHelper.isDebugEnabled()) {
-            args.add(ClientLauncher.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
+            args.add(Launcher.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
         }
         if (Config.ADDRESS_OVERRIDE != null) {
-            args.add(ClientLauncher.jvmProperty(Config.ADDRESS_OVERRIDE_PROPERTY, Config.ADDRESS_OVERRIDE));
+            args.add(Launcher.jvmProperty(Config.ADDRESS_OVERRIDE_PROPERTY, Config.ADDRESS_OVERRIDE));
         }
         args.add("-jar");
         args.add(BINARY_PATH.toString());

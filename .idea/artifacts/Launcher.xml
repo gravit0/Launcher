@@ -5,9 +5,10 @@
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/Launcher/MANIFEST.MF" />
       </element>
-      <element id="module-output" name="Launcher" />
       <element id="extracted-dir" path="$PROJECT_DIR$/build/libraries/minimal-json-0.9.4.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/compat/authlib/authlib-clean.jar" path-in-jar="/" />
+      <element id="module-output" name="Launcher" />
+      <element id="module-output" name="libLauncher" />
     </root>
   </artifact>
 </component>

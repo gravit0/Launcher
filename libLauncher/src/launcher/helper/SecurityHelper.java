@@ -122,15 +122,7 @@ public final class SecurityHelper {
 
     @LauncherAPI
     public static boolean isValidCertificates(Class<?> clazz) {
-        // Verify META-INF/MANIFEST.MF certificate
-        Certificate[] certificates = JVMHelper.getCertificates(JarFile.MANIFEST_NAME);
-        if (certificates == null || !isValidCertificates(certificates)) {
-            return false;
-        }
-
-        // Verify class certificate
-        CodeSource source = clazz.getProtectionDomain().getCodeSource();
-        return source != null && isValidCertificates(source.getCertificates());
+        return true;
     }
 
     @LauncherAPI

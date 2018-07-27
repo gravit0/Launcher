@@ -16,7 +16,6 @@ import java.util.Locale;
 
 import com.sun.management.OperatingSystemMXBean;
 import launcher.LauncherAPI;
-import sun.misc.Unsafe;
 
 public final class JVMHelper {
     // MXBeans exports
@@ -32,16 +31,8 @@ public final class JVMHelper {
     @LauncherAPI public static final int RAM = getRAMAmount();
 
     // Public static fields
-    @LauncherAPI public static final Unsafe UNSAFE;
-    @LauncherAPI public static final Lookup LOOKUP;
     @LauncherAPI public static final Runtime RUNTIME = Runtime.getRuntime();
     @LauncherAPI public static final ClassLoader LOADER = ClassLoader.getSystemClassLoader();
-
-    // Useful internal fields and constants
-    private static final Object UCP;
-    private static final MethodHandle MH_UCP_GETURLS_METHOD;
-    private static final MethodHandle MH_UCP_GETRESOURCE_METHOD;
-    private static final MethodHandle MH_RESOURCE_GETCERTS_METHOD;
 
     private JVMHelper() {
     }
@@ -66,31 +57,12 @@ public final class JVMHelper {
 
     @LauncherAPI
     public static Certificate[] getCertificates(String resource) {
-        try {
-            Object resource0 = MH_UCP_GETRESOURCE_METHOD.invoke(UCP, resource);
-            return resource0 == null ? null : (Certificate[]) MH_RESOURCE_GETCERTS_METHOD.invoke(resource0);
-        } catch (Throwable exc) {
-            throw new InternalError(exc);
-        }
+        throw new IllegalArgumentException("Method Deprecated");
     }
 
     @LauncherAPI
-    public static URL[] getClassPath() {
-        try {
-            return (URL[]) MH_UCP_GETURLS_METHOD.invoke(UCP);
-        } catch (Throwable exc) {
-            throw new InternalError(exc);
-        }
-    }
-
-    @LauncherAPI
-    public static void halt0(int status) {
-        LogHelper.debug("Trying to halt JVM");
-        try {
-            LOOKUP.findStatic(Class.forName("java.lang.Shutdown"), "halt0", MethodType.methodType(void.class, int.class)).invokeExact(status);
-        } catch (Throwable exc) {
-            throw new InternalError(exc);
-        }
+    public static String[] getClassPath() {
+        return System.getProperty("java.class.path").split(File.pathSeparator);
     }
 
     @LauncherAPI
@@ -146,24 +118,6 @@ public final class JVMHelper {
     static {
         try {
             MethodHandles.publicLookup(); // Just to initialize class
-
-            // Get unsafe to get trusted lookup
-            Field theUnsafeField = Unsafe.class.getDeclaredField("theUnsafe");
-            theUnsafeField.setAccessible(true);
-            UNSAFE = (Unsafe) theUnsafeField.get(null);
-
-            // Get trusted lookup and other stuff
-            Field implLookupField = Lookup.class.getDeclaredField("IMPL_LOOKUP");
-            LOOKUP = (Lookup) UNSAFE.getObject(UNSAFE.staticFieldBase(implLookupField), UNSAFE.staticFieldOffset(implLookupField));
-
-            // Get UCP stuff1
-            Class<?> ucpClass = firstClass("jdk.internal.loader.URLClassPath", "sun.misc.URLClassPath");
-            Class<?> loaderClass = firstClass("jdk.internal.loader.ClassLoaders$AppClassLoader", "java.net.URLClassLoader");
-            Class<?> resourceClass = firstClass("jdk.internal.loader.Resource", "sun.misc.Resource");
-            UCP = LOOKUP.findGetter(loaderClass, "ucp", ucpClass).invoke(LOADER);
-            MH_UCP_GETURLS_METHOD = LOOKUP.findVirtual(ucpClass, "getURLs", MethodType.methodType(URL[].class));
-            MH_UCP_GETRESOURCE_METHOD = LOOKUP.findVirtual(ucpClass, "getResource", MethodType.methodType(resourceClass, String.class));
-            MH_RESOURCE_GETCERTS_METHOD = LOOKUP.findVirtual(resourceClass, "getCertificates", MethodType.methodType(Certificate[].class));
         } catch (Throwable exc) {
             LogHelper.error("Unsafe field is not initialized");
             throw new InternalError(exc);

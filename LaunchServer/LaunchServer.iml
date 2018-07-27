@@ -48,7 +48,8 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="Launcher" exported="" />
+    <orderEntry type="module" module-name="libLauncher" exported="" />
+    <orderEntry type="module" module-name="Launcher" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

@@ -235,6 +235,7 @@ public final class LogHelper {
             fgBright(Color.CYAN).a(product). // Product
             fgBright(Color.WHITE).a(" v").fgBright(Color.BLUE).a(Launcher.VERSION). // Version
             fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(Launcher.BUILD).fgBright(Color.WHITE).a(')'). // Build#
+            fgBright(Color.WHITE).a(" mod by ").fgBright(Color.RED).a("Gravit").
             reset().toString(); // To string
     }
 

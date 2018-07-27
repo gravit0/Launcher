@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
-import launcher.client.ClientLauncher;
+import launcher.Launcher;
 import launcher.client.PlayerProfile.Texture;
 import launcher.helper.CommonHelper;
 import launcher.helper.IOHelper;
@@ -56,6 +56,6 @@ public final class RequestTextureProvider extends TextureProvider {
 
     private static String getTextureURL(String url, UUID uuid, String username) {
         return CommonHelper.replace(url, "username", IOHelper.urlEncode(username),
-            "uuid", IOHelper.urlEncode(uuid.toString()), "hash", IOHelper.urlEncode(ClientLauncher.toHash(uuid)));
+            "uuid", IOHelper.urlEncode(uuid.toString()), "hash", IOHelper.urlEncode(Launcher.toHash(uuid)));
     }
 }
