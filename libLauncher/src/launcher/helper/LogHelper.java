@@ -247,7 +247,7 @@ public final class LogHelper {
     }
 
     private static String formatVersion(String product) {
-        return String.format("sashok724's %s v%s (build #%s)", product, Launcher.VERSION, Launcher.BUILD);
+        return String.format("sashok724's %s v%s (build #%s) mod by Gravit", product, Launcher.VERSION, Launcher.BUILD);
     }
 
     static {

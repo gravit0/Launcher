@@ -8,10 +8,15 @@ import java.lang.invoke.MethodType;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.cert.CertSelector;
 import java.security.cert.Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import com.sun.management.OperatingSystemMXBean;
@@ -29,6 +34,7 @@ public final class JVMHelper {
     @LauncherAPI public static final int OS_BITS = getCorrectOSArch();
     @LauncherAPI public static final int JVM_BITS = Integer.parseInt(System.getProperty("sun.arch.data.model"));
     @LauncherAPI public static final int RAM = getRAMAmount();
+    @LauncherAPI public static final SecurityManager SECURITY_MANAGER = System.getSecurityManager();
 
     // Public static fields
     @LauncherAPI public static final Runtime RUNTIME = Runtime.getRuntime();
@@ -55,6 +61,7 @@ public final class JVMHelper {
         LogHelper.debug("Used heap: %d MiB", RUNTIME.totalMemory() - RUNTIME.freeMemory() >> 20);
     }
 
+    @Deprecated
     @LauncherAPI
     public static Certificate[] getCertificates(String resource) {
         throw new IllegalArgumentException("Method Deprecated");
@@ -63,6 +70,23 @@ public final class JVMHelper {
     @LauncherAPI
     public static String[] getClassPath() {
         return System.getProperty("java.class.path").split(File.pathSeparator);
+    }
+    @LauncherAPI
+    public static URL[] getClassPathURL() {
+        String[] cp =System.getProperty("java.class.path").split(File.pathSeparator);
+        URL[] list = new URL[cp.length];
+        int it = 0;
+        for (String s : cp) {
+            URL url = null;
+            try {
+                url = new URL(s);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            list[it] = url;
+            it++;
+        }
+        return list;
     }
 
     @LauncherAPI
