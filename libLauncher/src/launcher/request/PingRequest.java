@@ -2,7 +2,7 @@ package launcher.request;
 
 import java.io.IOException;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
@@ -11,7 +11,7 @@ public final class PingRequest extends Request<Void> {
     @LauncherAPI public static final byte EXPECTED_BYTE = 0b01010101;
 
     @LauncherAPI
-    public PingRequest(Config config) {
+    public PingRequest(LauncherConfig config) {
         super(config);
     }
 

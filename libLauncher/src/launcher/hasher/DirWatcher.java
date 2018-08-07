@@ -47,6 +47,7 @@ public final class DirWatcher implements Runnable, AutoCloseable {
 
         // Register dirs recursively
         IOHelper.walk(dir, new RegisterFileVisitor(), true);
+        LogHelper.subInfo("DirWatcher %s",dir.toString());
     }
 
     @Override
@@ -80,6 +81,7 @@ public final class DirWatcher implements Runnable, AutoCloseable {
 
             // Resolve paths and verify is not exclusion
             Path path = watchDir.resolve((Path) event.context());
+            LogHelper.subInfo("DirWatcher event %s",path.toString());
             Deque<String> stringPath = toPath(dir.relativize(path));
             if (matcher != null && !matcher.shouldVerify(stringPath)) {
                 continue; // Exclusion; should not be verified
@@ -133,6 +135,7 @@ public final class DirWatcher implements Runnable, AutoCloseable {
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             FileVisitResult result = super.preVisitDirectory(dir, attrs);
             if (DirWatcher.this.dir.equals(dir)) {
+                LogHelper.subInfo("DirWatcher register V1 %s %s",dir.toString(),result.toString());
                 dir.register(service, KINDS);
                 return result;
             }
@@ -140,10 +143,12 @@ public final class DirWatcher implements Runnable, AutoCloseable {
             // Maybe it's unnecessary to go deeper
             path.add(IOHelper.getFileName(dir));
             if (matcher != null && !matcher.shouldVerify(path)) {
+                LogHelper.subInfo("DirWatcher skipped %s %s",dir.toString(),result.toString());
                 return FileVisitResult.SKIP_SUBTREE;
             }
 
             // Register
+            LogHelper.subInfo("DirWatcher register V2 %s %s",dir.toString(),result.toString());
             dir.register(service, KINDS);
             return result;
         }

@@ -2,7 +2,7 @@ package launcher.request.auth;
 
 import java.io.IOException;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.PlayerProfile;
 import launcher.helper.VerifyHelper;
@@ -15,7 +15,7 @@ public final class CheckServerRequest extends Request<PlayerProfile> {
     private final String serverID;
 
     @LauncherAPI
-    public CheckServerRequest(Config config, String username, String serverID) {
+    public CheckServerRequest(LauncherConfig config, String username, String serverID) {
         super(config);
         this.username = VerifyHelper.verifyUsername(username);
         this.serverID = JoinServerRequest.verifyServerID(serverID);

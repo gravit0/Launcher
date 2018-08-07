@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.PlayerProfile;
 import launcher.request.Request;
@@ -15,7 +15,7 @@ public final class ProfileByUUIDRequest extends Request<PlayerProfile> {
     private final UUID uuid;
 
     @LauncherAPI
-    public ProfileByUUIDRequest(Config config, UUID uuid) {
+    public ProfileByUUIDRequest(LauncherConfig config, UUID uuid) {
         super(config);
         this.uuid = Objects.requireNonNull(uuid, "uuid");
     }

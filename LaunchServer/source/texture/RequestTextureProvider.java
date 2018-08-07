@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import launcher.Launcher;
-import launcher.client.PlayerProfile.Texture;
+import launcher.client.Texture;
 import launcher.helper.CommonHelper;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;

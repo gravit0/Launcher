@@ -21,15 +21,13 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.WriterConfig;
 import launcher.Launcher;
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.ClientProfile.Version;
 import launcher.hasher.DirWatcher;
@@ -111,8 +109,8 @@ public final class ClientLauncher {
             args.add("-Xmx" + params.ram + 'M');
         }
         args.add(Launcher.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
-        if (Config.ADDRESS_OVERRIDE != null) {
-            args.add(Launcher.jvmProperty(Config.ADDRESS_OVERRIDE_PROPERTY, Config.ADDRESS_OVERRIDE));
+        if (LauncherConfig.ADDRESS_OVERRIDE != null) {
+            args.add(Launcher.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
         }
         if (JVMHelper.OS_TYPE == OS.MUSTDIE && JVMHelper.OS_VERSION.startsWith("10.")) {
             LogHelper.debug("MustDie 10 fix is applied");

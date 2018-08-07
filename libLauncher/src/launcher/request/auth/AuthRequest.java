@@ -2,7 +2,7 @@ package launcher.request.auth;
 
 import java.io.IOException;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.PlayerProfile;
 import launcher.helper.SecurityHelper;
@@ -17,7 +17,7 @@ public final class AuthRequest extends Request<Result> {
     private final byte[] encryptedPassword;
 
     @LauncherAPI
-    public AuthRequest(Config config, String login, byte[] encryptedPassword) {
+    public AuthRequest(LauncherConfig config, String login, byte[] encryptedPassword) {
         super(config);
         this.login = VerifyHelper.verify(login, VerifyHelper.NOT_EMPTY, "Login can't be empty");
         this.encryptedPassword = encryptedPassword.clone();

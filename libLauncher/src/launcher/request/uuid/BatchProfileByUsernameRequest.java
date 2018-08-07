@@ -2,7 +2,7 @@ package launcher.request.uuid;
 
 import java.io.IOException;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.PlayerProfile;
 import launcher.helper.IOHelper;
@@ -16,7 +16,7 @@ public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]
     private final String[] usernames;
 
     @LauncherAPI
-    public BatchProfileByUsernameRequest(Config config, String... usernames) throws IOException {
+    public BatchProfileByUsernameRequest(LauncherConfig config, String... usernames) throws IOException {
         super(config);
         this.usernames = usernames.clone();
         IOHelper.verifyLength(this.usernames.length, MAX_BATCH_SIZE);

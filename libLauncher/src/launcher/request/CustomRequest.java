@@ -1,6 +1,6 @@
 package launcher.request;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.HInput;
@@ -8,7 +8,7 @@ import launcher.serialize.HOutput;
 
 public abstract class CustomRequest<T> extends Request<T> {
     @LauncherAPI
-    public CustomRequest(Config config) {
+    public CustomRequest(LauncherConfig config) {
         super(config);
     }
 

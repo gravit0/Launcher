@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import launcher.Launcher;
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 import launcher.helper.SecurityHelper;
@@ -15,11 +15,11 @@ import launcher.serialize.stream.EnumSerializer;
 import launcher.serialize.stream.EnumSerializer.Itf;
 
 public abstract class Request<R> {
-    @LauncherAPI protected final Config config;
+    @LauncherAPI protected final LauncherConfig config;
     private final AtomicBoolean started = new AtomicBoolean(false);
 
     @LauncherAPI
-    protected Request(Config config) {
+    protected Request(LauncherConfig config) {
         this.config = config == null ? Launcher.getConfig() : config;
     }
 

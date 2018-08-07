@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 import launcher.request.Request;
@@ -14,7 +14,7 @@ import launcher.serialize.HOutput;
 
 public final class UpdateListRequest extends Request<Set<String>> {
     @LauncherAPI
-    public UpdateListRequest(Config config) {
+    public UpdateListRequest(LauncherConfig config) {
         super(config);
     }
 

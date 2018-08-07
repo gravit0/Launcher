@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile.Texture;
+import launcher.client.Texture;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.config.entry.BlockConfigEntry;
 

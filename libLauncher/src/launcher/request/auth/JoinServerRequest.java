@@ -3,7 +3,7 @@ package launcher.request.auth;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
@@ -20,7 +20,7 @@ public final class JoinServerRequest extends Request<Boolean> {
     private final String serverID;
 
     @LauncherAPI
-    public JoinServerRequest(Config config, String username, String accessToken, String serverID) {
+    public JoinServerRequest(LauncherConfig config, String username, String accessToken, String serverID) {
         super(config);
         this.username = VerifyHelper.verifyUsername(username);
         this.accessToken = SecurityHelper.verifyToken(accessToken);

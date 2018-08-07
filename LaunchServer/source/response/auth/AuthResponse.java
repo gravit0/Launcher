@@ -1,5 +1,6 @@
 package launchserver.response.auth;
 
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.UUID;
 import javax.crypto.BadPaddingException;
@@ -23,6 +24,10 @@ public final class AuthResponse extends Response {
 
     public AuthResponse(LaunchServer server, long id, HInput input, HOutput output, String ip) {
         super(server, id, input, output);
+        this.ip = ip;
+    }
+    public AuthResponse(LaunchServer server, long id, HInput input, HOutput output, Socket socket, String ip) {
+        super(server, id, input, output,socket);
         this.ip = ip;
     }
 

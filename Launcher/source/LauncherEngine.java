@@ -1,15 +1,11 @@
 package launcher;
 
-import launcher.client.ClientLauncher;
-import launcher.client.ClientProfile;
-import launcher.client.PlayerProfile;
-import launcher.client.ServerPinger;
+import launcher.client.*;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
 import launcher.hasher.HashedEntry;
 import launcher.hasher.HashedFile;
 import launcher.helper.*;
-import launcher.client.JSApplication;
 import launcher.request.CustomRequest;
 import launcher.request.PingRequest;
 import launcher.request.Request;
@@ -105,11 +101,11 @@ public class LauncherEngine {
     @LauncherAPI
     public static void addLauncherClassBindings(Map<String, Object> bindings) {
         bindings.put("LauncherClass", Launcher.class);
-        bindings.put("LauncherConfigClass", Launcher.Config.class);
+        bindings.put("LauncherConfigClass", LauncherConfig.class);
 
         // Set client class bindings
         bindings.put("PlayerProfileClass", PlayerProfile.class);
-        bindings.put("PlayerProfileTextureClass", PlayerProfile.Texture.class);
+        bindings.put("PlayerProfileTextureClass", Texture.class);
         bindings.put("ClientProfileClass", ClientProfile.class);
         bindings.put("ClientProfileVersionClass", ClientProfile.Version.class);
         bindings.put("ClientLauncherClass", ClientLauncher.class);

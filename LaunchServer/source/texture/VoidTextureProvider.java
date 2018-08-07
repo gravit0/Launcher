@@ -2,7 +2,7 @@ package launchserver.texture;
 
 import java.util.UUID;
 
-import launcher.client.PlayerProfile.Texture;
+import launcher.client.Texture;
 import launcher.serialize.config.entry.BlockConfigEntry;
 
 public final class VoidTextureProvider extends TextureProvider {

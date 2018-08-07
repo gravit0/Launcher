@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.zip.InflaterInputStream;
 
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
@@ -52,7 +52,7 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
     private Instant startTime;
 
     @LauncherAPI
-    public UpdateRequest(Config config, String dirName, Path dir, FileNameMatcher matcher, boolean digest) {
+    public UpdateRequest(LauncherConfig config, String dirName, Path dir, FileNameMatcher matcher, boolean digest) {
         super(config);
         this.dirName = IOHelper.verifyFileName(dirName);
         this.dir = Objects.requireNonNull(dir, "dir");
