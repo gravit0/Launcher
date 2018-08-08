@@ -27,6 +27,7 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.WriterConfig;
 import launcher.Launcher;
+import launcher.LauncherClassLoader;
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.ClientProfile.Version;
@@ -58,7 +59,7 @@ public final class ClientLauncher {
     // Constants
     private static final Path NATIVES_DIR = IOHelper.toPath("natives");
     private static final Path RESOURCEPACKS_DIR = IOHelper.toPath("resourcepacks");
-
+    private static LauncherClassLoader classLoader;
     // Authlib constants
     @LauncherAPI public static final String SKIN_URL_PROPERTY = "skinURL";
     @LauncherAPI public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
@@ -102,6 +103,7 @@ public final class ClientLauncher {
 
         // Fill CLI arguments
         List<String> args = new LinkedList<>();
+        javaBin = Paths.get("java");
         args.add(javaBin.toString());
         args.add(MAGICAL_INTEL_OPTION);
         if (params.ram > 0 && params.ram <= JVMHelper.RAM) {
@@ -126,7 +128,9 @@ public final class ClientLauncher {
         }
         Collections.addAll(args, profile.object.getJvmArgs());
         Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
-        Collections.addAll(args, "-classpath", classPathString.toString(), ClientLauncher.class.getName());
+        //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
+        //Collections.addAll(args, "-classpath", classPathString.toString());
+        Collections.addAll(args, ClientLauncher.class.getName());
         args.add(paramsFile.toString()); // Add params file path to args
 
         // Print commandline debug message
@@ -135,6 +139,7 @@ public final class ClientLauncher {
         // Build client process
         LogHelper.debug("Launching client instance");
         ProcessBuilder builder = new ProcessBuilder(args);
+        builder.environment().put("CLASSPATH",classPathString.toString());
         builder.directory(params.clientDir.toFile());
         builder.inheritIO();
         if (pipeOutput) {
@@ -196,21 +201,22 @@ public final class ClientLauncher {
         {
             throw new SecurityException(String.format("Forbidden classpath entry, %d != 0",counter));
         }
+        URL[] classpathurls = resolveClassPath(params.clientDir, profile.object.getClassPath());
+        classLoader = new LauncherClassLoader(classpathurls,ClassLoader.getSystemClassLoader());
+        Thread.currentThread().setContextClassLoader(classLoader);
         // Start client with WatchService monitoring
         boolean digest = !profile.object.isUpdateFastCheck();
         LogHelper.debug("Starting JVM and client WatchService");
         FileNameMatcher assetMatcher = profile.object.getAssetUpdateMatcher();
         FileNameMatcher clientMatcher = profile.object.getClientUpdateMatcher();
-        try (DirWatcher jvmWatcher = new DirWatcher(IOHelper.JVM_DIR, jvmHDir.object, null, digest); // JVM Watcher
-            DirWatcher assetWatcher = new DirWatcher(params.assetDir, assetHDir.object, assetMatcher, digest);
+        try (DirWatcher assetWatcher = new DirWatcher(params.assetDir, assetHDir.object, assetMatcher, digest);
             DirWatcher clientWatcher = new DirWatcher(params.clientDir, clientHDir.object, clientMatcher, digest)) {
             // Verify current state of all dirs
-            verifyHDir(IOHelper.JVM_DIR, jvmHDir.object, null, digest);
+            //verifyHDir(IOHelper.JVM_DIR, jvmHDir.object, null, digest);
             verifyHDir(params.assetDir, assetHDir.object, assetMatcher, digest);
             verifyHDir(params.clientDir, clientHDir.object, clientMatcher, digest);
 
             // Start WatchService, and only then client
-            CommonHelper.newThread("JVM Directory Watcher", true, jvmWatcher).start();
             CommonHelper.newThread("Asset Directory Watcher", true, assetWatcher).start();
             CommonHelper.newThread("Client Directory Watcher", true, clientWatcher).start();
             launch(profile.object, params);
@@ -311,9 +317,8 @@ public final class ClientLauncher {
         Collections.addAll(args, profile.getClientArgs());
         LogHelper.debug("Args: " + args);
         // Resolve main class and method
-        Class<?> mainClass = Class.forName(profile.getMainClass());
+        Class<?> mainClass = classLoader.loadClass(profile.getMainClass());
         MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
-
         // Invoke main method with exception wrapping
         LAUNCHED.set(true);
         JVMHelper.fullGC();
