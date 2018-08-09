@@ -19,7 +19,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import launcher.Launcher;
-import launcher.Launcher.Config;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
@@ -66,7 +66,7 @@ public final class JARLauncherBinary extends LauncherBinary {
             byte[] launcherConfigBytes;
             try (ByteArrayOutputStream configArray = IOHelper.newByteArrayOutput()) {
                 try (HOutput configOutput = new HOutput(configArray)) {
-                    new Config(server.config.getAddress(), server.config.port, server.publicKey, runtime).write(configOutput);
+                    new LauncherConfig(server.config.getAddress(), server.config.port, server.publicKey, runtime).write(configOutput);
                 }
                 launcherConfigBytes = configArray.toByteArray();
             }

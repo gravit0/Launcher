@@ -58,7 +58,7 @@ public abstract class AuthHandler extends ConfigObject implements AutoCloseable 
             String.format("Auth handler has been already registered: '%s'", name));
     }
 
-    static {
+    public static void registerHandlers() {
         registerHandler("null", NullAuthHandler::new);
         registerHandler("memory", MemoryAuthHandler::new);
 

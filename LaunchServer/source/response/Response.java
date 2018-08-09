@@ -1,6 +1,7 @@
 package launchserver.response;
 
 import java.io.IOException;
+import java.net.Socket;
 
 import launcher.LauncherAPI;
 import launcher.helper.LogHelper;
@@ -14,6 +15,15 @@ public abstract class Response {
     @LauncherAPI protected final long id;
     @LauncherAPI protected final HInput input;
     @LauncherAPI protected final HOutput output;
+    @LauncherAPI protected final Socket socket;
+
+    protected Response(LaunchServer server, long id, HInput input, HOutput output,Socket socket) {
+        this.server = server;
+        this.id = id;
+        this.input = input;
+        this.output = output;
+        this.socket = socket;
+    }
 
     @LauncherAPI
     protected Response(LaunchServer server, long id, HInput input, HOutput output) {
@@ -21,6 +31,7 @@ public abstract class Response {
         this.id = id;
         this.input = input;
         this.output = output;
+        this.socket = null;
     }
 
     @LauncherAPI

@@ -3,7 +3,6 @@ package launchserver.auth;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 import launcher.LauncherAPI;
@@ -15,7 +14,8 @@ import launcher.serialize.config.entry.IntegerConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
 
 public final class MySQLSourceConfig extends ConfigObject implements AutoCloseable {
-    @LauncherAPI public static final int TIMEOUT = VerifyHelper.verifyInt(
+    @LauncherAPI
+    public static final int TIMEOUT = VerifyHelper.verifyInt(
         Integer.parseUnsignedInt(System.getProperty("launcher.mysql.idleTimeout", Integer.toString(5000))),
         VerifyHelper.POSITIVE, "launcher.mysql.idleTimeout can't be <= 5000");
     private static final int MAX_POOL_SIZE = VerifyHelper.verifyInt(
@@ -64,7 +64,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
     public synchronized Connection getConnection() throws SQLException {
         if (source == null) { // New data source
             MysqlDataSource mysqlSource = new MysqlDataSource();
-            mysqlSource.setUseUnicode(true);
+            mysqlSource.setCharacterEncoding("UTF-8");
 
             // Prep statements cache
             mysqlSource.setPrepStmtCacheSize(250);

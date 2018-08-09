@@ -10,7 +10,6 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 
 public final class LaunchServerCommandBukkit implements CommandExecutor {
     public final LaunchServerPluginBukkit plugin;
-
     public LaunchServerCommandBukkit(LaunchServerPluginBukkit plugin) {
         this.plugin = plugin;
     }

@@ -58,7 +58,6 @@ var IOHelper = IOHelperClass.static;
 var JVMHelper = JVMHelperClass.static;
 var JVMHelperOS = JVMHelperOSClass.static;
 var LogHelper = LogHelperClass.static;
-var LogHelperOutput = LogHelperOutputClass.static;
 var SecurityHelper = SecurityHelperClass.static;
 var DigestAlgorithm = DigestAlgorithmClass.static;
 var VerifyHelper = VerifyHelperClass.static;

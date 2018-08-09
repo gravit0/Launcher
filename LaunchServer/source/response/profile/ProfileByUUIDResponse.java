@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import launcher.client.PlayerProfile;
-import launcher.client.PlayerProfile.Texture;
+import launcher.client.Texture;
 import launcher.helper.LogHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;

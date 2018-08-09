@@ -44,7 +44,7 @@ public abstract class AuthProvider extends ConfigObject implements AutoCloseable
             String.format("Auth provider has been already registered: '%s'", name));
     }
 
-    static {
+    public static void registerProviders() {
         registerProvider("null", NullAuthProvider::new);
         registerProvider("accept", AcceptAuthProvider::new);
         registerProvider("reject", RejectAuthProvider::new);
@@ -54,5 +54,6 @@ public abstract class AuthProvider extends ConfigObject implements AutoCloseable
         registerProvider("mysql", MySQLAuthProvider::new);
         registerProvider("file", FileAuthProvider::new);
         registerProvider("request", RequestAuthProvider::new);
+        registerProvider("json", JsonAuthProvider::new);
     }
 }

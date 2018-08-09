@@ -5,6 +5,6 @@ public final class LauncherWrap {
     }
 
     public static void main(String... args) throws Throwable {
-        Launcher.main(args); // Just for test runtime
+        LauncherEngine.main(args); // Just for test runtime
     }
 }

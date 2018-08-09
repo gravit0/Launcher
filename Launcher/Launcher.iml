@@ -6,38 +6,19 @@
       <sourceFolder url="file://$MODULE_DIR$/source" isTestSource="false" packagePrefix="launcher" />
       <sourceFolder url="file://$MODULE_DIR$/source-testing" isTestSource="true" packagePrefix="launcher" />
       <sourceFolder url="file://$MODULE_DIR$/source-authlib" isTestSource="false" packagePrefix="com.mojang.authlib" />
-      <excludeFolder url="file://$MODULE_DIR$/runtime" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../build/libraries/gson-2.8.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../build/libraries/guava-17.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" exported="" name="minimal-json-0.9.4" level="project" />
+    <orderEntry type="module" module-name="libLauncher" exported="" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../compat/authlib/authlib-clean.jar!/" />
+          <root url="jar:///usr/lib/jvm/java-8-jre/jre/lib/ext/jfxrt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" scope="PROVIDED" name="jansi-1.11" level="project" />
-    <orderEntry type="library" exported="" name="minimal-json-0.9.4" level="project" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

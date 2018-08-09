@@ -138,14 +138,10 @@ function goSettings(event) {
 function verifyLauncher(e) {
     processing.resetOverlay();
     overlay.show(processing.overlay, function(event) makeLauncherRequest(function(result) {
-        if (result.binary !== null) {
-            LauncherRequest.update(Launcher.getConfig(), result);
-            return;
-        }
-
-        // Parse response
         settings.lastSign = result.sign;
         settings.lastProfiles = result.profiles;
+
+        // Init offline if set
         if (settings.offline) {
             initOffline();
         }
@@ -170,14 +166,8 @@ function doAuth(profile, login, rsaPassword) {
 function doUpdate(profile, pp, accessToken) {
     var digest = profile.object.isUpdateFastCheck();
 
-    // Update JVM dir
-    update.resetOverlay("Обновление файлов JVM");
+    // Update asset dir
     overlay.swap(0, update.overlay, function(event) {
-        var jvmDir = settings.updatesDir.resolve(jvmDirName);
-        makeUpdateRequest(jvmDirName, jvmDir, null, digest, function(jvmHDir) {
-            settings.lastHDirs.put(jvmDirName, jvmHDir);
-
-            // Update asset dir
             update.resetOverlay("Обновление файлов ресурсов");
             var assetDirName = profile.object.block.getEntryValue("assetDir", StringConfigEntryClass);
             var assetDir = settings.updatesDir.resolve(assetDirName);
@@ -192,17 +182,16 @@ function doUpdate(profile, pp, accessToken) {
                 var clientMatcher = profile.object.getClientUpdateMatcher();
                 makeUpdateRequest(clientDirName, clientDir, clientMatcher, digest, function(clientHDir) {
                     settings.lastHDirs.put(clientDirName, clientHDir);
-                    doLaunchClient(jvmDir, jvmHDir, assetDir, assetHDir, clientDir, clientHDir, profile, pp, accessToken);
+                    doLaunchClient(assetDir, assetHDir, clientDir, clientHDir, profile, pp, accessToken);
                 });
             });
-        });
     });
 }
 
-function doLaunchClient(jvmDir, jvmHDir, assetDir, assetHDir, clientDir, clientHDir, profile, pp, accessToken) {
+function doLaunchClient(assetDir, assetHDir, clientDir, clientHDir, profile, pp, accessToken) {
     processing.resetOverlay();
     overlay.swap(0, processing.overlay, function(event)
-        launchClient(jvmDir, jvmHDir, assetHDir, clientHDir, profile, new ClientLauncherParams(settings.lastSign,
+        launchClient(assetHDir, clientHDir, profile, new ClientLauncherParams(settings.lastSign,
             assetDir, clientDir, pp, accessToken, settings.autoEnter, settings.fullScreen, settings.ram, 0, 0), doDebugClient)
     );
 }

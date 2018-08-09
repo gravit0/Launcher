@@ -37,14 +37,14 @@ public abstract class CachedAuthHandler extends AuthHandler {
     }
 
     @Override
-    public final synchronized UUID checkServer(String username, String serverID) throws IOException {
+    public synchronized UUID checkServer(String username, String serverID) throws IOException {
         Entry entry = getEntry(username);
         return entry != null && username.equals(entry.username) &&
             serverID.equals(entry.serverID) ? entry.uuid : null;
     }
 
     @Override
-    public final synchronized boolean joinServer(String username, String accessToken, String serverID) throws IOException {
+    public synchronized boolean joinServer(String username, String accessToken, String serverID) throws IOException {
         Entry entry = getEntry(username);
         if (entry == null || !username.equals(entry.username) || !accessToken.equals(entry.accessToken) ||
             !updateServerID(entry.uuid, serverID)) {

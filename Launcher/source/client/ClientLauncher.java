@@ -1,8 +1,10 @@
 package launcher.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
@@ -19,15 +21,14 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.WriterConfig;
 import launcher.Launcher;
-import launcher.Launcher.Config;
+import launcher.LauncherClassLoader;
+import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.ClientProfile.Version;
 import launcher.hasher.DirWatcher;
@@ -58,8 +59,7 @@ public final class ClientLauncher {
     // Constants
     private static final Path NATIVES_DIR = IOHelper.toPath("natives");
     private static final Path RESOURCEPACKS_DIR = IOHelper.toPath("resourcepacks");
-    private static final Pattern UUID_PATTERN = Pattern.compile("-", Pattern.LITERAL);
-
+    private static LauncherClassLoader classLoader;
     // Authlib constants
     @LauncherAPI public static final String SKIN_URL_PROPERTY = "skinURL";
     @LauncherAPI public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
@@ -77,12 +77,8 @@ public final class ClientLauncher {
         return LAUNCHED.get();
     }
 
-    public static String jvmProperty(String name, String value) {
-        return String.format("-D%s=%s", name, value);
-    }
-
     @LauncherAPI
-    public static Process launch(Path jvmDir, SignedObjectHolder<HashedDir> jvmHDir,
+    public static Process launch(
         SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
         SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
         // Write params file (instead of CLI; Mustdie32 API can't handle command line > 32767 chars)
@@ -91,41 +87,44 @@ public final class ClientLauncher {
         try (HOutput output = new HOutput(IOHelper.newOutput(paramsFile))) {
             params.write(output);
             profile.write(output);
-
-            // Write hdirs
-            jvmHDir.write(output);
             assetHDir.write(output);
             clientHDir.write(output);
         }
 
         // Resolve java bin and set permissions
         LogHelper.debug("Resolving JVM binary");
-        Path javaBin = IOHelper.resolveJavaBin(jvmDir);
-        if (IOHelper.POSIX) {
-            Files.setPosixFilePermissions(javaBin, BIN_POSIX_PERMISSIONS);
-        }
+        //Path javaBin = IOHelper.resolveJavaBin(jvmDir);
 
         // Fill CLI arguments
         List<String> args = new LinkedList<>();
+        Path javaBin = Paths.get(System.getProperty("java.home")+IOHelper.PLATFORM_SEPARATOR+"bin"+IOHelper.PLATFORM_SEPARATOR+"java");
         args.add(javaBin.toString());
         args.add(MAGICAL_INTEL_OPTION);
         if (params.ram > 0 && params.ram <= JVMHelper.RAM) {
             args.add("-Xms" + params.ram + 'M');
             args.add("-Xmx" + params.ram + 'M');
         }
-        args.add(jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
-        if (Config.ADDRESS_OVERRIDE != null) {
-            args.add(jvmProperty(Config.ADDRESS_OVERRIDE_PROPERTY, Config.ADDRESS_OVERRIDE));
+        args.add(Launcher.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
+        if (LauncherConfig.ADDRESS_OVERRIDE != null) {
+            args.add(Launcher.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
         }
         if (JVMHelper.OS_TYPE == OS.MUSTDIE && JVMHelper.OS_VERSION.startsWith("10.")) {
             LogHelper.debug("MustDie 10 fix is applied");
-            args.add(jvmProperty("os.name", "Windows 10"));
-            args.add(jvmProperty("os.version", "10.0"));
+            args.add(Launcher.jvmProperty("os.name", "Windows 10"));
+            args.add(Launcher.jvmProperty("os.version", "10.0"));
         }
 
         // Add classpath and main class
+        StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
+        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
+        for (Path path : classPath) {
+            classPathString.append(File.pathSeparatorChar).append(path.toString());
+        }
         Collections.addAll(args, profile.object.getJvmArgs());
-        Collections.addAll(args, "-classpath", IOHelper.getCodeSource(ClientLauncher.class).toString(), ClientLauncher.class.getName());
+        Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
+        //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
+        //Collections.addAll(args, "-classpath", classPathString.toString());
+        Collections.addAll(args, ClientLauncher.class.getName());
         args.add(paramsFile.toString()); // Add params file path to args
 
         // Print commandline debug message
@@ -134,6 +133,7 @@ public final class ClientLauncher {
         // Build client process
         LogHelper.debug("Launching client instance");
         ProcessBuilder builder = new ProcessBuilder(args);
+        builder.environment().put("CLASSPATH",classPathString.toString());
         builder.directory(params.clientDir.toFile());
         builder.inheritIO();
         if (pipeOutput) {
@@ -147,7 +147,6 @@ public final class ClientLauncher {
 
     @LauncherAPI
     public static void main(String... args) throws Throwable {
-        SecurityHelper.verifyCertificates(ClientLauncher.class);
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");
 
@@ -159,14 +158,13 @@ public final class ClientLauncher {
         LogHelper.debug("Reading ClientLauncher params file");
         Params params;
         SignedObjectHolder<ClientProfile> profile;
-        SignedObjectHolder<HashedDir> jvmHDir, assetHDir, clientHDir;
+        SignedObjectHolder<HashedDir> assetHDir, clientHDir;
         RSAPublicKey publicKey = Launcher.getConfig().publicKey;
         try (HInput input = new HInput(IOHelper.newInput(paramsFile))) {
             params = new Params(input);
             profile = new SignedObjectHolder<>(input, publicKey, ClientProfile.RO_ADAPTER);
 
             // Read hdirs
-            jvmHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
             assetHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
             clientHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
         } finally {
@@ -176,38 +174,45 @@ public final class ClientLauncher {
         // Verify ClientLauncher sign and classpath
         LogHelper.debug("Verifying ClientLauncher sign and classpath");
         SecurityHelper.verifySign(LauncherRequest.BINARY_PATH, params.launcherSign, publicKey);
-        URL[] classpath = JVMHelper.getClassPath();
-        for (URL classpathURL : classpath) {
-            Path file = Paths.get(classpathURL.toURI());
-            if (!file.startsWith(IOHelper.JVM_DIR) && !file.equals(LauncherRequest.BINARY_PATH)) {
-                throw new SecurityException(String.format("Forbidden classpath entry: '%s'", file));
+        String[] classpath = JVMHelper.getClassPath();
+        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
+        int counter = classPath.size();
+        for (String classpathURL : classpath) {
+            Path file = Paths.get(classpathURL);
+            if (!file.startsWith(IOHelper.JVM_DIR)) {
+                for (Path classPathURL : classPath)
+                {
+                    if(classpathURL.equals(classPathURL.toString())) {
+                        counter--;
+                        break;
+                    }
+                }
             }
         }
-
+        if(counter != 0)
+        {
+            throw new SecurityException(String.format("Forbidden classpath entry, %d != 0",counter));
+        }
+        URL[] classpathurls = resolveClassPath(params.clientDir, profile.object.getClassPath());
+        classLoader = new LauncherClassLoader(classpathurls,ClassLoader.getSystemClassLoader());
+        Thread.currentThread().setContextClassLoader(classLoader);
         // Start client with WatchService monitoring
         boolean digest = !profile.object.isUpdateFastCheck();
         LogHelper.debug("Starting JVM and client WatchService");
         FileNameMatcher assetMatcher = profile.object.getAssetUpdateMatcher();
         FileNameMatcher clientMatcher = profile.object.getClientUpdateMatcher();
-        try (DirWatcher jvmWatcher = new DirWatcher(IOHelper.JVM_DIR, jvmHDir.object, null, digest); // JVM Watcher
-            DirWatcher assetWatcher = new DirWatcher(params.assetDir, assetHDir.object, assetMatcher, digest);
+        try (DirWatcher assetWatcher = new DirWatcher(params.assetDir, assetHDir.object, assetMatcher, digest);
             DirWatcher clientWatcher = new DirWatcher(params.clientDir, clientHDir.object, clientMatcher, digest)) {
             // Verify current state of all dirs
-            verifyHDir(IOHelper.JVM_DIR, jvmHDir.object, null, digest);
+            //verifyHDir(IOHelper.JVM_DIR, jvmHDir.object, null, digest);
             verifyHDir(params.assetDir, assetHDir.object, assetMatcher, digest);
             verifyHDir(params.clientDir, clientHDir.object, clientMatcher, digest);
 
             // Start WatchService, and only then client
-            CommonHelper.newThread("JVM Directory Watcher", true, jvmWatcher).start();
             CommonHelper.newThread("Asset Directory Watcher", true, assetWatcher).start();
             CommonHelper.newThread("Client Directory Watcher", true, clientWatcher).start();
             launch(profile.object, params);
         }
-    }
-
-    @LauncherAPI
-    public static String toHash(UUID uuid) {
-        return UUID_PATTERN.matcher(uuid.toString()).replaceAll("");
     }
 
     @LauncherAPI
@@ -230,7 +235,7 @@ public final class ClientLauncher {
         Version version = profile.getVersion();
         Collections.addAll(args, "--username", pp.username);
         if (version.compareTo(Version.MC172) >= 0) {
-            Collections.addAll(args, "--uuid", toHash(pp.uuid));
+            Collections.addAll(args, "--uuid", Launcher.toHash(pp.uuid));
             Collections.addAll(args, "--accessToken", params.accessToken);
 
             // Add 1.7.10+ args (user properties, asset index)
@@ -292,7 +297,7 @@ public final class ClientLauncher {
 
     private static void launch(ClientProfile profile, Params params) throws Throwable {
         // Add natives path
-        JVMHelper.addNativePath(params.clientDir.resolve(NATIVES_DIR));
+        //JVMHelper.addNativePath(params.clientDir.resolve(NATIVES_DIR));
 
         // Add client args
         Collection<String> args = new LinkedList<>();
@@ -303,17 +308,9 @@ public final class ClientLauncher {
         }
         Collections.addAll(args, profile.getClientArgs());
         LogHelper.debug("Args: " + args);
-
-        // Add client classpath
-        URL[] classPath = resolveClassPath(params.clientDir, profile.getClassPath());
-        for (URL url : classPath) {
-            JVMHelper.addClassPath(url);
-        }
-
         // Resolve main class and method
-        Class<?> mainClass = Class.forName(profile.getMainClass());
-        MethodHandle mainMethod = JVMHelper.LOOKUP.findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
-
+        Class<?> mainClass = classLoader.loadClass(profile.getMainClass());
+        MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
         // Invoke main method with exception wrapping
         LAUNCHED.set(true);
         JVMHelper.fullGC();
@@ -332,6 +329,18 @@ public final class ClientLauncher {
             result.add(path);
         }
         return result.stream().map(IOHelper::toURL).toArray(URL[]::new);
+    }
+    private static LinkedList<Path> resolveClassPathList(Path clientDir, String... classPath) throws IOException {
+        Collection<Path> result = new LinkedList<>();
+        for (String classPathEntry : classPath) {
+            Path path = clientDir.resolve(IOHelper.toPath(classPathEntry));
+            if (IOHelper.isDir(path)) { // Recursive walking and adding
+                IOHelper.walk(path, new ClassPathFileVisitor(result), false);
+                continue;
+            }
+            result.add(path);
+        }
+        return (LinkedList<Path>) result;
     }
 
     public static final class Params extends StreamObject {

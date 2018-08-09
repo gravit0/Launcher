@@ -1,13 +1,13 @@
 // ====== LAUNCHER CONFIG ====== //
 var config = {
     dir: "launcher", // Launcher directory
-    title: "sashok724's Launcher", // Window title
+    title: "Minecraft Launcher", // Window title
     icons: [ "favicon.png" ], // Window icon paths
 
     // Auth config
-    newsURL: "https://launcher.sashok724.net/", // News WebView URL
-    linkText: "Бесплатные окна", // Text for link under "Auth" button
-    linkURL: new java.net.URL("http://bit.ly/1SP0Rl8"), // URL for link under "Auth" button
+    newsURL: "https://yii.gravithome.ru/index.php?r=blog%2Findex", // News WebView URL
+    linkText: "GravitHome site", // Text for link under "Auth" button
+    linkURL: new java.net.URL("https://gravithome.ru/"), // URL for link under "Auth" button
 
     // Settings defaults
     settingsMagic: 0xC0DE5, // Ancient magic, don't touch

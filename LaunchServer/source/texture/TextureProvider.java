@@ -7,7 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile.Texture;
+import launcher.client.Texture;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.config.ConfigObject;
 import launcher.serialize.config.entry.BlockConfigEntry;
@@ -43,7 +43,7 @@ public abstract class TextureProvider extends ConfigObject implements AutoClosea
             String.format("Texture provider has been already registered: '%s'", name));
     }
 
-    static {
+    public static void registerProviders() {
         registerProvider("null", NullTextureProvider::new);
         registerProvider("void", VoidTextureProvider::new);
 
