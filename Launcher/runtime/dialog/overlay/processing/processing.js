@@ -62,7 +62,6 @@ function offlineLauncherRequest() {
 
     // Return last sign and profiles
     return {
-        binary: null,
         sign: settings.lastSign,
         profiles: settings.lastProfiles
     };
@@ -110,8 +109,8 @@ function makeAuthRequest(login, rsaPassword, callback) {
     startTask(task);
 }
 
-function launchClient(jvmDir, jvmHDir, assetHDir, clientHDir, profile, params, callback) {
-    var task = newTask(function() ClientLauncher.launch(jvmDir, jvmHDir, assetHDir, clientHDir,
+function launchClient(assetHDir, clientHDir, profile, params, callback) {
+    var task = newTask(function() ClientLauncher.launch(assetHDir, clientHDir,
         profile, params, LogHelper.isDebugEnabled()));
     processing.setTaskProperties(task, callback, null, true);
     task.updateMessage("Запуск выбранного клиента");

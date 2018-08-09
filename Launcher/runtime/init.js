@@ -1,4 +1,4 @@
-var app, stage, scene, jvmDirName;
+var app, stage, scene;
 
 // Engine scripts (API should be imported through static link)
 launcher.loadScript(LauncherClass.static.getResourceURL("engine/api.js"));
@@ -15,7 +15,6 @@ var LauncherApp = Java.extend(JSApplication, {
         settings.load();
     }, start: function(primaryStage) {
         stage = primaryStage;
-        stage.setResizable(false);
         stage.setTitle(config.title);
 
         // Set icons
@@ -54,17 +53,6 @@ function setRootParent(parent) {
 
 // Start function - there all begins
 function start(args) {
-    // Set JVM dir name
-    LogHelper.debug("Setting JVM dir name");
-    switch (JVMHelper.OS_TYPE) {
-        case JVMHelperOS.MUSTDIE: jvmDirName = JVMHelper.OS_BITS === 32 ? config.jvmMustdie32Dir : // 32-bit Mustdie
-            jvmDirName = JVMHelper.OS_BITS === 64 ? config.jvmMustdie64Dir : config.jvmUnknownDir; break; // 64-bit Mustdie
-        case JVMHelperOS.LINUX: jvmDirName = JVMHelper.OS_BITS === 32 ? config.jvmLinux32Dir : // 32-bit Linux
-            jvmDirName = JVMHelper.OS_BITS === 64 ? config.jvmLinux64Dir : config.jvmUnknownDir; break; // 64-bit Linux
-        case JVMHelperOS.MACOSX: jvmDirName = JVMHelper.OS_BITS === 64 ? config.jvmMacOSXDir : config.jvmUnknownDir; break; // 64-bit MacOSX
-        default: jvmDirName = config.jvmUnknownDir; LogHelper.warning("Unknown OS: '%s'", JVMHelper.OS_TYPE.name); break; // Unknown OS
-    }
-
     // Set font rendering properties
     LogHelper.debug("Setting FX properties");
     java.lang.System.setProperty("prism.lcdtext", "false");
