@@ -9,6 +9,7 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/compat/authlib/authlib-clean.jar" path-in-jar="/" />
       <element id="module-output" name="Launcher" />
       <element id="module-output" name="libLauncher" />
+      <element id="module-output" name="LauncherAuthlib" />
     </root>
   </artifact>
 </component>

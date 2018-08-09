@@ -78,7 +78,7 @@ public final class ClientLauncher {
     }
 
     @LauncherAPI
-    public static Process launch(Path jvmDir, SignedObjectHolder<HashedDir> jvmHDir,
+    public static Process launch(
         SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
         SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
         // Write params file (instead of CLI; Mustdie32 API can't handle command line > 32767 chars)
@@ -87,23 +87,17 @@ public final class ClientLauncher {
         try (HOutput output = new HOutput(IOHelper.newOutput(paramsFile))) {
             params.write(output);
             profile.write(output);
-
-            // Write hdirs
-            jvmHDir.write(output);
             assetHDir.write(output);
             clientHDir.write(output);
         }
 
         // Resolve java bin and set permissions
         LogHelper.debug("Resolving JVM binary");
-        Path javaBin = IOHelper.resolveJavaBin(jvmDir);
-        if (IOHelper.POSIX) {
-            Files.setPosixFilePermissions(javaBin, BIN_POSIX_PERMISSIONS);
-        }
+        //Path javaBin = IOHelper.resolveJavaBin(jvmDir);
 
         // Fill CLI arguments
         List<String> args = new LinkedList<>();
-        javaBin = Paths.get("java");
+        Path javaBin = Paths.get(System.getProperty("java.home")+IOHelper.PLATFORM_SEPARATOR+"bin"+IOHelper.PLATFORM_SEPARATOR+"java");
         args.add(javaBin.toString());
         args.add(MAGICAL_INTEL_OPTION);
         if (params.ram > 0 && params.ram <= JVMHelper.RAM) {
@@ -153,7 +147,6 @@ public final class ClientLauncher {
 
     @LauncherAPI
     public static void main(String... args) throws Throwable {
-        SecurityHelper.verifyCertificates(ClientLauncher.class);
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");
 
@@ -165,14 +158,13 @@ public final class ClientLauncher {
         LogHelper.debug("Reading ClientLauncher params file");
         Params params;
         SignedObjectHolder<ClientProfile> profile;
-        SignedObjectHolder<HashedDir> jvmHDir, assetHDir, clientHDir;
+        SignedObjectHolder<HashedDir> assetHDir, clientHDir;
         RSAPublicKey publicKey = Launcher.getConfig().publicKey;
         try (HInput input = new HInput(IOHelper.newInput(paramsFile))) {
             params = new Params(input);
             profile = new SignedObjectHolder<>(input, publicKey, ClientProfile.RO_ADAPTER);
 
             // Read hdirs
-            jvmHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
             assetHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
             clientHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
         } finally {
