@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import java.security.CodeSource;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -26,7 +25,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.jar.JarFile;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
@@ -118,11 +116,6 @@ public final class SecurityHelper {
     @LauncherAPI
     public static boolean isValidCertificates(Certificate... certs) {
         return certs != null && certs.length == 1 && isValidCertificate(certs[0]);
-    }
-
-    @LauncherAPI
-    public static boolean isValidCertificates(Class<?> clazz) {
-        return true;
     }
 
     @LauncherAPI
@@ -360,12 +353,10 @@ public final class SecurityHelper {
     public static RSAPublicKey toPublicRSAKey(byte[] bytes) throws InvalidKeySpecException {
         return (RSAPublicKey) newRSAKeyFactory().generatePublic(new X509EncodedKeySpec(bytes));
     }
-
+    @Deprecated
     @LauncherAPI
     public static void verifyCertificates(Class<?> clazz) {
-        if (!isValidCertificates(clazz)) {
-            throw new SecurityException("Invalid certificates");
-        }
+
     }
 
     @LauncherAPI
