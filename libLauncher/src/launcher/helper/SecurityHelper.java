@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import java.security.CodeSource;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;

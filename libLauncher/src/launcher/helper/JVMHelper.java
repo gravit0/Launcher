@@ -1,22 +1,14 @@
 package launcher.helper;
 
 import java.io.File;
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.invoke.MethodType;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.cert.CertSelector;
 import java.security.cert.Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import com.sun.management.OperatingSystemMXBean;
@@ -97,7 +89,6 @@ public final class JVMHelper {
     @LauncherAPI
     public static void verifySystemProperties(Class<?> mainClass, boolean requireSystem) {
         Locale.setDefault(Locale.US);
-
         // Verify class loader
         LogHelper.debug("Verifying class loader");
         if (requireSystem && !mainClass.getClassLoader().equals(LOADER)) {

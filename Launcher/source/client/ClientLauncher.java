@@ -7,7 +7,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -39,7 +38,6 @@ import launcher.helper.JVMHelper;
 import launcher.helper.JVMHelper.OS;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
-import launcher.helper.VerifyHelper;
 import launcher.request.update.LauncherRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
@@ -170,7 +168,6 @@ public final class ClientLauncher {
             // Read hdirs
             assetHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
             clientHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
-        } finally {
         }
 
         // Verify ClientLauncher sign and classpath

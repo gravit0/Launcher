@@ -4,11 +4,9 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import launcher.helper.IOHelper;
-import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.config.entry.BlockConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
-import launchserver.auth.provider.AuthProviderResult;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
