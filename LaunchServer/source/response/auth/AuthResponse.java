@@ -14,6 +14,7 @@ import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 import launchserver.auth.AuthException;
+import launchserver.auth.AuthLimiter;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.auth.provider.AuthProviderResult;
 import launchserver.response.Response;
@@ -53,6 +54,10 @@ public final class AuthResponse extends Response {
             result = server.config.authProvider.auth(login, password, ip);
             if (!VerifyHelper.isValidUsername(result.username)) {
                 AuthProvider.authError(String.format("Illegal result: '%s'", result.username));
+                return;
+            }
+            if (AuthLimiter.isLimit(ip)) {
+                AuthProvider.authError(String.format("You rate limit: '%s'. Please wait few seconds", result.username));
                 return;
             }
         } catch (AuthException e) {
