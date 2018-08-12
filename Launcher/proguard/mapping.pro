@@ -23637,7 +23637,16 @@ launcher.Launcher -> launcher.BS:
     78:80:java.lang.String readBuildNumber() -> REnOc6Ki3M
     15:27:void <clinit>() -> <clinit>
 launcher.LauncherAPI -> launcher.BT:
-launcher.LauncherConfig -> launcher.BU:
+launcher.LauncherAgent -> launcher.BU:
+    java.lang.instrument.Instrumentation inst -> inst
+    8:8:void <init>() -> <init>
+    11:13:void premain(java.lang.String,java.lang.instrument.Instrumentation) -> premain
+    15:17:void addJVMClassPath(java.lang.String) -> addJVMClassPath
+launcher.LauncherClassLoader -> launcher.BV:
+    29:30:void <init>(java.net.URL[],java.lang.ClassLoader) -> <init>
+    53:54:void <init>(java.net.URL[]) -> <init>
+    58:59:void addURL(java.net.URL) -> addURL
+launcher.LauncherConfig -> launcher.BW:
     java.lang.String ADDRESS_OVERRIDE_PROPERTY -> ADDRESS_OVERRIDE_PROPERTY
     java.lang.String ADDRESS_OVERRIDE -> ADDRESS_OVERRIDE
     java.net.InetSocketAddress address -> address
@@ -23647,47 +23656,47 @@ launcher.LauncherConfig -> launcher.BU:
     34:55:void <init>(launcher.serialize.HInput) -> <init>
     59:70:void write(launcher.serialize.HOutput) -> write
     18:18:void <clinit>() -> <clinit>
-launcher.LauncherEngine -> launcher.BV:
+launcher.LauncherEngine -> launcher.BX:
     java.util.concurrent.atomic.AtomicBoolean started -> REnOc6Ki3M
     javax.script.ScriptEngine engine -> REnOc6Ki3M
     46:52:void <init>() -> <init>
     55:61:void setScriptBindings() -> REnOc6Ki3M
     65:68:java.lang.Object loadScript(java.net.URL) -> loadScript
-    72:86:void main(java.lang.String[]) -> main
-    90:99:void start(java.lang.String[]) -> start
-    103:175:void addLauncherClassBindings(java.util.Map) -> addLauncherClassBindings
-launcher.client.ClientLauncher -> launcher.BW:
+    72:85:void main(java.lang.String[]) -> main
+    89:98:void start(java.lang.String[]) -> start
+    102:174:void addLauncherClassBindings(java.util.Map) -> addLauncherClassBindings
+launcher.client.ClientLauncher -> launcher.BY:
     java.lang.String[] EMPTY_ARRAY -> REnOc6Ki3M
     java.lang.String MAGICAL_INTEL_OPTION -> REnOc6Ki3M
     java.util.Set BIN_POSIX_PERMISSIONS -> REnOc6Ki3M
     java.nio.file.Path NATIVES_DIR -> REnOc6Ki3M
     java.nio.file.Path RESOURCEPACKS_DIR -> CxM7zIuYhO
+    launcher.LauncherClassLoader classLoader -> REnOc6Ki3M
     java.lang.String SKIN_URL_PROPERTY -> SKIN_URL_PROPERTY
     java.lang.String SKIN_DIGEST_PROPERTY -> SKIN_DIGEST_PROPERTY
     java.lang.String CLOAK_URL_PROPERTY -> CLOAK_URL_PROPERTY
     java.lang.String CLOAK_DIGEST_PROPERTY -> CLOAK_DIGEST_PROPERTY
     java.util.concurrent.atomic.AtomicBoolean LAUNCHED -> REnOc6Ki3M
-    71:72:void <init>() -> <init>
-    76:76:boolean isLaunched() -> isLaunched
-    84:146:java.lang.Process launch(java.nio.file.Path,launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.client.ClientLauncher$Params,boolean) -> launch
-    151:218:void main(java.lang.String[]) -> main
-    222:231:void verifyHDir(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> verifyHDir
-    234:288:void addClientArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
-    291:298:void addClientLegacyArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> CxM7zIuYhO
-    305:322:void launch(launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
-    325:334:java.net.URL[] resolveClassPath(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
-    337:346:java.util.LinkedList resolveClassPathList(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
-    334:334:java.net.URL[] lambda$resolveClassPath$1(int) -> REnOc6Ki3M
-    156:156:boolean lambda$main$0(int) -> REnOc6Ki3M
-    50:69:void <clinit>() -> <clinit>
-launcher.client.ClientLauncher$1 -> launcher.BX:
-launcher.client.ClientLauncher$ClassPathFileVisitor -> launcher.BY:
+    69:70:void <init>() -> <init>
+    74:74:boolean isLaunched() -> isLaunched
+    91:150:java.lang.Process launch(launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.client.ClientLauncher$Params,boolean) -> launch
+    155:215:void main(java.lang.String[]) -> main
+    219:228:void verifyHDir(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> verifyHDir
+    231:285:void addClientArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    288:295:void addClientLegacyArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> CxM7zIuYhO
+    302:318:void launch(launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    321:330:java.net.URL[] resolveClassPath(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
+    333:342:java.util.LinkedList resolveClassPathList(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
+    330:330:java.net.URL[] lambda$resolveClassPath$0(int) -> REnOc6Ki3M
+    48:67:void <clinit>() -> <clinit>
+launcher.client.ClientLauncher$1 -> launcher.BZ:
+launcher.client.ClientLauncher$ClassPathFileVisitor -> launcher.Ca:
     java.util.Collection result -> REnOc6Ki3M
-    423:425:void <init>(java.util.Collection) -> <init>
-    429:432:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
-    420:420:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
-    420:420:void <init>(java.util.Collection,launcher.client.ClientLauncher$1) -> <init>
-launcher.client.ClientLauncher$Params -> launcher.BZ:
+    419:421:void <init>(java.util.Collection) -> <init>
+    425:428:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
+    416:416:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
+    416:416:void <init>(java.util.Collection,launcher.client.ClientLauncher$1) -> <init>
+launcher.client.ClientLauncher$Params -> launcher.Cb:
     java.nio.file.Path assetDir -> assetDir
     java.nio.file.Path clientDir -> clientDir
     launcher.client.PlayerProfile pp -> pp
@@ -23698,11 +23707,11 @@ launcher.client.ClientLauncher$Params -> launcher.BZ:
     int width -> width
     int height -> height
     byte[] launcherSign -> REnOc6Ki3M
-    366:381:void <init>(byte[],java.nio.file.Path,java.nio.file.Path,launcher.client.PlayerProfile,java.lang.String,boolean,boolean,int,int,int) -> <init>
-    384:399:void <init>(launcher.serialize.HInput) -> <init>
-    403:417:void write(launcher.serialize.HOutput) -> write
-    349:349:byte[] access$000(launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
-launcher.client.ClientProfile -> launcher.Ca:
+    362:377:void <init>(byte[],java.nio.file.Path,java.nio.file.Path,launcher.client.PlayerProfile,java.lang.String,boolean,boolean,int,int,int) -> <init>
+    380:395:void <init>(launcher.serialize.HInput) -> <init>
+    399:413:void write(launcher.serialize.HOutput) -> write
+    345:345:byte[] access$000(launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+launcher.client.ClientProfile -> launcher.Cc:
     launcher.serialize.stream.StreamObject$Adapter RO_ADAPTER -> RO_ADAPTER
     launcher.hasher.FileNameMatcher ASSET_MATCHER -> REnOc6Ki3M
     launcher.serialize.config.entry.StringConfigEntry version -> REnOc6Ki3M
@@ -23749,7 +23758,7 @@ launcher.client.ClientProfile -> launcher.Ca:
     105:105:java.lang.String[] lambda$getClassPath$1(int) -> Ol5j4AUN0M
     25:25:launcher.client.ClientProfile lambda$static$0(launcher.serialize.HInput) -> REnOc6Ki3M
     25:26:void <clinit>() -> <clinit>
-launcher.client.ClientProfile$Version -> launcher.Cb:
+launcher.client.ClientProfile$Version -> launcher.Cd:
     launcher.client.ClientProfile$Version MC147 -> MC147
     launcher.client.ClientProfile$Version MC152 -> MC152
     launcher.client.ClientProfile$Version MC164 -> MC164
@@ -23770,12 +23779,12 @@ launcher.client.ClientProfile$Version -> launcher.Cb:
     222:222:java.lang.String toString() -> toString
     226:226:launcher.client.ClientProfile$Version byName(java.lang.String) -> byName
     199:235:void <clinit>() -> <clinit>
-launcher.client.JSApplication -> launcher.Cc:
+launcher.client.JSApplication -> launcher.Ce:
     java.util.concurrent.atomic.AtomicReference INSTANCE -> INSTANCE
     13:15:void <init>() -> <init>
     18:18:launcher.client.JSApplication getInstance() -> getInstance
     10:10:void <clinit>() -> <clinit>
-launcher.client.PlayerProfile -> launcher.Cd:
+launcher.client.PlayerProfile -> launcher.Cf:
     java.util.UUID uuid -> uuid
     java.lang.String username -> username
     launcher.client.Texture skin -> skin
@@ -23785,7 +23794,7 @@ launcher.client.PlayerProfile -> launcher.Cd:
     37:49:void write(launcher.serialize.HOutput) -> write
     53:53:launcher.client.PlayerProfile newOfflineProfile(java.lang.String) -> newOfflineProfile
     58:58:java.util.UUID offlineUUID(java.lang.String) -> offlineUUID
-launcher.client.ServerPinger -> launcher.Ce:
+launcher.client.ServerPinger -> launcher.Cg:
     java.lang.String LEGACY_PING_HOST_MAGIC -> REnOc6Ki3M
     java.lang.String LEGACY_PING_HOST_CHANNEL -> CxM7zIuYhO
     java.util.regex.Pattern LEGACY_PING_HOST_DELIMETER -> REnOc6Ki3M
@@ -23804,13 +23813,13 @@ launcher.client.ServerPinger -> launcher.Ce:
     200:202:java.lang.String readUTF16String(launcher.serialize.HInput) -> REnOc6Ki3M
     206:208:void writeUTF16String(launcher.serialize.HOutput,java.lang.String) -> REnOc6Ki3M
     27:27:void <clinit>() -> <clinit>
-launcher.client.ServerPinger$Result -> launcher.Cf:
+launcher.client.ServerPinger$Result -> launcher.Ch:
     int onlinePlayers -> onlinePlayers
     int maxPlayers -> maxPlayers
     java.lang.String raw -> raw
     215:221:void <init>(int,int,java.lang.String) -> <init>
     225:225:boolean isOverfilled() -> isOverfilled
-launcher.client.Texture -> launcher.Cg:
+launcher.client.Texture -> launcher.Ci:
     launcher.helper.SecurityHelper$DigestAlgorithm DIGEST_ALGO -> REnOc6Ki3M
     java.lang.String url -> url
     byte[] digest -> digest
@@ -23819,7 +23828,7 @@ launcher.client.Texture -> launcher.Cg:
     48:51:void <init>(launcher.serialize.HInput) -> <init>
     55:57:void write(launcher.serialize.HOutput) -> write
     17:17:void <clinit>() -> <clinit>
-launcher.hasher.DirWatcher -> launcher.Ch:
+launcher.hasher.DirWatcher -> launcher.Cj:
     boolean FILE_TREE_SUPPORTED -> REnOc6Ki3M
     java.nio.file.WatchEvent$Kind[] KINDS -> REnOc6Ki3M
     java.nio.file.Path dir -> REnOc6Ki3M
@@ -23839,8 +23848,8 @@ launcher.hasher.DirWatcher -> launcher.Ch:
     25:25:java.nio.file.WatchEvent$Kind[] access$300() -> REnOc6Ki3M
     25:25:launcher.hasher.FileNameMatcher access$400(launcher.hasher.DirWatcher) -> REnOc6Ki3M
     26:29:void <clinit>() -> <clinit>
-launcher.hasher.DirWatcher$1 -> launcher.Ci:
-launcher.hasher.DirWatcher$RegisterFileVisitor -> launcher.Cj:
+launcher.hasher.DirWatcher$1 -> launcher.Ck:
+launcher.hasher.DirWatcher$RegisterFileVisitor -> launcher.Cl:
     java.util.Deque path -> REnOc6Ki3M
     launcher.hasher.DirWatcher this$0 -> REnOc6Ki3M
     122:123:void <init>(launcher.hasher.DirWatcher) -> <init>
@@ -23849,32 +23858,19 @@ launcher.hasher.DirWatcher$RegisterFileVisitor -> launcher.Cj:
     122:122:java.nio.file.FileVisitResult postVisitDirectory(java.lang.Object,java.io.IOException) -> postVisitDirectory
     122:122:java.nio.file.FileVisitResult preVisitDirectory(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> preVisitDirectory
     122:122:void <init>(launcher.hasher.DirWatcher,launcher.hasher.DirWatcher$1) -> <init>
-launcher.hasher.FileNameMatcher -> launcher.Ck:
-    launcher.hasher.FileNameMatcher$Entry[] NO_ENTRIES -> REnOc6Ki3M
-    launcher.hasher.FileNameMatcher$Entry[] update -> CxM7zIuYhO
-    launcher.hasher.FileNameMatcher$Entry[] verify -> Z8CBapOaom
-    launcher.hasher.FileNameMatcher$Entry[] exclusions -> LI3Bzun3i2
-    20:24:void <init>(java.lang.String[],java.lang.String[],java.lang.String[]) -> <init>
-    26:30:void <init>(launcher.hasher.FileNameMatcher$Entry[],launcher.hasher.FileNameMatcher$Entry[],launcher.hasher.FileNameMatcher$Entry[]) -> <init>
-    34:34:boolean shouldUpdate(java.util.Collection) -> shouldUpdate
-    39:39:boolean shouldVerify(java.util.Collection) -> shouldVerify
-    44:44:launcher.hasher.FileNameMatcher verifyOnly() -> verifyOnly
-    48:48:boolean anyMatch(launcher.hasher.FileNameMatcher$Entry[],java.util.Collection) -> REnOc6Ki3M
-    52:52:launcher.hasher.FileNameMatcher$Entry[] toEntries(java.lang.String[]) -> REnOc6Ki3M
-    52:52:launcher.hasher.FileNameMatcher$Entry[] lambda$toEntries$2(int) -> REnOc6Ki3M
-    52:52:launcher.hasher.FileNameMatcher$Entry lambda$toEntries$1(java.lang.CharSequence) -> REnOc6Ki3M
-    48:48:boolean lambda$anyMatch$0(java.util.Collection,launcher.hasher.FileNameMatcher$Entry) -> REnOc6Ki3M
-    12:12:void <clinit>() -> <clinit>
-launcher.hasher.FileNameMatcher$1 -> launcher.Cl:
-launcher.hasher.FileNameMatcher$Entry -> launcher.Cm:
-    java.util.regex.Pattern SPLITTER -> REnOc6Ki3M
-    java.util.regex.Pattern[] parts -> REnOc6Ki3M
-    59:61:void <init>(java.lang.CharSequence) -> <init>
-    64:78:boolean matches(java.util.Collection) -> REnOc6Ki3M
-    60:60:java.util.regex.Pattern[] lambda$new$0(int) -> REnOc6Ki3M
-    55:55:void <init>(java.lang.CharSequence,launcher.hasher.FileNameMatcher$1) -> <init>
-    55:55:boolean access$100(launcher.hasher.FileNameMatcher$Entry,java.util.Collection) -> REnOc6Ki3M
-    56:56:void <clinit>() -> <clinit>
+launcher.hasher.FileNameMatcher -> launcher.Cm:
+    java.lang.String[] NO_ENTRIES -> REnOc6Ki3M
+    java.lang.String[] update -> CxM7zIuYhO
+    java.lang.String[] verify -> Z8CBapOaom
+    java.lang.String[] exclusions -> LI3Bzun3i2
+    17:21:void <init>(java.lang.String[],java.lang.String[],java.lang.String[]) -> <init>
+    25:25:boolean shouldUpdate(java.util.Collection) -> shouldUpdate
+    30:30:boolean shouldVerify(java.util.Collection) -> shouldVerify
+    35:35:launcher.hasher.FileNameMatcher verifyOnly() -> verifyOnly
+    39:39:boolean anyMatch(java.lang.String[],java.util.Collection) -> REnOc6Ki3M
+    39:39:boolean lambda$anyMatch$1(java.lang.String[],java.lang.String) -> REnOc6Ki3M
+    39:39:boolean lambda$null$0(java.lang.String,java.lang.String) -> REnOc6Ki3M
+    9:9:void <clinit>() -> <clinit>
 launcher.hasher.HashedDir -> launcher.Cn:
     java.util.Map map -> REnOc6Ki3M
     24:28:void <init>() -> <init>
@@ -24088,30 +24084,30 @@ launcher.helper.JVMHelper -> launcher.Cz:
     java.lang.SecurityManager SECURITY_MANAGER -> SECURITY_MANAGER
     java.lang.Runtime RUNTIME -> RUNTIME
     java.lang.ClassLoader LOADER -> LOADER
-    43:44:void <init>() -> <init>
-    48:48:void addClassPath(java.net.URL) -> addClassPath
-    53:53:void addNativePath(java.nio.file.Path) -> addNativePath
-    59:62:void fullGC() -> fullGC
-    67:67:java.security.cert.Certificate[] getCertificates(java.lang.String) -> getCertificates
-    72:72:java.lang.String[] getClassPath() -> getClassPath
-    76:89:java.net.URL[] getClassPathURL() -> getClassPathURL
-    94:94:boolean isJVMMatchesSystemArch() -> isJVMMatchesSystemArch
-    99:113:void verifySystemProperties(java.lang.Class,boolean) -> verifySystemProperties
-    118:123:int getCorrectOSArch() -> REnOc6Ki3M
-    127:128:int getRAMAmount() -> CxM7zIuYhO
-    132:139:java.lang.Class firstClass(java.lang.String[]) -> REnOc6Ki3M
-    27:149:void <clinit>() -> <clinit>
+    35:36:void <init>() -> <init>
+    40:40:void addClassPath(java.net.URL) -> addClassPath
+    45:45:void addNativePath(java.nio.file.Path) -> addNativePath
+    51:54:void fullGC() -> fullGC
+    59:59:java.security.cert.Certificate[] getCertificates(java.lang.String) -> getCertificates
+    64:64:java.lang.String[] getClassPath() -> getClassPath
+    68:81:java.net.URL[] getClassPathURL() -> getClassPathURL
+    86:86:boolean isJVMMatchesSystemArch() -> isJVMMatchesSystemArch
+    91:104:void verifySystemProperties(java.lang.Class,boolean) -> verifySystemProperties
+    109:114:int getCorrectOSArch() -> REnOc6Ki3M
+    118:119:int getRAMAmount() -> CxM7zIuYhO
+    123:130:java.lang.Class firstClass(java.lang.String[]) -> REnOc6Ki3M
+    19:140:void <clinit>() -> <clinit>
 launcher.helper.JVMHelper$OS -> launcher.CA:
     launcher.helper.JVMHelper$OS MUSTDIE -> MUSTDIE
     launcher.helper.JVMHelper$OS LINUX -> LINUX
     launcher.helper.JVMHelper$OS MACOSX -> MACOSX
     java.lang.String name -> name
     launcher.helper.JVMHelper$OS[] $VALUES -> $VALUES
-    150:150:launcher.helper.JVMHelper$OS[] values() -> values
-    150:150:launcher.helper.JVMHelper$OS valueOf(java.lang.String) -> valueOf
-    156:158:void <init>(java.lang.String,int,java.lang.String) -> <init>
-    161:170:launcher.helper.JVMHelper$OS byName(java.lang.String) -> byName
-    150:153:void <clinit>() -> <clinit>
+    141:141:launcher.helper.JVMHelper$OS[] values() -> values
+    141:141:launcher.helper.JVMHelper$OS valueOf(java.lang.String) -> valueOf
+    147:149:void <init>(java.lang.String,int,java.lang.String) -> <init>
+    152:161:launcher.helper.JVMHelper$OS byName(java.lang.String) -> byName
+    141:144:void <clinit>() -> <clinit>
 launcher.helper.LogHelper -> launcher.CB:
     java.lang.String DEBUG_PROPERTY -> DEBUG_PROPERTY
     java.lang.String NO_JANSI_PROPERTY -> NO_JANSI_PROPERTY
@@ -24191,56 +24187,55 @@ launcher.helper.SecurityHelper -> launcher.CH:
     java.lang.String HEX -> HEX
     char[] VOWELS -> REnOc6Ki3M
     char[] CONS -> CxM7zIuYhO
-    56:57:void <init>() -> <init>
-    61:61:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.lang.String) -> digest
-    66:68:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.net.URL) -> digest
-    73:75:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.nio.file.Path) -> digest
-    80:80:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,byte[]) -> digest
-    85:90:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.io.InputStream) -> digest
-    96:100:java.security.KeyPair genRSAKeyPair(java.security.SecureRandom) -> genRSAKeyPair
-    106:106:java.security.KeyPair genRSAKeyPair() -> genRSAKeyPair
-    112:114:boolean isValidCertificate(java.security.cert.Certificate) -> isValidCertificate
-    120:120:boolean isValidCertificates(java.security.cert.Certificate[]) -> isValidCertificates
-    125:125:boolean isValidCertificates(java.lang.Class) -> isValidCertificates
-    130:132:boolean isValidSign(java.nio.file.Path,byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
-    137:143:boolean isValidSign(byte[],byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
-    148:150:boolean isValidSign(java.io.InputStream,byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
-    155:157:boolean isValidSign(java.net.URL,byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
-    162:162:boolean isValidToken(java.lang.CharSequence) -> isValidToken
-    167:171:java.security.MessageDigest newDigest(launcher.helper.SecurityHelper$DigestAlgorithm) -> newDigest
-    177:177:javax.crypto.Cipher newRSADecryptCipher(java.security.interfaces.RSAPrivateKey) -> newRSADecryptCipher
-    182:182:javax.crypto.Cipher newRSAEncryptCipher(java.security.interfaces.RSAPublicKey) -> newRSAEncryptCipher
-    187:193:java.security.Signature newRSASignSignature(java.security.interfaces.RSAPrivateKey) -> newRSASignSignature
-    198:204:java.security.Signature newRSAVerifySignature(java.security.interfaces.RSAPublicKey) -> newRSAVerifySignature
-    209:209:java.security.SecureRandom newRandom() -> newRandom
-    214:216:byte[] randomBytes(java.util.Random,int) -> randomBytes
-    221:221:byte[] randomBytes(int) -> randomBytes
-    226:226:java.lang.String randomStringToken(java.util.Random) -> randomStringToken
-    231:231:java.lang.String randomStringToken() -> randomStringToken
-    236:236:byte[] randomToken(java.util.Random) -> randomToken
-    241:241:byte[] randomToken() -> randomToken
-    246:303:java.lang.String randomUsername(java.util.Random) -> randomUsername
-    308:308:java.lang.String randomUsername() -> randomUsername
-    313:318:byte[] sign(java.io.InputStream,java.security.interfaces.RSAPrivateKey) -> sign
-    324:329:byte[] sign(byte[],java.security.interfaces.RSAPrivateKey) -> sign
-    335:337:byte[] sign(java.nio.file.Path,java.security.interfaces.RSAPrivateKey) -> sign
-    342:351:java.lang.String toHex(byte[]) -> toHex
-    356:356:java.security.interfaces.RSAPrivateKey toPrivateRSAKey(byte[]) -> toPrivateRSAKey
-    361:361:java.security.interfaces.RSAPublicKey toPublicRSAKey(byte[]) -> toPublicRSAKey
-    366:369:void verifyCertificates(java.lang.Class) -> verifyCertificates
-    373:376:void verifySign(byte[],byte[],java.security.interfaces.RSAPublicKey) -> verifySign
-    380:383:void verifySign(java.io.InputStream,byte[],java.security.interfaces.RSAPublicKey) -> verifySign
-    387:390:void verifySign(java.nio.file.Path,byte[],java.security.interfaces.RSAPublicKey) -> verifySign
-    394:397:void verifySign(java.net.URL,byte[],java.security.interfaces.RSAPublicKey) -> verifySign
-    401:401:java.lang.String verifyToken(java.lang.String) -> verifyToken
-    407:409:javax.crypto.Cipher newCipher(java.lang.String) -> REnOc6Ki3M
-    414:420:javax.crypto.Cipher newRSACipher(int,java.security.interfaces.RSAKey) -> REnOc6Ki3M
-    425:427:java.security.KeyFactory newRSAKeyFactory() -> REnOc6Ki3M
-    433:435:java.security.Signature newRSASignature() -> REnOc6Ki3M
-    440:448:void updateSignature(java.io.InputStream,java.security.Signature) -> REnOc6Ki3M
-    167:167:boolean lambda$newDigest$1(launcher.helper.SecurityHelper$DigestAlgorithm) -> REnOc6Ki3M
-    162:162:boolean lambda$isValidToken$0(int) -> REnOc6Ki3M
-    53:54:void <clinit>() -> <clinit>
+    54:55:void <init>() -> <init>
+    59:59:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.lang.String) -> digest
+    64:66:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.net.URL) -> digest
+    71:73:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.nio.file.Path) -> digest
+    78:78:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,byte[]) -> digest
+    83:88:byte[] digest(launcher.helper.SecurityHelper$DigestAlgorithm,java.io.InputStream) -> digest
+    94:98:java.security.KeyPair genRSAKeyPair(java.security.SecureRandom) -> genRSAKeyPair
+    104:104:java.security.KeyPair genRSAKeyPair() -> genRSAKeyPair
+    110:112:boolean isValidCertificate(java.security.cert.Certificate) -> isValidCertificate
+    118:118:boolean isValidCertificates(java.security.cert.Certificate[]) -> isValidCertificates
+    123:125:boolean isValidSign(java.nio.file.Path,byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
+    130:136:boolean isValidSign(byte[],byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
+    141:143:boolean isValidSign(java.io.InputStream,byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
+    148:150:boolean isValidSign(java.net.URL,byte[],java.security.interfaces.RSAPublicKey) -> isValidSign
+    155:155:boolean isValidToken(java.lang.CharSequence) -> isValidToken
+    160:164:java.security.MessageDigest newDigest(launcher.helper.SecurityHelper$DigestAlgorithm) -> newDigest
+    170:170:javax.crypto.Cipher newRSADecryptCipher(java.security.interfaces.RSAPrivateKey) -> newRSADecryptCipher
+    175:175:javax.crypto.Cipher newRSAEncryptCipher(java.security.interfaces.RSAPublicKey) -> newRSAEncryptCipher
+    180:186:java.security.Signature newRSASignSignature(java.security.interfaces.RSAPrivateKey) -> newRSASignSignature
+    191:197:java.security.Signature newRSAVerifySignature(java.security.interfaces.RSAPublicKey) -> newRSAVerifySignature
+    202:202:java.security.SecureRandom newRandom() -> newRandom
+    207:209:byte[] randomBytes(java.util.Random,int) -> randomBytes
+    214:214:byte[] randomBytes(int) -> randomBytes
+    219:219:java.lang.String randomStringToken(java.util.Random) -> randomStringToken
+    224:224:java.lang.String randomStringToken() -> randomStringToken
+    229:229:byte[] randomToken(java.util.Random) -> randomToken
+    234:234:byte[] randomToken() -> randomToken
+    239:296:java.lang.String randomUsername(java.util.Random) -> randomUsername
+    301:301:java.lang.String randomUsername() -> randomUsername
+    306:311:byte[] sign(java.io.InputStream,java.security.interfaces.RSAPrivateKey) -> sign
+    317:322:byte[] sign(byte[],java.security.interfaces.RSAPrivateKey) -> sign
+    328:330:byte[] sign(java.nio.file.Path,java.security.interfaces.RSAPrivateKey) -> sign
+    335:344:java.lang.String toHex(byte[]) -> toHex
+    349:349:java.security.interfaces.RSAPrivateKey toPrivateRSAKey(byte[]) -> toPrivateRSAKey
+    354:354:java.security.interfaces.RSAPublicKey toPublicRSAKey(byte[]) -> toPublicRSAKey
+    360:360:void verifyCertificates(java.lang.Class) -> verifyCertificates
+    364:367:void verifySign(byte[],byte[],java.security.interfaces.RSAPublicKey) -> verifySign
+    371:374:void verifySign(java.io.InputStream,byte[],java.security.interfaces.RSAPublicKey) -> verifySign
+    378:381:void verifySign(java.nio.file.Path,byte[],java.security.interfaces.RSAPublicKey) -> verifySign
+    385:388:void verifySign(java.net.URL,byte[],java.security.interfaces.RSAPublicKey) -> verifySign
+    392:392:java.lang.String verifyToken(java.lang.String) -> verifyToken
+    398:400:javax.crypto.Cipher newCipher(java.lang.String) -> REnOc6Ki3M
+    405:411:javax.crypto.Cipher newRSACipher(int,java.security.interfaces.RSAKey) -> REnOc6Ki3M
+    416:418:java.security.KeyFactory newRSAKeyFactory() -> REnOc6Ki3M
+    424:426:java.security.Signature newRSASignature() -> REnOc6Ki3M
+    431:439:void updateSignature(java.io.InputStream,java.security.Signature) -> REnOc6Ki3M
+    160:160:boolean lambda$newDigest$1(launcher.helper.SecurityHelper$DigestAlgorithm) -> REnOc6Ki3M
+    155:155:boolean lambda$isValidToken$0(int) -> REnOc6Ki3M
+    51:52:void <clinit>() -> <clinit>
 launcher.helper.SecurityHelper$DigestAlgorithm -> launcher.CI:
     launcher.helper.SecurityHelper$DigestAlgorithm PLAIN -> PLAIN
     launcher.helper.SecurityHelper$DigestAlgorithm MD5 -> MD5
@@ -24254,13 +24249,13 @@ launcher.helper.SecurityHelper$DigestAlgorithm -> launcher.CI:
     int bytes -> bytes
     launcher.helper.SecurityHelper$DigestAlgorithm[] $VALUES -> $VALUES
     boolean $assertionsDisabled -> $assertionsDisabled
-    450:450:launcher.helper.SecurityHelper$DigestAlgorithm[] values() -> values
-    450:450:launcher.helper.SecurityHelper$DigestAlgorithm valueOf(java.lang.String) -> valueOf
-    460:467:void <init>(java.lang.String,int,java.lang.String,int) -> <init>
-    471:471:java.lang.String toString() -> toString
-    475:478:byte[] verify(byte[]) -> verify
-    482:482:launcher.helper.SecurityHelper$DigestAlgorithm byName(java.lang.String) -> byName
-    450:491:void <clinit>() -> <clinit>
+    441:441:launcher.helper.SecurityHelper$DigestAlgorithm[] values() -> values
+    441:441:launcher.helper.SecurityHelper$DigestAlgorithm valueOf(java.lang.String) -> valueOf
+    451:458:void <init>(java.lang.String,int,java.lang.String,int) -> <init>
+    462:462:java.lang.String toString() -> toString
+    466:469:byte[] verify(byte[]) -> verify
+    473:473:launcher.helper.SecurityHelper$DigestAlgorithm byName(java.lang.String) -> byName
+    441:482:void <clinit>() -> <clinit>
 launcher.helper.VerifyHelper -> launcher.CJ:
     java.util.function.IntPredicate POSITIVE -> POSITIVE
     java.util.function.IntPredicate NOT_NEGATIVE -> NOT_NEGATIVE
