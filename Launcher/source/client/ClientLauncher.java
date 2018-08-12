@@ -36,6 +36,7 @@ import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
+import launcher.AvanguardStarter;
 
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
@@ -139,7 +140,7 @@ public final class ClientLauncher {
     public static void main(String... args) throws Throwable {
         if(JVMHelper.OS_TYPE == OS.MUSTDIE)
         {
-            ru.zaxar163.Main.main(args);
+            AvanguardStarter.main(args);
         }
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");

@@ -1,9 +1,10 @@
-package ru.zaxar163;
+package launcher;
 
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
+import ru.zaxar163.GuardBind;
 
-public class Main {
+public class AvanguardStarter {
     public static void main(String[] args) {
         GuardBind.avnRegisterThreatNotifier((int threatType) -> {
             System.err.println("Threat " + GuardBind.ThreatType.getThreat(threatType).name());
