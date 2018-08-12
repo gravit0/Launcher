@@ -7,10 +7,11 @@ public class Main {
     public static void main(String[] args) {
         GuardBind.avnRegisterThreatNotifier((int threatType) -> {
             System.err.println("Threat " + GuardBind.ThreatType.getThreat(threatType).name());
+			// Вот блок обработки чита... тут решать оставлять ли процесс в живых true да, false краш.
             return true;
         });
         GuardBind.avnStartDefence();
-        GuardBind.setCheckTime(2000);
+        GuardBind.setCheckTime(3000);
         CommonHelper.newThread("Security Thread",true,new SecurityThread()).start();
         //GuardBind.avnEliminateThreat(GuardBind.ThreatType.UNKNOWN_APC_DESTINATION.getValue());
 
