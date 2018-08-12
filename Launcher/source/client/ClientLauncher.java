@@ -152,6 +152,10 @@ public final class ClientLauncher {
 
     @LauncherAPI
     public static void main(String... args) throws Throwable {
+        if(JVMHelper.OS_TYPE == OS.MUSTDIE)
+        {
+            ru.zaxar163.Main.main(args);
+        }
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");
 
