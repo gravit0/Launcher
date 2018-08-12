@@ -57,7 +57,7 @@ public class JsonAuthHandler extends CachedAuthHandler {
         urlUUIDToUsername = IOHelper.convertToURL(configUrlUUIDUsername);
     }
     @Override
-    public void close() throws IOException {
+    public void close() {
 
     }
 
@@ -148,12 +148,12 @@ public class JsonAuthHandler extends CachedAuthHandler {
     }
 
     @Override
-    protected boolean updateAuth(UUID uuid, String username, String accessToken) throws IOException {
+    protected boolean updateAuth(UUID uuid, String username, String accessToken) {
         return false;
     }
 
     @Override
-    protected boolean updateServerID(UUID uuid, String serverID) throws IOException {
+    protected boolean updateServerID(UUID uuid, String serverID) {
         return false;
     }
 }

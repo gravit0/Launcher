@@ -4,13 +4,9 @@ import launcher.LauncherAPI;
 import launcher.helper.JVMHelper;
 import launcher.helper.LogHelper;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 @LauncherAPI
 public final class GuardBind {
-	public static enum ThreatType {
+	public enum ThreatType {
         UNKNOWN_THREAT              (0),
         REMOTE_THREAD               (1),
         WINDOWS_HOOKS_INJECTION     (2),
@@ -23,7 +19,7 @@ public final class GuardBind {
 
         private final int id;
 
-        private ThreatType(int value) {
+        ThreatType(int value) {
             id = value;
         }
 
@@ -33,21 +29,17 @@ public final class GuardBind {
         }
     }
 
-    public static interface ThreatNotifier {
-    	public boolean call(int threatType);
+    public interface ThreatNotifier {
+    	boolean call(int threatType);
     }
 
     static {
         LogHelper.debug("Anti-Cheat loading");
         if(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {
-            try {
-                if(JVMHelper.OS_BITS == 32) {
-                    System.loadLibrary("Avanguard32");
-                } else if(JVMHelper.OS_BITS == 64) {
-                    System.loadLibrary("Avanguard64");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(JVMHelper.OS_BITS == 32) {
+                System.loadLibrary("Avanguard32");
+            } else if(JVMHelper.OS_BITS == 64) {
+                System.loadLibrary("Avanguard64");
             }
         }
         LogHelper.debug("Anti-Cheat loaded");
