@@ -6,10 +6,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.interfaces.RSAPublicKey;
@@ -32,12 +29,8 @@ import launcher.client.ClientProfile.Version;
 import launcher.hasher.DirWatcher;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
-import launcher.helper.CommonHelper;
-import launcher.helper.IOHelper;
-import launcher.helper.JVMHelper;
+import launcher.helper.*;
 import launcher.helper.JVMHelper.OS;
-import launcher.helper.LogHelper;
-import launcher.helper.SecurityHelper;
 import launcher.request.update.LauncherRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
@@ -79,13 +72,14 @@ public final class ClientLauncher {
         SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
         SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
         // Write params file (instead of CLI; Mustdie32 API can't handle command line > 32767 chars)
-        //Path paramsFile = Files.createTempFile("ClientLauncherParams", ".bin");
-        //try (HOutput output = new HOutput(IOHelper.newOutput(paramsFile))) {
-        //    params.write(output);
-        //    profile.write(output);
-        //    assetHDir.write(output);
-        //    clientHDir.write(output);
-        //}
+        LogHelper.debug("Writing ClientLauncher params");
+        Path paramsFile = Files.createTempFile("ClientLauncherParams", ".bin");
+        try (HOutput output = new HOutput(IOHelper.newOutput(paramsFile))) {
+            params.write(output);
+            profile.write(output);
+            assetHDir.write(output);
+            clientHDir.write(output);
+        }
 
         // Resolve java bin and set permissions
         LogHelper.debug("Resolving JVM binary");
@@ -121,7 +115,7 @@ public final class ClientLauncher {
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
         Collections.addAll(args, ClientLauncher.class.getName());
-        Collections.addAll(args, "start");
+        Collections.addAll(args, paramsFile.toString());
 
         // Print commandline debug message
         LogHelper.debug("Commandline: " + args);
@@ -131,22 +125,13 @@ public final class ClientLauncher {
         ProcessBuilder builder = new ProcessBuilder(args);
         builder.environment().put("CLASSPATH",classPathString.toString());
         builder.directory(params.clientDir.toFile());
+        builder.inheritIO();
         if (pipeOutput) {
             builder.redirectErrorStream(true);
             builder.redirectOutput(Redirect.PIPE);
         }
         // Let's rock!
         Process process = builder.start();
-        OutputStream stdin = process.getOutputStream();
-        LogHelper.debug("Writing ClientLauncher params");
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(stdin);
-        try (HOutput output = new HOutput(bufferedOutputStream)) {
-            params.write(output);
-            profile.write(output);
-            assetHDir.write(output);
-            clientHDir.write(output);
-        }
-        bufferedOutputStream.flush();
         return process;
     }
 
@@ -159,19 +144,24 @@ public final class ClientLauncher {
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");
 
+        // Resolve params file
+        VerifyHelper.verifyInt(args.length, l -> l >= 1, "Missing args: <paramsFile>");
+        Path paramsFile = IOHelper.toPath(args[0]);
         // Read and delete params file
         LogHelper.debug("Reading ClientLauncher params");
         Params params;
         SignedObjectHolder<ClientProfile> profile;
         SignedObjectHolder<HashedDir> assetHDir, clientHDir;
         RSAPublicKey publicKey = Launcher.getConfig().publicKey;
-        try (HInput input = new HInput(System.in)) {
+        try (HInput input = new HInput(IOHelper.newInput(paramsFile))) {
             params = new Params(input);
             profile = new SignedObjectHolder<>(input, publicKey, ClientProfile.RO_ADAPTER);
 
             // Read hdirs
             assetHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
             clientHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
+        } finally {
+            Files.delete(paramsFile);
         }
 
         // Verify ClientLauncher sign and classpath

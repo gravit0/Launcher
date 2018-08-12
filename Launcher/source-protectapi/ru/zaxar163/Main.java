@@ -7,8 +7,8 @@ public class Main {
     public static void main(String[] args) {
         GuardBind.avnRegisterThreatNotifier((int threatType) -> {
             System.err.println("Threat " + GuardBind.ThreatType.getThreat(threatType).name());
-			// Вот блок обработки чита... тут решать оставлять ли процесс в живых true да, false краш.
-            return true;
+			      // Вот блок обработки чита... тут решать оставлять ли процесс в живых true да, false краш.
+            return false;
         });
         GuardBind.avnStartDefence();
         GuardBind.setCheckTime(3000);
