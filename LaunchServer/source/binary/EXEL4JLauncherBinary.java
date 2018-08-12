@@ -76,12 +76,12 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 
         // Prepare version info (product)
         VersionInfo info = new VersionInfo();
-        info.setProductName("sashok724's Launcher v3");
+        info.setProductName("sashok724's Launcher v3 mod by Gravit");
         info.setProductVersion("1.0.0.0");
         info.setTxtProductVersion(Launcher.VERSION + ", build " + Launcher.BUILD);
 
         // Prepare version info (file)
-        info.setFileDescription("sashok724's Launcher v3");
+        info.setFileDescription("sashok724's Launcher v3 mod by Gravit");
         info.setFileVersion("1.0.0.0");
         info.setTxtFileVersion(Launcher.VERSION + ", build " + Launcher.BUILD);
         info.setOriginalFilename(binaryFile.getFileName().toString());
@@ -89,7 +89,7 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
         // Prepare version info (misc)
         info.setInternalName("Launcher");
         info.setCopyright("© sashok724 LLC");
-        info.setTrademarks("This product is licensed under WTFPL 2.0");
+        info.setTrademarks("This product is licensed under MIT License");
         info.setLanguage(LanguageID.ENGLISH_US);
         config.setVersionInfo(info);
 
