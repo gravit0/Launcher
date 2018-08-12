@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 @LauncherAPI
 public final class GuardBind {
-    enum ThreatType {
+	public static enum ThreatType {
         UNKNOWN_THREAT              (0),
         REMOTE_THREAD               (1),
         WINDOWS_HOOKS_INJECTION     (2),
@@ -23,7 +23,7 @@ public final class GuardBind {
 
         private final int id;
 
-        ThreatType(int value) {
+        private ThreatType(int value) {
             id = value;
         }
 
@@ -33,8 +33,8 @@ public final class GuardBind {
         }
     }
 
-    public interface ThreatNotifier {
-        boolean call(int threatType);
+    public static interface ThreatNotifier {
+    	public boolean call(int threatType);
     }
 
     static {
@@ -77,5 +77,6 @@ public final class GuardBind {
     @LauncherAPI
 	public static native int        getCheckTime();
 	
+	@LauncherAPI
     public static native void avnRegisterThreatNotifier(ThreatNotifier notifier);
 }

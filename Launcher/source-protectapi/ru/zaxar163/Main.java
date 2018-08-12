@@ -10,7 +10,7 @@ public class Main {
             return false;
         });
         GuardBind.avnStartDefence();
-        GuardBind.setCheckTime(2000);
+        GuardBind.setCheckTime(3000);
         CommonHelper.newThread("Security Thread",true,new SecurityThread()).start();
         //GuardBind.avnEliminateThreat(GuardBind.ThreatType.UNKNOWN_APC_DESTINATION.getValue());
 
