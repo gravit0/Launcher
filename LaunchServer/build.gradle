@@ -1,6 +1,12 @@
 def mainClassName = "launcher.ServerLauncher"
 
 repositories {
+	maven {
+		url "https://hub.spigotmc.org/nexus/content/repositories/snapshots"
+	}
+	maven {
+		url "https://oss.sonatype.org/content/repositories/snapshots"
+	}
     maven {
         url "http://maven.geomajas.org/"
     }
@@ -12,14 +18,10 @@ jar {
 }
 
 dependencies {
-    compile files('../compat/authlib/authlib-clean.jar')
-    compile "com.eclipsesource.minimal-json:minimal-json:0.9.4"
-    compile "com.google.code.gson:gson:2.8.5"
-    compile "com.google.guava:guava:26.0-jre"
-	compile project(":libLauncher")
-	compileOnly files('../libs/launch4j.jar')
-	compileOnly files('../libs/Spigot.jar')
-	compileOnly files('../libs/BungeeCord.jar')
-	compileOnly group: 'hikari-cp', name: 'hikari-cp', version: '2.6.0'
-	compileOnly "mysql:mysql-connector-java:8.0.12"
+	compile project(':libLauncher')
+	compileOnly files('/libs/launch4j.jar') // laggy dep
+	compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT' // files('../libs/Spigot.jar')
+	compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT' //files('../libs/BungeeCord.jar')
+	compileOnly 'hikari-cp:hikari-cp:2.6.0'
+	compileOnly 'mysql:mysql-connector-java:8.0.12'
 }

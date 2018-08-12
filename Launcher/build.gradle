@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '6.0.3'
+        classpath 'net.sf.proguard:proguard-gradle:6.0.3'
     }
 }
 
@@ -21,12 +21,8 @@ jar {
 }
 
 dependencies {
-    compile files('../compat/authlib/authlib-clean.jar')
-    compile "com.eclipsesource.minimal-json:minimal-json:0.9.4"
-    compile "com.google.code.gson:gson:2.8.5"
-    compile "com.google.guava:guava:26.0-jre"
-	compile project(":libLauncher")
-	compileOnly "org.jline:jline:3.9.0"
+	compile project(':libLauncher')
+	compileOnly 'org.jline:jline:3.9.0'
 }
 
 task obfTask(type: proguard.gradle.ProGuardTask) {
