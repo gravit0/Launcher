@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         GuardBind.avnRegisterThreatNotifier((int threatType) -> {
             System.err.println("Threat " + GuardBind.ThreatType.getThreat(threatType).name());
-            return true;
+            return false;
         });
         GuardBind.avnStartDefence();
         GuardBind.setCheckTime(2000);
