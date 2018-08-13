@@ -16,13 +16,14 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class JsonAuthHandler extends CachedAuthHandler {
 
     private static final int TIMEOUT = 10;
     private final URL url;
     private final URL urlCheckServer;
     private final URL urlJoinServer;
-    private final URL urlUsernameToUUID;
+	private final URL urlUsernameToUUID;
     private final URL urlUUIDToUsername;
     private final String userKeyName;
     private final String serverIDKeyName;

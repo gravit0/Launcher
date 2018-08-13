@@ -21,7 +21,7 @@ public final class LaunchServerCommandBungee extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String... args) {
+    public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof ConsoleCommandSender)) {
             sender.sendMessage(NOT_CONSOLE_MESSAGE);
             return;

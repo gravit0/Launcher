@@ -41,7 +41,8 @@ import launcher.AvanguardStarter;
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
     private static final String MAGICAL_INTEL_OPTION = "-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
-    private static final Set<PosixFilePermission> BIN_POSIX_PERMISSIONS = Collections.unmodifiableSet(EnumSet.of(
+    @SuppressWarnings("unused")
+	private static final Set<PosixFilePermission> BIN_POSIX_PERMISSIONS = Collections.unmodifiableSet(EnumSet.of(
         PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE, // Owner
         PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_EXECUTE, // Group
         PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_EXECUTE // Others

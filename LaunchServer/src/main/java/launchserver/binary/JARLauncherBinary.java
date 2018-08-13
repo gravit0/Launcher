@@ -8,9 +8,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.*;
-import java.util.zip.Deflater;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -24,7 +21,6 @@ import launcher.helper.SecurityHelper;
 import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
-import sun.misc.IOUtils;
 
 public final class JARLauncherBinary extends LauncherBinary {
     @LauncherAPI public final Path runtimeDir;

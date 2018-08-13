@@ -23,7 +23,8 @@ import launcher.helper.JVMHelper.OS;
 import launcher.helper.LogHelper;
 
 public final class DirWatcher implements Runnable, AutoCloseable {
-    private static final boolean FILE_TREE_SUPPORTED = JVMHelper.OS_TYPE == OS.MUSTDIE;
+    @SuppressWarnings("unused")
+	private static final boolean FILE_TREE_SUPPORTED = JVMHelper.OS_TYPE == OS.MUSTDIE;
 
     // Constants
     private static final Kind<?>[] KINDS = {

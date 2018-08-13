@@ -15,7 +15,7 @@ public final class LaunchServerCommandBukkit implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String alias, String... args) {
+    public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
         if (!(sender instanceof ConsoleCommandSender) && !(sender instanceof RemoteConsoleCommandSender)) {
             sender.sendMessage(ChatColor.RED + "Эту команду можно использовать только из консоли");
             return true;
