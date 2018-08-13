@@ -1,3 +1,5 @@
+import ru.zaxar163.gradle.utils.*
+
 buildscript {
     repositories {
         mavenCentral()
@@ -7,7 +9,7 @@ buildscript {
     }
 }
 
-def mainClassName = "launcher.ClientLauncher"
+String mainClassName = "launcher.LauncherEngine"
 
 repositories {
 	maven {
@@ -36,7 +38,7 @@ def keystoreFile = parent.file('sign/sashok724.jks')
 def keystorepass = 'PSP1004'
 def keyalias = 'sashok724'
 
-task signJar(description: 'to Sign JAR.',group: 'Build', overwrite: true){
+task signJar(group: 'Build', overwrite: true){
 	dependsOn tasks.jar
 	doLast{
 		println ":$project.name:${name}"
@@ -55,4 +57,10 @@ task signJar(description: 'to Sign JAR.',group: 'Build', overwrite: true){
 	}
 }
 
-build.dependsOn tasks.obfTask
+task Pack200(type: Pack200Task) {
+	dependsOn tasks.signJar
+	jar = new File(buildDir, 'jars/signed/Launcher-obf.jar')
+	packed = file("$buildDir/libs/Launcher.pack.gz")
+}
+
+build.dependsOn tasks.obfTask, tasks.signJar, tasks.Pack200

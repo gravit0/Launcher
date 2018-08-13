@@ -1,4 +1,4 @@
-def mainClassName = "launcher.ServerLauncher"
+def mainClassName = "launchserver.LaunchServer"
 
 repositories {
 	maven {
@@ -14,14 +14,18 @@ repositories {
 
 jar {
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-	manifest.attributes("Main-Class": mainClassName);
+	from(parent.childProjects.Launcher.file("build/libs/Launcher.pack.gz"))
+	manifest.attributes("Main-Class": mainClassName)
+	manifest.attributes("Class-Path": "libraries/jansi.jar libraries/jline2.jar libraries/mysql.jar libraries/hikaricp/hikaricp.jar libraries/hikaricp/javassist.jar libraries/hikaricp/slf4j-api.jar libraries/hikaricp/slf4j-simple.jar libraries/launch4j/launch4j.jar")
 }
 
 dependencies {
 	compile project(':libLauncher')
 	compileOnly files('libs/launch4j.jar') // laggy dep
-	compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT' // files('../libs/Spigot.jar')
-	compileOnly files('libs/BungeeCord.jar')
+	compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
+	compileOnly files('libs/BungeeCord.jar') // laggy dep
 	compileOnly 'hikari-cp:hikari-cp:2.6.0'
 	compileOnly 'mysql:mysql-connector-java:8.0.12'
 }
+
+build.dependsOn ':Launcher:build'
