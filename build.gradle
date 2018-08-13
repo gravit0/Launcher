@@ -12,15 +12,15 @@ allprojects {
 
 subprojects {
 	apply plugin: 'java'
-	
-	def keystoreFile = new File('sign/sashok724.jks')
-	def keystorepass = 'PSP1004'
-	def keyalias = 'sashok724'
+	def ini = new File('sign/info.ini')
+	Map<String, String> map = parseIni(ini)
+	def keystoreFile = new File("sign/" + map.get("keyname"))
+	def keystorepass = map.get("keystorepass")
+	def keyalias = map.get("keyalias")
 
-	task signJar(description: 'to Sign JAR.',group: 'Build'){
+	task signJar(group: 'Build'){
 		dependsOn tasks.jar
 		doLast{
-			println ":$project.name:${name}"
 			def signdir  = new File("$buildDir/jars/signed")
 			signdir.mkdirs()
 			ant.signjar(
@@ -37,4 +37,19 @@ subprojects {
 	}
 	
 	build.dependsOn tasks.signJar
+}
+
+task genRuntimeJS(type: Zip) {
+    archiveName = "runtime.zip"
+    destinationDir = file("${buildDir}/dist")
+    from "runtime/"
+}
+
+Map<String, String> parseIni(File ini) throws IOException {
+	Map<String, String> toRet = new HashMap<String, String>()
+	for (String line : java.nio.file.Files.readAllLines(ini.toPath())) {
+		String[] props = line.split("=");
+		toRet.put(props[0], props[1])
+	}
+	return toRet
 }

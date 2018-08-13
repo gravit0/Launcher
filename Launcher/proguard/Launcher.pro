@@ -3,7 +3,7 @@
 -libraryjars '<java.home>/lib/ext/jfxrt.jar'
 -libraryjars '<java.home>/lib/ext/nashorn.jar'
 
--printmapping 'mapping.pro'
+-printmapping '../build/mapping.pro'
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute Source
 

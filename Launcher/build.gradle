@@ -1,5 +1,3 @@
-import ru.zaxar163.gradle.utils.*
-
 buildscript {
     repositories {
         mavenCentral()
@@ -35,14 +33,15 @@ task obfTask(type: proguard.gradle.ProGuardTask) {
     outjars new File(buildDir, 'libs/Launcher-obf.jar')
 }
 
-def keystoreFile = parent.file('sign/sashok724.jks')
-def keystorepass = 'PSP1004'
-def keyalias = 'sashok724'
+def ini = parent.file('sign/info.ini')
+Map<String, String> map = parseIni(ini)
+def keystoreFile = parent.file("sign/" + map.get("keyname"))
+def keystorepass = map.get("keystorepass")
+def keyalias = map.get("keyalias")
 
 task signJar(group: 'Build', overwrite: true){
     dependsOn tasks.obfTask
     doLast{
-        println ":$project.name:${name}"
         def signdir  = new File("$buildDir/jars/signed")
         signdir.mkdirs()
         ant.signjar(
@@ -58,10 +57,4 @@ task signJar(group: 'Build', overwrite: true){
     }
 }
 
-task Pack200(type: Pack200Task) {
-    dependsOn tasks.signJar
-    jar = new File(buildDir, 'jars/signed/Launcher-obf.jar')
-    packed = file("$buildDir/libs/Launcher.pack.gz")
-}
-
-build.dependsOn tasks.obfTask, tasks.signJar, tasks.Pack200
+build.dependsOn tasks.obfTask, tasks.signJar

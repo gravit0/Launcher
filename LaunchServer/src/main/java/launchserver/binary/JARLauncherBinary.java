@@ -82,7 +82,7 @@ public final class JARLauncherBinary extends LauncherBinary {
         // Unpack launcher runtime files
         Files.createDirectory(runtimeDir);
         LogHelper.info("Unpacking launcher runtime files");
-        try (ZipInputStream input = IOHelper.newZipInput(IOHelper.getResourceURL("launchserver/defaults/runtime.zip"))) {
+        try (ZipInputStream input = IOHelper.newZipInput(IOHelper.getResourceURL("runtime.zip"))) {
             for (ZipEntry entry = input.getNextEntry(); entry != null; entry = input.getNextEntry()) {
                 if (entry.isDirectory()) {
                     continue; // Skip dirs

@@ -13,9 +13,9 @@ repositories {
 }
 
 jar {
-    dependsOn ':Launcher:build'
+    dependsOn parent.childProjects.Launcher.tasks.build, parent.tasks.genRuntimeJS
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-    from(parent.childProjects.Launcher.file("build/jars/signed/Launcher-obf.jar"))
+    from(parent.childProjects.Launcher.file("build/jars/signed/Launcher-obf.jar"), parent.tasks.genRuntimeJS.archivePath)
     manifest.attributes("Main-Class": mainClassName)
     manifest.attributes("Class-Path": "libraries/jansi.jar libraries/jline2.jar libraries/mysql.jar libraries/hikaricp/hikaricp.jar libraries/hikaricp/javassist.jar libraries/hikaricp/slf4j-api.jar libraries/hikaricp/slf4j-simple.jar libraries/launch4j/launch4j.jar")
 }
