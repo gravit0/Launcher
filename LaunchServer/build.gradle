@@ -1,0 +1,31 @@
+def mainClassName = "launchserver.LaunchServer"
+
+repositories {
+    maven {
+        url "https://hub.spigotmc.org/nexus/content/repositories/snapshots"
+    }
+    maven {
+        url "http://maven.geomajas.org/"
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+jar {
+    dependsOn ':Launcher:build'
+    from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+    from(parent.childProjects.Launcher.file("build/jars/signed/Launcher-obf.jar"))
+    manifest.attributes("Main-Class": mainClassName)
+    manifest.attributes("Class-Path": "libraries/jansi.jar libraries/jline2.jar libraries/mysql.jar libraries/hikaricp/hikaricp.jar libraries/hikaricp/javassist.jar libraries/hikaricp/slf4j-api.jar libraries/hikaricp/slf4j-simple.jar libraries/launch4j/launch4j.jar")
+}
+
+dependencies {
+    compile project(':libLauncher')
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compileOnly files('libs/launch4j.jar') // laggy dep
+    compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
+    compileOnly files('libs/BungeeCord.jar') // laggy dep
+    compileOnly 'hikari-cp:hikari-cp:2.6.0'
+    compileOnly 'mysql:mysql-connector-java:8.0.12'
+}

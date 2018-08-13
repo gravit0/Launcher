@@ -1,0 +1,5 @@
+rootProject.name = 'Launcher'
+
+include 'Launcher'
+include 'libLauncher'
+include 'LaunchServer'

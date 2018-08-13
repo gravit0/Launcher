@@ -1,0 +1,40 @@
+allprojects {
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+	
+	repositories {
+		mavenCentral()
+		maven {
+			url "http://clojars.org/repo/"
+		}
+	}
+}
+
+subprojects {
+	apply plugin: 'java'
+	
+	def keystoreFile = new File('sign/sashok724.jks')
+	def keystorepass = 'PSP1004'
+	def keyalias = 'sashok724'
+
+	task signJar(description: 'to Sign JAR.',group: 'Build'){
+		dependsOn tasks.jar
+		doLast{
+			println ":$project.name:${name}"
+			def signdir  = new File("$buildDir/jars/signed")
+			signdir.mkdirs()
+			ant.signjar(
+			destDir: "${signdir.absolutePath}",
+                  jar: tasks.jar.archivePath.getAbsolutePath(),
+                  alias:keyalias,
+                  storetype:"jks",
+                  keystore:"${keystoreFile.absolutePath}",
+                  storepass:keystorepass,
+                  verbose:true,
+                  preservelastmodified:"true"
+			)
+		}
+	}
+	
+	build.dependsOn tasks.signJar
+}

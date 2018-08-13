@@ -1,0 +1,67 @@
+import ru.zaxar163.gradle.utils.*
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.sf.proguard:proguard-gradle:6.0.1'
+    }
+}
+
+String mainClassName = "launcher.LauncherEngine"
+
+repositories {
+    maven {
+        url "http://repo.spring.io/plugins-release/"
+    }
+}
+
+jar {
+    from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest.attributes("Main-Class": mainClassName);
+}
+
+dependencies {
+    compile project(':libLauncher')
+    compileOnly 'com.google.code.gson:gson:2.8.5'
+    compileOnly 'com.google.guava:guava:26.0-jre'
+}
+
+task obfTask(type: proguard.gradle.ProGuardTask) {
+    dependsOn tasks.jar
+    configuration new File('proguard/Launcher.pro')
+    injars tasks.jar.archivePath
+    outjars new File(buildDir, 'libs/Launcher-obf.jar')
+}
+
+def keystoreFile = parent.file('sign/sashok724.jks')
+def keystorepass = 'PSP1004'
+def keyalias = 'sashok724'
+
+task signJar(group: 'Build', overwrite: true){
+    dependsOn tasks.obfTask
+    doLast{
+        println ":$project.name:${name}"
+        def signdir  = new File("$buildDir/jars/signed")
+        signdir.mkdirs()
+        ant.signjar(
+        destDir: "${signdir.absolutePath}",
+                jar: new File(buildDir, 'libs/Launcher-obf.jar').getAbsolutePath(),
+                alias:keyalias,
+                storetype:"jks",
+                keystore:"${keystoreFile.absolutePath}",
+                storepass:keystorepass,
+                verbose:true,
+                preservelastmodified:"true"
+        )
+    }
+}
+
+task Pack200(type: Pack200Task) {
+    dependsOn tasks.signJar
+    jar = new File(buildDir, 'jars/signed/Launcher-obf.jar')
+    packed = file("$buildDir/libs/Launcher.pack.gz")
+}
+
+build.dependsOn tasks.obfTask, tasks.signJar, tasks.Pack200
