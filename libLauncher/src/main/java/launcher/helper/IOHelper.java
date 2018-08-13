@@ -45,6 +45,8 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -55,14 +57,29 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 import launcher.Launcher;
 import launcher.LauncherAPI;
+import launcher.ssl.LauncherSSLContext;
 
 public final class IOHelper {
     // Charset
     @LauncherAPI public static final Charset UNICODE_CHARSET = StandardCharsets.UTF_8;
     @LauncherAPI public static final Charset ASCII_CHARSET = StandardCharsets.US_ASCII;
+    public static LauncherSSLContext sslContext;
+
+    static {
+        try {
+            sslContext = new LauncherSSLContext();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Constants
     @LauncherAPI public static final int SOCKET_TIMEOUT = VerifyHelper.verifyInt(
@@ -329,7 +346,15 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static Socket newSocket() throws SocketException {
+    public static SSLSocket newSSLSocket(InetSocketAddress address) throws IOException {
+        SSLSocket socket = (SSLSocket) sslContext.sf.createSocket(address.getHostName(),address.getPort());
+        socket.startHandshake();
+        setSocketFlags(socket);
+        return socket;
+    }
+
+    @LauncherAPI
+    public static Socket newSocket() throws IOException {
         Socket socket = new Socket();
         setSocketFlags(socket);
         return socket;

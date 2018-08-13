@@ -1,9 +1,14 @@
 package launchserver.response;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,10 +25,16 @@ import launcher.helper.VerifyHelper;
 import launcher.request.Request.Type;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.ssl.LauncherKeyStore;
+import launcher.ssl.LauncherTrustManager;
 import launchserver.LaunchServer;
 import launchserver.response.Response.Factory;
 
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.*;
+
 public final class ServerSocketHandler implements Runnable, AutoCloseable {
+    private static SSLServerSocketFactory ssf;
     private static final ThreadFactory THREAD_FACTORY = r -> CommonHelper.newThread("Network Thread", true, r);
     @LauncherAPI public volatile boolean logConnections = Boolean.getBoolean("launcher.logConnections");
 
@@ -54,10 +65,42 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         }
     }
 
+    public void SSLContextInit() throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, KeyManagementException, IOException, CertificateException {
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new LauncherTrustManager()
+        };
+        KeyStore ks = LauncherKeyStore.getKeyStore("keystore","PSP1000");
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory
+                .getDefaultAlgorithm());
+        kmf.init(ks, "PSP1000".toCharArray());
+        SSLContext sc = SSLContext.getInstance("TLSv1.2");
+        sc.init(kmf.getKeyManagers(), trustAllCerts, new SecureRandom());
+        ssf = sc.getServerSocketFactory();
+    }
+
     @Override
     public void run() {
+        try {
+            SSLContextInit();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        }
+        //System.setProperty( "javax.net.ssl.keyStore","keystore");
+        //System.setProperty( "javax.net.ssl.keyStorePassword","PSP1000");
         LogHelper.info("Starting server socket thread");
-        try (ServerSocket serverSocket = new ServerSocket()) {
+        try (SSLServerSocket serverSocket = (SSLServerSocket) ssf.createServerSocket()) {
+            serverSocket.setEnabledProtocols(new String[] {"TLSv1.2"});
             if (!this.serverSocket.compareAndSet(null, serverSocket)) {
                 throw new IllegalStateException("Previous socket wasn't closed");
             }
@@ -68,11 +111,10 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
             //serverSocket.setReceiveBufferSize(0x10000);
             serverSocket.bind(server.config.getSocketAddress());
             LogHelper.info("Server socket thread successfully started");
-
             // Listen for incoming connections
             while (serverSocket.isBound()) {
-                Socket socket = serverSocket.accept();
-
+                SSLSocket socket = (SSLSocket) serverSocket.accept();
+                socket.startHandshake();
                 // Invoke pre-connect listener
                 long id = idCounter.incrementAndGet();
                 if (listener != null && !listener.onConnect(id, socket.getInetAddress())) {

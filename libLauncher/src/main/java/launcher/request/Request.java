@@ -2,6 +2,7 @@ package launcher.request;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import launcher.Launcher;
@@ -13,6 +14,8 @@ import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.stream.EnumSerializer;
 import launcher.serialize.stream.EnumSerializer.Itf;
+
+import javax.net.ssl.SSLSocket;
 
 public abstract class Request<R> {
     @LauncherAPI protected final LauncherConfig config;
@@ -42,8 +45,9 @@ public abstract class Request<R> {
         }
 
         // Make request to LaunchServer
-        try (Socket socket = IOHelper.newSocket()) {
-            socket.connect(IOHelper.resolve(config.address));
+        try (SSLSocket socket = IOHelper.newSSLSocket(config.address)) {
+            socket.setEnabledProtocols(new String[] {"TLSv1", "TLSv1.1", "TLSv1.2", "SSLv3"});
+            System.out.println(Arrays.toString(socket.getEnabledCipherSuites()));
             try (HInput input = new HInput(socket.getInputStream());
                 HOutput output = new HOutput(socket.getOutputStream())) {
                 writeHandshake(input, output);

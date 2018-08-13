@@ -657,26 +657,26 @@ launcher.client.ClientLauncher -> launcher.w42vVwSrSW:
     java.lang.String CLOAK_URL_PROPERTY -> CLOAK_URL_PROPERTY
     java.lang.String CLOAK_DIGEST_PROPERTY -> CLOAK_DIGEST_PROPERTY
     java.util.concurrent.atomic.AtomicBoolean LAUNCHED -> REnOc6Ki3M
-    63:64:void <init>() -> <init>
-    68:68:boolean isLaunched() -> isLaunched
-    76:136:java.lang.Process launch(launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.client.ClientLauncher$Params,boolean) -> launch
-    141:210:void main(java.lang.String[]) -> main
-    214:223:void verifyHDir(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> verifyHDir
-    226:280:void addClientArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
-    283:290:void addClientLegacyArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> CxM7zIuYhO
-    297:313:void launch(launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
-    316:325:java.net.URL[] resolveClassPath(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
-    328:337:java.util.LinkedList resolveClassPathList(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
-    325:325:java.net.URL[] lambda$resolveClassPath$1(int) -> REnOc6Ki3M
-    149:149:boolean lambda$main$0(int) -> REnOc6Ki3M
-    42:61:void <clinit>() -> <clinit>
+    64:65:void <init>() -> <init>
+    69:69:boolean isLaunched() -> isLaunched
+    77:137:java.lang.Process launch(launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.client.ClientLauncher$Params,boolean) -> launch
+    142:211:void main(java.lang.String[]) -> main
+    215:224:void verifyHDir(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> verifyHDir
+    227:281:void addClientArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    284:291:void addClientLegacyArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> CxM7zIuYhO
+    298:314:void launch(launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    317:326:java.net.URL[] resolveClassPath(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
+    329:338:java.util.LinkedList resolveClassPathList(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
+    326:326:java.net.URL[] lambda$resolveClassPath$1(int) -> REnOc6Ki3M
+    150:150:boolean lambda$main$0(int) -> REnOc6Ki3M
+    42:62:void <clinit>() -> <clinit>
 launcher.client.ClientLauncher$1 -> launcher.rA2YLHiJR:
 launcher.client.ClientLauncher$ClassPathFileVisitor -> launcher.kQfBjd7UO0:
     java.util.Collection result -> REnOc6Ki3M
-    414:416:void <init>(java.util.Collection) -> <init>
-    420:423:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
-    411:411:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
-    411:411:void <init>(java.util.Collection,launcher.client.ClientLauncher$1) -> <init>
+    415:417:void <init>(java.util.Collection) -> <init>
+    421:424:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
+    412:412:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
+    412:412:void <init>(java.util.Collection,launcher.client.ClientLauncher$1) -> <init>
 launcher.client.ClientLauncher$Params -> launcher.XFK1HTUklp:
     java.nio.file.Path assetDir -> assetDir
     java.nio.file.Path clientDir -> clientDir
@@ -688,10 +688,10 @@ launcher.client.ClientLauncher$Params -> launcher.XFK1HTUklp:
     int width -> width
     int height -> height
     byte[] launcherSign -> REnOc6Ki3M
-    357:372:void <init>(byte[],java.nio.file.Path,java.nio.file.Path,launcher.client.PlayerProfile,java.lang.String,boolean,boolean,int,int,int) -> <init>
-    375:390:void <init>(launcher.serialize.HInput) -> <init>
-    394:408:void write(launcher.serialize.HOutput) -> write
-    340:340:byte[] access$000(launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    358:373:void <init>(byte[],java.nio.file.Path,java.nio.file.Path,launcher.client.PlayerProfile,java.lang.String,boolean,boolean,int,int,int) -> <init>
+    376:391:void <init>(launcher.serialize.HInput) -> <init>
+    395:409:void write(launcher.serialize.HOutput) -> write
+    341:341:byte[] access$000(launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
 launcher.client.ClientProfile -> launcher.IBvy0uQmfK:
     launcher.serialize.stream.StreamObject$Adapter RO_ADAPTER -> RO_ADAPTER
     launcher.hasher.FileNameMatcher ASSET_MATCHER -> REnOc6Ki3M
@@ -817,28 +817,28 @@ launcher.hasher.DirWatcher -> launcher.WKi8Yuft3R:
     launcher.hasher.FileNameMatcher matcher -> REnOc6Ki3M
     java.nio.file.WatchService service -> REnOc6Ki3M
     boolean digest -> CxM7zIuYhO
-    41:51:void <init>(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> <init>
-    56:57:void close() -> close
-    63:69:void run() -> run
-    72:102:void processKey(java.nio.file.WatchKey) -> REnOc6Ki3M
-    105:108:void processLoop() -> REnOc6Ki3M
-    111:112:void handleError(java.lang.Throwable) -> REnOc6Ki3M
-    115:119:java.util.Deque toPath(java.lang.Iterable) -> REnOc6Ki3M
+    42:52:void <init>(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> <init>
+    57:58:void close() -> close
+    64:70:void run() -> run
+    73:103:void processKey(java.nio.file.WatchKey) -> REnOc6Ki3M
+    106:109:void processLoop() -> REnOc6Ki3M
+    112:113:void handleError(java.lang.Throwable) -> REnOc6Ki3M
+    116:120:java.util.Deque toPath(java.lang.Iterable) -> REnOc6Ki3M
     25:25:java.nio.file.Path access$100(launcher.hasher.DirWatcher) -> REnOc6Ki3M
     25:25:java.nio.file.WatchService access$200(launcher.hasher.DirWatcher) -> REnOc6Ki3M
     25:25:java.nio.file.WatchEvent$Kind[] access$300() -> REnOc6Ki3M
     25:25:launcher.hasher.FileNameMatcher access$400(launcher.hasher.DirWatcher) -> REnOc6Ki3M
-    26:29:void <clinit>() -> <clinit>
+    27:30:void <clinit>() -> <clinit>
 launcher.hasher.DirWatcher$1 -> launcher.s2vcyiX6Sa:
 launcher.hasher.DirWatcher$RegisterFileVisitor -> launcher.kjdeWgIYBJ:
     java.util.Deque path -> REnOc6Ki3M
     launcher.hasher.DirWatcher this$0 -> REnOc6Ki3M
-    122:123:void <init>(launcher.hasher.DirWatcher) -> <init>
-    127:131:java.nio.file.FileVisitResult postVisitDirectory(java.nio.file.Path,java.io.IOException) -> REnOc6Ki3M
-    136:153:java.nio.file.FileVisitResult preVisitDirectory(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
-    122:122:java.nio.file.FileVisitResult postVisitDirectory(java.lang.Object,java.io.IOException) -> postVisitDirectory
-    122:122:java.nio.file.FileVisitResult preVisitDirectory(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> preVisitDirectory
-    122:122:void <init>(launcher.hasher.DirWatcher,launcher.hasher.DirWatcher$1) -> <init>
+    123:124:void <init>(launcher.hasher.DirWatcher) -> <init>
+    128:132:java.nio.file.FileVisitResult postVisitDirectory(java.nio.file.Path,java.io.IOException) -> REnOc6Ki3M
+    137:154:java.nio.file.FileVisitResult preVisitDirectory(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
+    123:123:java.nio.file.FileVisitResult postVisitDirectory(java.lang.Object,java.io.IOException) -> postVisitDirectory
+    123:123:java.nio.file.FileVisitResult preVisitDirectory(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> preVisitDirectory
+    123:123:void <init>(launcher.hasher.DirWatcher,launcher.hasher.DirWatcher$1) -> <init>
 launcher.hasher.FileNameMatcher -> launcher.PDPDio3ID3:
     java.lang.String[] NO_ENTRIES -> REnOc6Ki3M
     java.lang.String[] update -> CxM7zIuYhO
@@ -935,6 +935,7 @@ launcher.helper.CommonHelper -> launcher.rhmeQGXuZu:
 launcher.helper.IOHelper -> launcher.tdIf9vy9e:
     java.nio.charset.Charset UNICODE_CHARSET -> UNICODE_CHARSET
     java.nio.charset.Charset ASCII_CHARSET -> ASCII_CHARSET
+    launcher.ssl.LauncherSSLContext sslContext -> REnOc6Ki3M
     int SOCKET_TIMEOUT -> SOCKET_TIMEOUT
     int HTTP_TIMEOUT -> HTTP_TIMEOUT
     int BUFFER_SIZE -> BUFFER_SIZE
@@ -953,107 +954,108 @@ launcher.helper.IOHelper -> launcher.tdIf9vy9e:
     java.util.Set WALK_OPTIONS -> REnOc6Ki3M
     java.util.regex.Pattern CROSS_SEPARATOR_PATTERN -> REnOc6Ki3M
     java.util.regex.Pattern PLATFORM_SEPARATOR_PATTERN -> CxM7zIuYhO
-    103:104:void <init>() -> <init>
-    109:113:void close(java.lang.AutoCloseable) -> close
-    117:119:void copy(java.nio.file.Path,java.nio.file.Path) -> copy
-    123:127:void createParentDirs(java.nio.file.Path) -> createParentDirs
-    131:131:java.lang.String decode(byte[]) -> decode
-    136:136:java.lang.String decodeASCII(byte[]) -> decodeASCII
-    141:142:void deleteDir(java.nio.file.Path,boolean) -> deleteDir
-    146:146:byte[] encode(java.lang.String) -> encode
-    151:151:byte[] encodeASCII(java.lang.String) -> encodeASCII
-    156:156:boolean exists(java.nio.file.Path) -> exists
-    161:161:java.nio.file.Path getCodeSource(java.lang.Class) -> getCodeSource
-    166:166:java.lang.String getFileName(java.nio.file.Path) -> getFileName
-    171:171:java.lang.String getIP(java.net.SocketAddress) -> getIP
-    176:176:byte[] getResourceBytes(java.lang.String) -> getResourceBytes
-    181:185:java.net.URL getResourceURL(java.lang.String) -> getResourceURL
-    190:190:boolean hasExtension(java.nio.file.Path,java.lang.String) -> hasExtension
-    195:195:boolean isDir(java.nio.file.Path) -> isDir
-    200:202:boolean isEmpty(java.nio.file.Path) -> isEmpty
-    207:207:boolean isFile(java.nio.file.Path) -> isFile
-    212:213:boolean isValidFileName(java.lang.String) -> isValidFileName
-    219:222:boolean isValidPath(java.lang.String) -> isValidPath
-    228:228:boolean isValidTextureBounds(int,int,boolean) -> isValidTextureBounds
-    234:236:void move(java.nio.file.Path,java.nio.file.Path) -> move
-    240:240:byte[] newBuffer() -> newBuffer
-    245:245:java.io.ByteArrayOutputStream newByteArrayOutput() -> newByteArrayOutput
-    250:250:char[] newCharBuffer() -> newCharBuffer
-    255:265:java.net.URLConnection newConnection(java.net.URL) -> newConnection
-    270:273:java.net.HttpURLConnection newConnectionPost(java.net.URL) -> newConnectionPost
-    278:280:java.util.zip.Deflater newDeflater() -> newDeflater
-    285:285:java.util.zip.Inflater newInflater() -> newInflater
-    290:290:java.io.InputStream newInput(java.net.URL) -> newInput
-    295:295:java.io.InputStream newInput(java.nio.file.Path) -> newInput
-    300:300:java.io.OutputStream newOutput(java.nio.file.Path) -> newOutput
-    305:306:java.io.OutputStream newOutput(java.nio.file.Path,boolean) -> newOutput
-    311:311:java.io.BufferedReader newReader(java.io.InputStream) -> newReader
-    316:316:java.io.BufferedReader newReader(java.io.InputStream,java.nio.charset.Charset) -> newReader
-    321:323:java.io.BufferedReader newReader(java.net.URL) -> newReader
-    328:328:java.io.BufferedReader newReader(java.nio.file.Path) -> newReader
-    333:335:java.net.Socket newSocket() -> newSocket
-    340:340:java.io.BufferedWriter newWriter(java.io.OutputStream) -> newWriter
-    345:345:java.io.BufferedWriter newWriter(java.nio.file.Path) -> newWriter
-    350:351:java.io.BufferedWriter newWriter(java.nio.file.Path,boolean) -> newWriter
-    356:356:java.io.BufferedWriter newWriter(java.io.FileDescriptor) -> newWriter
-    361:363:java.util.zip.ZipEntry newZipEntry(java.lang.String) -> newZipEntry
-    368:368:java.util.zip.ZipEntry newZipEntry(java.util.zip.ZipEntry) -> newZipEntry
-    373:373:java.util.zip.ZipInputStream newZipInput(java.io.InputStream) -> newZipInput
-    378:378:java.util.zip.ZipInputStream newZipInput(java.net.URL) -> newZipInput
-    383:383:java.util.zip.ZipInputStream newZipInput(java.nio.file.Path) -> newZipInput
-    388:400:byte[] read(java.nio.file.Path) -> read
-    405:407:byte[] read(java.net.URL) -> read
-    412:420:void read(java.io.InputStream,byte[]) -> read
-    424:427:byte[] read(java.io.InputStream) -> read
-    432:432:java.nio.file.attribute.BasicFileAttributes readAttributes(java.nio.file.Path) -> readAttributes
-    437:452:java.awt.image.BufferedImage readTexture(java.lang.Object,boolean) -> readTexture
-    457:457:java.lang.String request(java.net.URL) -> request
-    462:465:java.net.InetSocketAddress resolve(java.net.InetSocketAddress) -> resolve
-    470:483:java.nio.file.Path resolveIncremental(java.nio.file.Path,java.lang.String,java.lang.String) -> resolveIncremental
-    490:513:java.nio.file.Path resolveJavaBin(java.nio.file.Path) -> resolveJavaBin
-    519:530:void setSocketFlags(java.net.Socket) -> setSocketFlags
-    534:534:java.nio.file.Path toPath(java.lang.String) -> toPath
-    539:539:java.lang.String toString(java.nio.file.Path) -> toString
-    545:547:java.net.URI toURI(java.net.URL) -> toURI
-    554:556:java.net.URL toURL(java.nio.file.Path) -> toURL
-    562:568:int transfer(java.io.InputStream,java.io.OutputStream) -> transfer
-    573:576:void transfer(java.nio.file.Path,java.io.OutputStream) -> transfer
-    580:580:int transfer(java.io.InputStream,java.nio.file.Path) -> transfer
-    585:587:int transfer(java.io.InputStream,java.nio.file.Path,boolean) -> transfer
-    593:595:java.lang.String urlDecode(java.lang.String) -> urlDecode
-    602:604:java.lang.String urlEncode(java.lang.String) -> urlEncode
-    610:610:java.lang.String verifyFileName(java.lang.String) -> verifyFileName
-    615:618:int verifyLength(int,int) -> verifyLength
-    623:624:java.awt.image.BufferedImage verifyTexture(java.awt.image.BufferedImage,boolean) -> verifyTexture
-    630:633:java.lang.String verifyURL(java.lang.String) -> verifyURL
-    639:640:void walk(java.nio.file.Path,java.nio.file.FileVisitor,boolean) -> walk
-    644:646:void write(java.nio.file.Path,byte[]) -> write
-    704:706:java.net.URL convertToURL(java.lang.String) -> convertToURL
-    623:623:boolean lambda$verifyTexture$1(boolean,java.awt.image.BufferedImage) -> REnOc6Ki3M
-    213:213:boolean lambda$isValidFileName$0(int) -> REnOc6Ki3M
-    64:101:void <clinit>() -> <clinit>
+    120:121:void <init>() -> <init>
+    126:130:void close(java.lang.AutoCloseable) -> close
+    134:136:void copy(java.nio.file.Path,java.nio.file.Path) -> copy
+    140:144:void createParentDirs(java.nio.file.Path) -> createParentDirs
+    148:148:java.lang.String decode(byte[]) -> decode
+    153:153:java.lang.String decodeASCII(byte[]) -> decodeASCII
+    158:159:void deleteDir(java.nio.file.Path,boolean) -> deleteDir
+    163:163:byte[] encode(java.lang.String) -> encode
+    168:168:byte[] encodeASCII(java.lang.String) -> encodeASCII
+    173:173:boolean exists(java.nio.file.Path) -> exists
+    178:178:java.nio.file.Path getCodeSource(java.lang.Class) -> getCodeSource
+    183:183:java.lang.String getFileName(java.nio.file.Path) -> getFileName
+    188:188:java.lang.String getIP(java.net.SocketAddress) -> getIP
+    193:193:byte[] getResourceBytes(java.lang.String) -> getResourceBytes
+    198:202:java.net.URL getResourceURL(java.lang.String) -> getResourceURL
+    207:207:boolean hasExtension(java.nio.file.Path,java.lang.String) -> hasExtension
+    212:212:boolean isDir(java.nio.file.Path) -> isDir
+    217:219:boolean isEmpty(java.nio.file.Path) -> isEmpty
+    224:224:boolean isFile(java.nio.file.Path) -> isFile
+    229:230:boolean isValidFileName(java.lang.String) -> isValidFileName
+    236:239:boolean isValidPath(java.lang.String) -> isValidPath
+    245:245:boolean isValidTextureBounds(int,int,boolean) -> isValidTextureBounds
+    251:253:void move(java.nio.file.Path,java.nio.file.Path) -> move
+    257:257:byte[] newBuffer() -> newBuffer
+    262:262:java.io.ByteArrayOutputStream newByteArrayOutput() -> newByteArrayOutput
+    267:267:char[] newCharBuffer() -> newCharBuffer
+    272:282:java.net.URLConnection newConnection(java.net.URL) -> newConnection
+    287:290:java.net.HttpURLConnection newConnectionPost(java.net.URL) -> newConnectionPost
+    295:297:java.util.zip.Deflater newDeflater() -> newDeflater
+    302:302:java.util.zip.Inflater newInflater() -> newInflater
+    307:307:java.io.InputStream newInput(java.net.URL) -> newInput
+    312:312:java.io.InputStream newInput(java.nio.file.Path) -> newInput
+    317:317:java.io.OutputStream newOutput(java.nio.file.Path) -> newOutput
+    322:323:java.io.OutputStream newOutput(java.nio.file.Path,boolean) -> newOutput
+    328:328:java.io.BufferedReader newReader(java.io.InputStream) -> newReader
+    333:333:java.io.BufferedReader newReader(java.io.InputStream,java.nio.charset.Charset) -> newReader
+    338:340:java.io.BufferedReader newReader(java.net.URL) -> newReader
+    345:345:java.io.BufferedReader newReader(java.nio.file.Path) -> newReader
+    350:353:javax.net.ssl.SSLSocket newSSLSocket(java.net.InetSocketAddress) -> newSSLSocket
+    358:360:java.net.Socket newSocket() -> newSocket
+    365:365:java.io.BufferedWriter newWriter(java.io.OutputStream) -> newWriter
+    370:370:java.io.BufferedWriter newWriter(java.nio.file.Path) -> newWriter
+    375:376:java.io.BufferedWriter newWriter(java.nio.file.Path,boolean) -> newWriter
+    381:381:java.io.BufferedWriter newWriter(java.io.FileDescriptor) -> newWriter
+    386:388:java.util.zip.ZipEntry newZipEntry(java.lang.String) -> newZipEntry
+    393:393:java.util.zip.ZipEntry newZipEntry(java.util.zip.ZipEntry) -> newZipEntry
+    398:398:java.util.zip.ZipInputStream newZipInput(java.io.InputStream) -> newZipInput
+    403:403:java.util.zip.ZipInputStream newZipInput(java.net.URL) -> newZipInput
+    408:408:java.util.zip.ZipInputStream newZipInput(java.nio.file.Path) -> newZipInput
+    413:425:byte[] read(java.nio.file.Path) -> read
+    430:432:byte[] read(java.net.URL) -> read
+    437:445:void read(java.io.InputStream,byte[]) -> read
+    449:452:byte[] read(java.io.InputStream) -> read
+    457:457:java.nio.file.attribute.BasicFileAttributes readAttributes(java.nio.file.Path) -> readAttributes
+    462:477:java.awt.image.BufferedImage readTexture(java.lang.Object,boolean) -> readTexture
+    482:482:java.lang.String request(java.net.URL) -> request
+    487:490:java.net.InetSocketAddress resolve(java.net.InetSocketAddress) -> resolve
+    495:508:java.nio.file.Path resolveIncremental(java.nio.file.Path,java.lang.String,java.lang.String) -> resolveIncremental
+    515:538:java.nio.file.Path resolveJavaBin(java.nio.file.Path) -> resolveJavaBin
+    544:555:void setSocketFlags(java.net.Socket) -> setSocketFlags
+    559:559:java.nio.file.Path toPath(java.lang.String) -> toPath
+    564:564:java.lang.String toString(java.nio.file.Path) -> toString
+    570:572:java.net.URI toURI(java.net.URL) -> toURI
+    579:581:java.net.URL toURL(java.nio.file.Path) -> toURL
+    587:593:int transfer(java.io.InputStream,java.io.OutputStream) -> transfer
+    598:601:void transfer(java.nio.file.Path,java.io.OutputStream) -> transfer
+    605:605:int transfer(java.io.InputStream,java.nio.file.Path) -> transfer
+    610:612:int transfer(java.io.InputStream,java.nio.file.Path,boolean) -> transfer
+    618:620:java.lang.String urlDecode(java.lang.String) -> urlDecode
+    627:629:java.lang.String urlEncode(java.lang.String) -> urlEncode
+    635:635:java.lang.String verifyFileName(java.lang.String) -> verifyFileName
+    640:643:int verifyLength(int,int) -> verifyLength
+    648:649:java.awt.image.BufferedImage verifyTexture(java.awt.image.BufferedImage,boolean) -> verifyTexture
+    655:658:java.lang.String verifyURL(java.lang.String) -> verifyURL
+    664:665:void walk(java.nio.file.Path,java.nio.file.FileVisitor,boolean) -> walk
+    669:671:void write(java.nio.file.Path,byte[]) -> write
+    729:731:java.net.URL convertToURL(java.lang.String) -> convertToURL
+    648:648:boolean lambda$verifyTexture$1(boolean,java.awt.image.BufferedImage) -> REnOc6Ki3M
+    230:230:boolean lambda$isValidFileName$0(int) -> REnOc6Ki3M
+    70:118:void <clinit>() -> <clinit>
 launcher.helper.IOHelper$1 -> launcher.MlmIcRyvX:
 launcher.helper.IOHelper$DeleteDirVisitor -> launcher.df1NmneVwo:
     java.nio.file.Path dir -> REnOc6Ki3M
     boolean self -> REnOc6Ki3M
-    652:655:void <init>(java.nio.file.Path,boolean) -> <init>
-    659:663:java.nio.file.FileVisitResult postVisitDirectory(java.nio.file.Path,java.io.IOException) -> REnOc6Ki3M
-    668:669:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
-    648:648:java.nio.file.FileVisitResult postVisitDirectory(java.lang.Object,java.io.IOException) -> postVisitDirectory
-    648:648:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
-    648:648:void <init>(java.nio.file.Path,boolean,launcher.helper.IOHelper$1) -> <init>
+    677:680:void <init>(java.nio.file.Path,boolean) -> <init>
+    684:688:java.nio.file.FileVisitResult postVisitDirectory(java.nio.file.Path,java.io.IOException) -> REnOc6Ki3M
+    693:694:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
+    673:673:java.nio.file.FileVisitResult postVisitDirectory(java.lang.Object,java.io.IOException) -> postVisitDirectory
+    673:673:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
+    673:673:void <init>(java.nio.file.Path,boolean,launcher.helper.IOHelper$1) -> <init>
 launcher.helper.IOHelper$SkipHiddenVisitor -> launcher.hmS5PfHESn:
     java.nio.file.FileVisitor visitor -> REnOc6Ki3M
-    676:678:void <init>(java.nio.file.FileVisitor) -> <init>
-    682:682:java.nio.file.FileVisitResult postVisitDirectory(java.nio.file.Path,java.io.IOException) -> REnOc6Ki3M
-    687:687:java.nio.file.FileVisitResult preVisitDirectory(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
-    692:692:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> CxM7zIuYhO
-    697:697:java.nio.file.FileVisitResult visitFileFailed(java.nio.file.Path,java.io.IOException) -> CxM7zIuYhO
-    673:673:java.nio.file.FileVisitResult postVisitDirectory(java.lang.Object,java.io.IOException) -> postVisitDirectory
-    673:673:java.nio.file.FileVisitResult visitFileFailed(java.lang.Object,java.io.IOException) -> visitFileFailed
-    673:673:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
-    673:673:java.nio.file.FileVisitResult preVisitDirectory(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> preVisitDirectory
-    673:673:void <init>(java.nio.file.FileVisitor,launcher.helper.IOHelper$1) -> <init>
+    701:703:void <init>(java.nio.file.FileVisitor) -> <init>
+    707:707:java.nio.file.FileVisitResult postVisitDirectory(java.nio.file.Path,java.io.IOException) -> REnOc6Ki3M
+    712:712:java.nio.file.FileVisitResult preVisitDirectory(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
+    717:717:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> CxM7zIuYhO
+    722:722:java.nio.file.FileVisitResult visitFileFailed(java.nio.file.Path,java.io.IOException) -> CxM7zIuYhO
+    698:698:java.nio.file.FileVisitResult postVisitDirectory(java.lang.Object,java.io.IOException) -> postVisitDirectory
+    698:698:java.nio.file.FileVisitResult visitFileFailed(java.lang.Object,java.io.IOException) -> visitFileFailed
+    698:698:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
+    698:698:java.nio.file.FileVisitResult preVisitDirectory(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> preVisitDirectory
+    698:698:void <init>(java.nio.file.FileVisitor,launcher.helper.IOHelper$1) -> <init>
 launcher.helper.JVMHelper -> launcher.bQCu57YHgR:
     java.lang.management.RuntimeMXBean RUNTIME_MXBEAN -> RUNTIME_MXBEAN
     com.sun.management.OperatingSystemMXBean OPERATING_SYSTEM_MXBEAN -> OPERATING_SYSTEM_MXBEAN
@@ -1281,14 +1283,14 @@ launcher.request.PingRequest -> launcher.i7vGPczWSn:
 launcher.request.Request -> launcher.pqRxYwKh0F:
     launcher.LauncherConfig config -> config
     java.util.concurrent.atomic.AtomicBoolean started -> REnOc6Ki3M
-    19:24:void <init>(launcher.LauncherConfig) -> <init>
-    28:29:void <init>() -> <init>
+    22:27:void <init>(launcher.LauncherConfig) -> <init>
+    31:32:void <init>() -> <init>
     launcher.request.Request$Type getType() -> getType
     java.lang.Object requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> requestDo
-    40:52:java.lang.Object request() -> request
-    57:61:void readError(launcher.serialize.HInput) -> readError
-    65:74:void writeHandshake(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
-    78:78:void requestError(java.lang.String) -> requestError
+    43:56:java.lang.Object request() -> request
+    61:65:void readError(launcher.serialize.HInput) -> readError
+    69:78:void writeHandshake(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
+    82:82:void requestError(java.lang.String) -> requestError
 launcher.request.Request$Type -> launcher.FbDseUhV3e:
     launcher.request.Request$Type PING -> PING
     launcher.request.Request$Type LAUNCHER -> LAUNCHER
@@ -1304,12 +1306,12 @@ launcher.request.Request$Type -> launcher.FbDseUhV3e:
     launcher.serialize.stream.EnumSerializer SERIALIZER -> SERIALIZER
     int n -> n
     launcher.request.Request$Type[] $VALUES -> $VALUES
-    81:81:launcher.request.Request$Type[] values() -> values
-    81:81:launcher.request.Request$Type valueOf(java.lang.String) -> valueOf
-    91:93:void <init>(java.lang.String,int,int) -> <init>
-    97:97:int getNumber() -> getNumber
-    102:102:launcher.request.Request$Type read(launcher.serialize.HInput) -> read
-    81:88:void <clinit>() -> <clinit>
+    85:85:launcher.request.Request$Type[] values() -> values
+    85:85:launcher.request.Request$Type valueOf(java.lang.String) -> valueOf
+    95:97:void <init>(java.lang.String,int,int) -> <init>
+    101:101:int getNumber() -> getNumber
+    106:106:launcher.request.Request$Type read(launcher.serialize.HInput) -> read
+    85:92:void <clinit>() -> <clinit>
 launcher.request.RequestException -> launcher.rYrF2pyP6:
     long serialVersionUID -> REnOc6Ki3M
     12:13:void <init>(java.lang.String) -> <init>
@@ -1662,6 +1664,20 @@ launcher.serialize.stream.StreamObject -> launcher.cpkoMU8si8:
     19:24:byte[] write() -> write
 launcher.serialize.stream.StreamObject$Adapter -> launcher.ujBg0HXD7R:
     launcher.serialize.stream.StreamObject convert(launcher.serialize.HInput) -> convert
+launcher.ssl.LauncherKeyStore -> launcher.uVxCEhJ3aw:
+    12:12:void <init>() -> <init>
+    14:23:java.security.KeyStore getKeyStore(java.lang.String,java.lang.String) -> REnOc6Ki3M
+launcher.ssl.LauncherSSLContext -> launcher.JTxEwe2Odj:
+    javax.net.ssl.SSLServerSocketFactory ssf -> REnOc6Ki3M
+    javax.net.ssl.SSLSocketFactory sf -> REnOc6Ki3M
+    javax.net.ssl.SSLContext sc -> REnOc6Ki3M
+    14:25:void <init>(java.security.KeyStore,java.lang.String) -> <init>
+    26:34:void <init>() -> <init>
+launcher.ssl.LauncherTrustManager -> launcher.eyr48gYnQV:
+    5:5:void <init>() -> <init>
+    7:7:void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String) -> checkClientTrusted
+    10:10:void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String) -> checkServerTrusted
+    13:13:java.security.cert.X509Certificate[] getAcceptedIssuers() -> getAcceptedIssuers
 ru.zaxar163.GuardBind -> ru.zaxar163.GuardBind:
     8:8:void <init>() -> <init>
     boolean avnStartDefence() -> avnStartDefence
