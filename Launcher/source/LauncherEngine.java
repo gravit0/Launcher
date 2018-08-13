@@ -69,7 +69,6 @@ public class LauncherEngine {
     }
 
     public static void main(String... args) throws Throwable {
-        SecurityHelper.verifyCertificates(Launcher.class);
         JVMHelper.verifySystemProperties(Launcher.class, true);
         LogHelper.printVersion("Launcher");
 

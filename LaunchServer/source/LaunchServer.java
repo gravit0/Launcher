@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -47,6 +46,7 @@ import launcher.serialize.config.entry.BooleanConfigEntry;
 import launcher.serialize.config.entry.IntegerConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
 import launcher.serialize.signed.SignedObjectHolder;
+import launchserver.auth.AuthLimiter;
 import launchserver.auth.handler.AuthHandler;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.binary.EXEL4JLauncherBinary;
@@ -337,7 +337,6 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     }
 
     public static void main(String... args) throws Throwable {
-        SecurityHelper.verifyCertificates(LaunchServer.class);
         JVMHelper.verifySystemProperties(LaunchServer.class, true);
         LogHelper.addOutput(IOHelper.WORKING_DIR.resolve("LaunchServer.log"));
         LogHelper.printVersion("LaunchServer");
@@ -389,6 +388,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         // Misc options
         @LauncherAPI public final boolean launch4J;
         @LauncherAPI public final boolean compress;
+        @LauncherAPI public final int authRateLimit;
+        @LauncherAPI public final int authRateLimitMilis;
         private final StringConfigEntry address;
         private final String bindAddress;
 
@@ -397,6 +398,12 @@ public final class LaunchServer implements Runnable, AutoCloseable {
             address = block.getEntry("address", StringConfigEntry.class);
             port = VerifyHelper.verifyInt(block.getEntryValue("port", IntegerConfigEntry.class),
                 VerifyHelper.range(0, 65535), "Illegal LaunchServer port");
+            authRateLimit = VerifyHelper.verifyInt(block.getEntryValue("authRateLimit", IntegerConfigEntry.class),
+                    VerifyHelper.range(0, 1000000), "Illegal authRateLimit");
+            AuthLimiter.rateLimit = authRateLimit;
+            authRateLimitMilis = VerifyHelper.verifyInt(block.getEntryValue("authRateLimitMilis", IntegerConfigEntry.class),
+                    VerifyHelper.range(10, 1000000), "Illegal authRateLimitMillis");
+            AuthLimiter.rateLimitMilis = authRateLimitMilis;
             bindAddress = block.hasEntry("bindAddress") ?
                 block.getEntryValue("bindAddress", StringConfigEntry.class) : getAddress();
 

@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/source" isTestSource="false" packagePrefix="launcher" />
       <sourceFolder url="file://$MODULE_DIR$/source-testing" isTestSource="true" packagePrefix="launcher" />
       <sourceFolder url="file://$MODULE_DIR$/source-authlib" isTestSource="false" packagePrefix="com.mojang.authlib" />
+      <sourceFolder url="file://$MODULE_DIR$/source-protectapi" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" exported="" name="minimal-json-0.9.4" level="project" />

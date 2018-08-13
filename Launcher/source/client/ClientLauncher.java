@@ -1,17 +1,12 @@
 package launcher.client;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.ProcessBuilder.Redirect;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.interfaces.RSAPublicKey;
@@ -34,18 +29,14 @@ import launcher.client.ClientProfile.Version;
 import launcher.hasher.DirWatcher;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
-import launcher.helper.CommonHelper;
-import launcher.helper.IOHelper;
-import launcher.helper.JVMHelper;
+import launcher.helper.*;
 import launcher.helper.JVMHelper.OS;
-import launcher.helper.LogHelper;
-import launcher.helper.SecurityHelper;
-import launcher.helper.VerifyHelper;
 import launcher.request.update.LauncherRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
+import launcher.AvanguardStarter;
 
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
@@ -82,7 +73,7 @@ public final class ClientLauncher {
         SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
         SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
         // Write params file (instead of CLI; Mustdie32 API can't handle command line > 32767 chars)
-        LogHelper.debug("Writing ClientLauncher params file");
+        LogHelper.debug("Writing ClientLauncher params");
         Path paramsFile = Files.createTempFile("ClientLauncherParams", ".bin");
         try (HOutput output = new HOutput(IOHelper.newOutput(paramsFile))) {
             params.write(output);
@@ -125,7 +116,7 @@ public final class ClientLauncher {
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
         Collections.addAll(args, ClientLauncher.class.getName());
-        args.add(paramsFile.toString()); // Add params file path to args
+        Collections.addAll(args, paramsFile.toString());
 
         // Print commandline debug message
         LogHelper.debug("Commandline: " + args);
@@ -140,22 +131,25 @@ public final class ClientLauncher {
             builder.redirectErrorStream(true);
             builder.redirectOutput(Redirect.PIPE);
         }
-
         // Let's rock!
-        return builder.start();
+        Process process = builder.start();
+        return process;
     }
 
     @LauncherAPI
     public static void main(String... args) throws Throwable {
+        if(JVMHelper.OS_TYPE == OS.MUSTDIE)
+        {
+            AvanguardStarter.main(args);
+        }
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");
 
         // Resolve params file
         VerifyHelper.verifyInt(args.length, l -> l >= 1, "Missing args: <paramsFile>");
         Path paramsFile = IOHelper.toPath(args[0]);
-
         // Read and delete params file
-        LogHelper.debug("Reading ClientLauncher params file");
+        LogHelper.debug("Reading ClientLauncher params");
         Params params;
         SignedObjectHolder<ClientProfile> profile;
         SignedObjectHolder<HashedDir> assetHDir, clientHDir;
