@@ -24,8 +24,6 @@ import launcher.serialize.config.ConfigObject;
 import launcher.serialize.config.TextConfigReader;
 import launcher.serialize.config.TextConfigWriter;
 import launcher.serialize.config.entry.*;
-import launcher.serialize.signed.SignedBytesHolder;
-import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.EnumSerializer;
 import launcher.serialize.stream.StreamObject;
 
@@ -137,8 +135,6 @@ public class LauncherEngine {
         bindings.put("HOutputClass", HOutput.class);
         bindings.put("StreamObjectClass", StreamObject.class);
         bindings.put("StreamObjectAdapterClass", StreamObject.Adapter.class);
-        bindings.put("SignedBytesHolderClass", SignedBytesHolder.class);
-        bindings.put("SignedObjectHolderClass", SignedObjectHolder.class);
         bindings.put("EnumSerializerClass", EnumSerializer.class);
 
         // Set config serialization class bindings

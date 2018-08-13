@@ -45,7 +45,6 @@ import launcher.serialize.config.entry.BlockConfigEntry;
 import launcher.serialize.config.entry.BooleanConfigEntry;
 import launcher.serialize.config.entry.IntegerConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
-import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.auth.AuthLimiter;
 import launchserver.auth.handler.AuthHandler;
 import launchserver.auth.provider.AuthProvider;
@@ -84,8 +83,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     private final AtomicBoolean started = new AtomicBoolean(false);
 
     // Updates and profiles
-    private volatile List<SignedObjectHolder<ClientProfile>> profilesList;
-    private volatile Map<String, SignedObjectHolder<HashedDir>> updatesDirMap;
+    private volatile List<ClientProfile> profilesList;
+    private volatile Map<String, HashedDir> updatesDirMap;
 
     public LaunchServer(Path dir, boolean portable) throws IOException, InvalidKeySpecException {
         //setScriptBindings();
@@ -225,17 +224,17 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
     @LauncherAPI
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public Collection<SignedObjectHolder<ClientProfile>> getProfiles() {
+    public Collection<ClientProfile> getProfiles() {
         return profilesList;
     }
 
     @LauncherAPI
-    public SignedObjectHolder<HashedDir> getUpdateDir(String name) {
+    public HashedDir getUpdateDir(String name) {
         return updatesDirMap.get(name);
     }
 
     @LauncherAPI
-    public Set<Entry<String, SignedObjectHolder<HashedDir>>> getUpdateDirs() {
+    public Set<Entry<String, HashedDir>> getUpdateDirs() {
         return updatesDirMap.entrySet();
     }
 
@@ -265,18 +264,18 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     @LauncherAPI
     public void syncProfilesDir() throws IOException {
         LogHelper.info("Syncing profiles dir");
-        List<SignedObjectHolder<ClientProfile>> newProfies = new LinkedList<>();
+        List<ClientProfile> newProfies = new LinkedList<>();
         IOHelper.walk(profilesDir, new ProfilesFileVisitor(newProfies), false);
 
         // Sort and set new profiles
-        newProfies.sort(Comparator.comparing(a -> a.object));
+        newProfies.sort(Comparator.comparing(a -> a));
         profilesList = Collections.unmodifiableList(newProfies);
     }
 
     @LauncherAPI
     public void syncUpdatesDir(Collection<String> dirs) throws IOException {
         LogHelper.info("Syncing updates dir");
-        Map<String, SignedObjectHolder<HashedDir>> newUpdatesDirMap = new HashMap<>(16);
+        Map<String, HashedDir> newUpdatesDirMap = new HashMap<>(16);
         try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(updatesDir)) {
             for (Path updateDir : dirStream) {
                 if (Files.isHidden(updateDir)) {
@@ -292,7 +291,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
                 // Add from previous map (it's guaranteed to be non-null)
                 if (dirs != null && !dirs.contains(name)) {
-                    SignedObjectHolder<HashedDir> hdir = updatesDirMap.get(name);
+                    HashedDir hdir = updatesDirMap.get(name);
                     if (hdir != null) {
                         newUpdatesDirMap.put(name, hdir);
                         continue;
@@ -302,7 +301,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                 // Sync and sign update dir
                 LogHelper.subInfo("Syncing '%s' update dir", name);
                 HashedDir updateHDir = new HashedDir(updateDir, null, true, true);
-                newUpdatesDirMap.put(name, new SignedObjectHolder<>(updateHDir, privateKey));
+                newUpdatesDirMap.put(name, updateHDir);
             }
         }
         updatesDirMap = Collections.unmodifiableMap(newUpdatesDirMap);
@@ -356,9 +355,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     }
 
     private final class ProfilesFileVisitor extends SimpleFileVisitor<Path> {
-        private final Collection<SignedObjectHolder<ClientProfile>> result;
+        private final Collection<ClientProfile> result;
 
-        private ProfilesFileVisitor(Collection<SignedObjectHolder<ClientProfile>> result) {
+        private ProfilesFileVisitor(Collection<ClientProfile> result) {
             this.result = result;
         }
 
@@ -374,7 +373,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
             profile.verify();
 
             // Add SIGNED profile to result list
-            result.add(new SignedObjectHolder<>(profile, privateKey));
+            result.add(profile);
             return super.visitFile(file, attrs);
         }
     }

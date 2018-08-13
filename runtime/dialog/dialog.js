@@ -138,14 +138,12 @@ function goSettings(event) {
 function verifyLauncher(e) {
     processing.resetOverlay();
     overlay.show(processing.overlay, function(event) makeLauncherRequest(function(result) {
-        settings.lastSign = result.sign;
         settings.lastProfiles = result.profiles;
 
         // Init offline if set
         if (settings.offline) {
             initOffline();
         }
-
         // Update profiles list and hide overlay
         updateProfilesList(result.profiles);
         overlay.hide(0, function() {
@@ -164,22 +162,22 @@ function doAuth(profile, login, rsaPassword) {
 }
 
 function doUpdate(profile, pp, accessToken) {
-    var digest = profile.object.isUpdateFastCheck();
+    var digest = profile.isUpdateFastCheck();
 
     // Update asset dir
     overlay.swap(0, update.overlay, function(event) {
             update.resetOverlay("Обновление файлов ресурсов");
-            var assetDirName = profile.object.block.getEntryValue("assetDir", StringConfigEntryClass);
+            var assetDirName = profile.block.getEntryValue("assetDir", StringConfigEntryClass);
             var assetDir = settings.updatesDir.resolve(assetDirName);
-            var assetMatcher = profile.object.getAssetUpdateMatcher();
+            var assetMatcher = profile.getAssetUpdateMatcher();
             makeUpdateRequest(assetDirName, assetDir, assetMatcher, digest, function(assetHDir) {
                 settings.lastHDirs.put(assetDirName, assetHDir);
 
                 // Update client dir
                 update.resetOverlay("Обновление файлов клиента");
-                var clientDirName = profile.object.block.getEntryValue("dir", StringConfigEntryClass);
+                var clientDirName = profile.block.getEntryValue("dir", StringConfigEntryClass);
                 var clientDir = settings.updatesDir.resolve(clientDirName);
-                var clientMatcher = profile.object.getClientUpdateMatcher();
+                var clientMatcher = profile.getClientUpdateMatcher();
                 makeUpdateRequest(clientDirName, clientDir, clientMatcher, digest, function(clientHDir) {
                     settings.lastHDirs.put(clientDirName, clientHDir);
                     doLaunchClient(assetDir, assetHDir, clientDir, clientHDir, profile, pp, accessToken);
@@ -212,7 +210,9 @@ function updateProfilesList(profiles) {
     // Set profiles items
     profilesBox.setItems(javafx.collections.FXCollections.observableList(profiles));
     for each (var profile in profiles) {
-        pingers[profile.object] = new ServerPinger(profile.object.getServerSocketAddress(), profile.object.getVersion());
+        if(profile == undefined) continue;
+        LogHelper.info(profile.getServerSocketAddress());
+        pingers[profile] = new ServerPinger(profile.getServerSocketAddress(), profile.getVersion());
     }
 
     // Set profiles selection model
@@ -243,7 +243,7 @@ function newProfileCell(listView) {
             }
 
             // Update title and server status
-            title.setText(item.object.getTitle());
+            title.setText(item.getTitle());
             pingServer(status, statusCircle, item);
         }
     };
@@ -253,7 +253,7 @@ function newProfileCell(listView) {
 
 function pingServer(status, statusCircle, profile) {
     setServerStatus(status, statusCircle, javafx.scene.paint.Color.GREY, "...");
-    var task = newTask(function() pingers[profile.object].ping());
+    var task = newTask(function() pingers[profile].ping());
     task.setOnSucceeded(function(event) {
         var result = task.getValue();
         var color = result.isOverfilled() ? javafx.scene.paint.Color.YELLOW : javafx.scene.paint.Color.GREEN;

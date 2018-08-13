@@ -639,12 +639,12 @@ launcher.LauncherConfig -> launcher.mgXgJr6phP:
 launcher.LauncherEngine -> launcher.D5BTZ0MHrC:
     java.util.concurrent.atomic.AtomicBoolean started -> REnOc6Ki3M
     javax.script.ScriptEngine engine -> REnOc6Ki3M
-    46:52:void <init>() -> <init>
-    55:61:void setScriptBindings() -> REnOc6Ki3M
-    65:68:java.lang.Object loadScript(java.net.URL) -> loadScript
-    72:85:void main(java.lang.String[]) -> main
-    89:98:void start(java.lang.String[]) -> start
-    102:174:void addLauncherClassBindings(java.util.Map) -> addLauncherClassBindings
+    44:50:void <init>() -> <init>
+    53:59:void setScriptBindings() -> REnOc6Ki3M
+    63:66:java.lang.Object loadScript(java.net.URL) -> loadScript
+    70:83:void main(java.lang.String[]) -> main
+    87:96:void start(java.lang.String[]) -> start
+    100:170:void addLauncherClassBindings(java.util.Map) -> addLauncherClassBindings
 launcher.client.ClientLauncher -> launcher.w42vVwSrSW:
     java.lang.String[] EMPTY_ARRAY -> REnOc6Ki3M
     java.lang.String MAGICAL_INTEL_OPTION -> REnOc6Ki3M
@@ -657,26 +657,26 @@ launcher.client.ClientLauncher -> launcher.w42vVwSrSW:
     java.lang.String CLOAK_URL_PROPERTY -> CLOAK_URL_PROPERTY
     java.lang.String CLOAK_DIGEST_PROPERTY -> CLOAK_DIGEST_PROPERTY
     java.util.concurrent.atomic.AtomicBoolean LAUNCHED -> REnOc6Ki3M
-    64:65:void <init>() -> <init>
-    69:69:boolean isLaunched() -> isLaunched
-    77:137:java.lang.Process launch(launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.serialize.signed.SignedObjectHolder,launcher.client.ClientLauncher$Params,boolean) -> launch
-    142:211:void main(java.lang.String[]) -> main
-    215:224:void verifyHDir(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> verifyHDir
-    227:281:void addClientArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
-    284:291:void addClientLegacyArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> CxM7zIuYhO
-    298:314:void launch(launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
-    317:326:java.net.URL[] resolveClassPath(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
-    329:338:java.util.LinkedList resolveClassPathList(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
-    326:326:java.net.URL[] lambda$resolveClassPath$1(int) -> REnOc6Ki3M
-    150:150:boolean lambda$main$0(int) -> REnOc6Ki3M
-    42:62:void <clinit>() -> <clinit>
+    63:64:void <init>() -> <init>
+    68:68:boolean isLaunched() -> isLaunched
+    76:136:java.lang.Process launch(launcher.hasher.HashedDir,launcher.hasher.HashedDir,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params,boolean) -> launch
+    141:209:void main(java.lang.String[]) -> main
+    213:222:void verifyHDir(java.nio.file.Path,launcher.hasher.HashedDir,launcher.hasher.FileNameMatcher,boolean) -> verifyHDir
+    225:279:void addClientArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    282:289:void addClientLegacyArgs(java.util.Collection,launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> CxM7zIuYhO
+    296:312:void launch(launcher.client.ClientProfile,launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    315:324:java.net.URL[] resolveClassPath(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
+    327:336:java.util.LinkedList resolveClassPathList(java.nio.file.Path,java.lang.String[]) -> REnOc6Ki3M
+    324:324:java.net.URL[] lambda$resolveClassPath$1(int) -> REnOc6Ki3M
+    149:149:boolean lambda$main$0(int) -> REnOc6Ki3M
+    41:61:void <clinit>() -> <clinit>
 launcher.client.ClientLauncher$1 -> launcher.rA2YLHiJR:
 launcher.client.ClientLauncher$ClassPathFileVisitor -> launcher.kQfBjd7UO0:
     java.util.Collection result -> REnOc6Ki3M
-    415:417:void <init>(java.util.Collection) -> <init>
-    421:424:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
-    412:412:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
-    412:412:void <init>(java.util.Collection,launcher.client.ClientLauncher$1) -> <init>
+    409:411:void <init>(java.util.Collection) -> <init>
+    415:418:java.nio.file.FileVisitResult visitFile(java.nio.file.Path,java.nio.file.attribute.BasicFileAttributes) -> REnOc6Ki3M
+    406:406:java.nio.file.FileVisitResult visitFile(java.lang.Object,java.nio.file.attribute.BasicFileAttributes) -> visitFile
+    406:406:void <init>(java.util.Collection,launcher.client.ClientLauncher$1) -> <init>
 launcher.client.ClientLauncher$Params -> launcher.XFK1HTUklp:
     java.nio.file.Path assetDir -> assetDir
     java.nio.file.Path clientDir -> clientDir
@@ -687,11 +687,9 @@ launcher.client.ClientLauncher$Params -> launcher.XFK1HTUklp:
     int ram -> ram
     int width -> width
     int height -> height
-    byte[] launcherSign -> REnOc6Ki3M
-    358:373:void <init>(byte[],java.nio.file.Path,java.nio.file.Path,launcher.client.PlayerProfile,java.lang.String,boolean,boolean,int,int,int) -> <init>
-    376:391:void <init>(launcher.serialize.HInput) -> <init>
-    395:409:void write(launcher.serialize.HOutput) -> write
-    341:341:byte[] access$000(launcher.client.ClientLauncher$Params) -> REnOc6Ki3M
+    355:369:void <init>(java.nio.file.Path,java.nio.file.Path,launcher.client.PlayerProfile,java.lang.String,boolean,boolean,int,int,int) -> <init>
+    372:386:void <init>(launcher.serialize.HInput) -> <init>
+    392:403:void write(launcher.serialize.HOutput) -> write
 launcher.client.ClientProfile -> launcher.IBvy0uQmfK:
     launcher.serialize.stream.StreamObject$Adapter RO_ADAPTER -> RO_ADAPTER
     launcher.hasher.FileNameMatcher ASSET_MATCHER -> REnOc6Ki3M
@@ -1359,21 +1357,18 @@ launcher.request.update.LauncherRequest -> launcher.T3xsQ3Hzd:
     31:32:void <init>(launcher.LauncherConfig) -> <init>
     36:37:void <init>() -> <init>
     41:41:launcher.request.Request$Type getType() -> getType
-    47:73:launcher.request.update.LauncherRequest$Result requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
-    78:100:void update(launcher.LauncherConfig,launcher.request.update.LauncherRequest$Result) -> update
+    47:72:launcher.request.update.LauncherRequest$Result requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
+    79:98:void update(launcher.LauncherConfig,launcher.request.update.LauncherRequest$Result) -> update
     25:25:java.lang.Object requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> requestDo
     26:27:void <clinit>() -> <clinit>
 launcher.request.update.LauncherRequest$1 -> launcher.Kf9df1Nw7:
 launcher.request.update.LauncherRequest$Result -> launcher.dMvKouv9Ie:
     java.util.List profiles -> profiles
     byte[] binary -> REnOc6Ki3M
-    byte[] sign -> CxM7zIuYhO
-    108:112:void <init>(byte[],byte[],java.util.List) -> <init>
+    105:112:void <init>(byte[],java.util.List) -> <init>
     116:116:byte[] getBinary() -> getBinary
-    121:121:byte[] getSign() -> getSign
-    103:103:void <init>(byte[],byte[],java.util.List,launcher.request.update.LauncherRequest$1) -> <init>
-    103:103:byte[] access$100(launcher.request.update.LauncherRequest$Result) -> REnOc6Ki3M
-    103:103:byte[] access$200(launcher.request.update.LauncherRequest$Result) -> CxM7zIuYhO
+    101:101:void <init>(byte[],java.util.List,launcher.request.update.LauncherRequest$1) -> <init>
+    101:101:byte[] access$100(launcher.request.update.LauncherRequest$Result) -> REnOc6Ki3M
 launcher.request.update.UpdateListRequest -> launcher.dP1WwMOLzc:
     18:19:void <init>(launcher.LauncherConfig) -> <init>
     23:24:void <init>() -> <init>
@@ -1391,32 +1386,32 @@ launcher.request.update.UpdateRequest -> launcher.T71Ege40YQ:
     long totalDownloaded -> REnOc6Ki3M
     long totalSize -> CxM7zIuYhO
     java.time.Instant startTime -> REnOc6Ki3M
-    56:61:void <init>(launcher.LauncherConfig,java.lang.String,java.nio.file.Path,launcher.hasher.FileNameMatcher,boolean) -> <init>
-    65:66:void <init>(java.lang.String,java.nio.file.Path,launcher.hasher.FileNameMatcher,boolean) -> <init>
-    70:70:launcher.request.Request$Type getType() -> getType
-    75:79:launcher.serialize.signed.SignedObjectHolder request() -> REnOc6Ki3M
-    85:148:launcher.serialize.signed.SignedObjectHolder requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
-    153:154:void setStateCallback(launcher.request.update.UpdateRequest$State$Callback) -> setStateCallback
-    157:182:void deleteExtraDir(java.nio.file.Path,launcher.hasher.HashedDir,boolean) -> REnOc6Ki3M
-    185:222:void downloadFile(java.nio.file.Path,launcher.hasher.HashedFile,java.io.InputStream) -> REnOc6Ki3M
-    225:242:void fillActionsQueue(java.util.Queue,launcher.hasher.HashedDir) -> REnOc6Ki3M
-    245:249:void updateState(java.lang.String,long,long) -> REnOc6Ki3M
-    38:38:java.lang.Object request() -> request
-    38:38:java.lang.Object requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> requestDo
+    55:60:void <init>(launcher.LauncherConfig,java.lang.String,java.nio.file.Path,launcher.hasher.FileNameMatcher,boolean) -> <init>
+    64:65:void <init>(java.lang.String,java.nio.file.Path,launcher.hasher.FileNameMatcher,boolean) -> <init>
+    69:69:launcher.request.Request$Type getType() -> getType
+    74:78:launcher.hasher.HashedDir request() -> REnOc6Ki3M
+    84:147:launcher.hasher.HashedDir requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
+    152:153:void setStateCallback(launcher.request.update.UpdateRequest$State$Callback) -> setStateCallback
+    156:181:void deleteExtraDir(java.nio.file.Path,launcher.hasher.HashedDir,boolean) -> REnOc6Ki3M
+    184:221:void downloadFile(java.nio.file.Path,launcher.hasher.HashedFile,java.io.InputStream) -> REnOc6Ki3M
+    224:241:void fillActionsQueue(java.util.Queue,launcher.hasher.HashedDir) -> REnOc6Ki3M
+    244:248:void updateState(java.lang.String,long,long) -> REnOc6Ki3M
+    37:37:java.lang.Object request() -> request
+    37:37:java.lang.Object requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> requestDo
 launcher.request.update.UpdateRequest$1 -> launcher.li5rYQCrF:
     int[] $SwitchMap$launcher$request$update$UpdateRequest$Action$Type -> REnOc6Ki3M
     int[] $SwitchMap$launcher$hasher$HashedEntry$Type -> CxM7zIuYhO
-    123:164:void <clinit>() -> <clinit>
+    122:163:void <clinit>() -> <clinit>
 launcher.request.update.UpdateRequest$Action -> launcher.DPQn8ecwi8:
     launcher.request.update.UpdateRequest$Action CD_BACK -> REnOc6Ki3M
     launcher.request.update.UpdateRequest$Action FINISH -> CxM7zIuYhO
     launcher.request.update.UpdateRequest$Action$Type type -> REnOc6Ki3M
     java.lang.String name -> REnOc6Ki3M
     launcher.hasher.HashedEntry entry -> REnOc6Ki3M
-    260:264:void <init>(launcher.request.update.UpdateRequest$Action$Type,java.lang.String,launcher.hasher.HashedEntry) -> <init>
-    266:270:void <init>(launcher.serialize.HInput) -> <init>
-    274:278:void write(launcher.serialize.HOutput) -> write
-    252:253:void <clinit>() -> <clinit>
+    259:263:void <init>(launcher.request.update.UpdateRequest$Action$Type,java.lang.String,launcher.hasher.HashedEntry) -> <init>
+    265:269:void <init>(launcher.serialize.HInput) -> <init>
+    273:277:void write(launcher.serialize.HOutput) -> write
+    251:252:void <clinit>() -> <clinit>
 launcher.request.update.UpdateRequest$Action$Type -> launcher.rwg3pR8dHB:
     launcher.request.update.UpdateRequest$Action$Type CD -> REnOc6Ki3M
     launcher.request.update.UpdateRequest$Action$Type CD_BACK -> CxM7zIuYhO
@@ -1425,12 +1420,12 @@ launcher.request.update.UpdateRequest$Action$Type -> launcher.rwg3pR8dHB:
     launcher.serialize.stream.EnumSerializer SERIALIZER -> REnOc6Ki3M
     int n -> REnOc6Ki3M
     launcher.request.update.UpdateRequest$Action$Type[] $VALUES -> REnOc6Ki3M
-    280:280:launcher.request.update.UpdateRequest$Action$Type[] values() -> values
-    280:280:launcher.request.update.UpdateRequest$Action$Type valueOf(java.lang.String) -> valueOf
-    285:287:void <init>(java.lang.String,int,int) -> <init>
-    291:291:int getNumber() -> getNumber
-    295:295:launcher.request.update.UpdateRequest$Action$Type read(launcher.serialize.HInput) -> REnOc6Ki3M
-    280:282:void <clinit>() -> <clinit>
+    279:279:launcher.request.update.UpdateRequest$Action$Type[] values() -> values
+    279:279:launcher.request.update.UpdateRequest$Action$Type valueOf(java.lang.String) -> valueOf
+    284:286:void <init>(java.lang.String,int,int) -> <init>
+    290:290:int getNumber() -> getNumber
+    294:294:launcher.request.update.UpdateRequest$Action$Type read(launcher.serialize.HInput) -> REnOc6Ki3M
+    279:281:void <clinit>() -> <clinit>
 launcher.request.update.UpdateRequest$State -> launcher.KIZahkc6gq:
     long fileDownloaded -> fileDownloaded
     long fileSize -> fileSize
@@ -1438,25 +1433,25 @@ launcher.request.update.UpdateRequest$State -> launcher.KIZahkc6gq:
     long totalSize -> totalSize
     java.lang.String filePath -> filePath
     java.time.Duration duration -> duration
-    308:317:void <init>(java.lang.String,long,long,long,long,java.time.Duration) -> <init>
-    321:325:double getBps() -> getBps
-    330:334:java.time.Duration getEstimatedTime() -> getEstimatedTime
-    339:339:double getFileDownloadedKiB() -> getFileDownloadedKiB
-    344:344:double getFileDownloadedMiB() -> getFileDownloadedMiB
-    349:352:double getFileDownloadedPart() -> getFileDownloadedPart
-    357:357:long getFileRemaining() -> getFileRemaining
-    362:362:double getFileRemainingKiB() -> getFileRemainingKiB
-    367:367:double getFileRemainingMiB() -> getFileRemainingMiB
-    372:372:double getFileSizeKiB() -> getFileSizeKiB
-    377:377:double getFileSizeMiB() -> getFileSizeMiB
-    382:382:double getTotalDownloadedKiB() -> getTotalDownloadedKiB
-    387:387:double getTotalDownloadedMiB() -> getTotalDownloadedMiB
-    392:395:double getTotalDownloadedPart() -> getTotalDownloadedPart
-    400:400:long getTotalRemaining() -> getTotalRemaining
-    405:405:double getTotalRemainingKiB() -> getTotalRemainingKiB
-    410:410:double getTotalRemainingMiB() -> getTotalRemainingMiB
-    415:415:double getTotalSizeKiB() -> getTotalSizeKiB
-    420:420:double getTotalSizeMiB() -> getTotalSizeMiB
+    307:316:void <init>(java.lang.String,long,long,long,long,java.time.Duration) -> <init>
+    320:324:double getBps() -> getBps
+    329:333:java.time.Duration getEstimatedTime() -> getEstimatedTime
+    338:338:double getFileDownloadedKiB() -> getFileDownloadedKiB
+    343:343:double getFileDownloadedMiB() -> getFileDownloadedMiB
+    348:351:double getFileDownloadedPart() -> getFileDownloadedPart
+    356:356:long getFileRemaining() -> getFileRemaining
+    361:361:double getFileRemainingKiB() -> getFileRemainingKiB
+    366:366:double getFileRemainingMiB() -> getFileRemainingMiB
+    371:371:double getFileSizeKiB() -> getFileSizeKiB
+    376:376:double getFileSizeMiB() -> getFileSizeMiB
+    381:381:double getTotalDownloadedKiB() -> getTotalDownloadedKiB
+    386:386:double getTotalDownloadedMiB() -> getTotalDownloadedMiB
+    391:394:double getTotalDownloadedPart() -> getTotalDownloadedPart
+    399:399:long getTotalRemaining() -> getTotalRemaining
+    404:404:double getTotalRemainingKiB() -> getTotalRemainingKiB
+    409:409:double getTotalRemainingMiB() -> getTotalRemainingMiB
+    414:414:double getTotalSizeKiB() -> getTotalSizeKiB
+    419:419:double getTotalSizeMiB() -> getTotalSizeMiB
 launcher.request.update.UpdateRequest$State$Callback -> launcher.CDCRznTyry:
     void call(launcher.request.update.UpdateRequest$State) -> REnOc6Ki3M
 launcher.request.uuid.BatchProfileByUsernameRequest -> launcher.FiZo35pRi:
@@ -1634,46 +1629,29 @@ launcher.serialize.config.entry.StringConfigEntry -> launcher.RbUQr0O0mV:
     27:28:void uncheckedSetValue(java.lang.String) -> REnOc6Ki3M
     32:33:void write(launcher.serialize.HOutput) -> write
     9:9:void uncheckedSetValue(java.lang.Object) -> REnOc6Ki3M
-launcher.serialize.signed.SignedBytesHolder -> launcher.rmujr3wEHg:
-    byte[] bytes -> REnOc6Ki3M
-    byte[] sign -> CxM7zIuYhO
-    20:21:void <init>(launcher.serialize.HInput,java.security.interfaces.RSAPublicKey) -> <init>
-    24:28:void <init>(byte[],byte[],java.security.interfaces.RSAPublicKey) -> <init>
-    31:34:void <init>(byte[],java.security.interfaces.RSAPrivateKey) -> <init>
-    38:40:void write(launcher.serialize.HOutput) -> write
-    44:44:byte[] getBytes() -> getBytes
-    49:49:byte[] getSign() -> getSign
-launcher.serialize.signed.SignedObjectHolder -> launcher.ldnqKt2qJ:
-    launcher.serialize.stream.StreamObject object -> object
-    17:19:void <init>(launcher.serialize.HInput,java.security.interfaces.RSAPublicKey,launcher.serialize.stream.StreamObject$Adapter) -> <init>
-    23:25:void <init>(launcher.serialize.stream.StreamObject,java.security.interfaces.RSAPrivateKey) -> <init>
-    29:29:boolean equals(java.lang.Object) -> equals
-    34:34:int hashCode() -> hashCode
-    39:39:java.lang.String toString() -> toString
-    44:46:launcher.serialize.stream.StreamObject newInstance(launcher.serialize.stream.StreamObject$Adapter) -> newInstance
-launcher.serialize.stream.EnumSerializer -> launcher.G4VHVNt6W:
+launcher.serialize.stream.EnumSerializer -> launcher.rmujr3wEHg:
     java.util.Map map -> REnOc6Ki3M
     14:21:void <init>(java.lang.Class) -> <init>
     25:26:java.lang.Enum read(launcher.serialize.HInput) -> read
     31:32:void write(launcher.serialize.HOutput,launcher.serialize.stream.EnumSerializer$Itf) -> write
-launcher.serialize.stream.EnumSerializer$Itf -> launcher.QXsF0N8YA:
+launcher.serialize.stream.EnumSerializer$Itf -> launcher.ldnqKt2qJ:
     int getNumber() -> getNumber
-launcher.serialize.stream.StreamObject -> launcher.cpkoMU8si8:
+launcher.serialize.stream.StreamObject -> launcher.G4VHVNt6W:
     11:11:void <init>() -> <init>
     void write(launcher.serialize.HOutput) -> write
     19:24:byte[] write() -> write
-launcher.serialize.stream.StreamObject$Adapter -> launcher.ujBg0HXD7R:
+launcher.serialize.stream.StreamObject$Adapter -> launcher.QXsF0N8YA:
     launcher.serialize.stream.StreamObject convert(launcher.serialize.HInput) -> convert
-launcher.ssl.LauncherKeyStore -> launcher.uVxCEhJ3aw:
+launcher.ssl.LauncherKeyStore -> launcher.cpkoMU8si8:
     12:12:void <init>() -> <init>
     14:23:java.security.KeyStore getKeyStore(java.lang.String,java.lang.String) -> REnOc6Ki3M
-launcher.ssl.LauncherSSLContext -> launcher.JTxEwe2Odj:
+launcher.ssl.LauncherSSLContext -> launcher.ujBg0HXD7R:
     javax.net.ssl.SSLServerSocketFactory ssf -> REnOc6Ki3M
     javax.net.ssl.SSLSocketFactory sf -> REnOc6Ki3M
     javax.net.ssl.SSLContext sc -> REnOc6Ki3M
     14:25:void <init>(java.security.KeyStore,java.lang.String) -> <init>
     26:34:void <init>() -> <init>
-launcher.ssl.LauncherTrustManager -> launcher.eyr48gYnQV:
+launcher.ssl.LauncherTrustManager -> launcher.uVxCEhJ3aw:
     5:5:void <init>() -> <init>
     7:7:void checkClientTrusted(java.security.cert.X509Certificate[],java.lang.String) -> checkClientTrusted
     10:10:void checkServerTrusted(java.security.cert.X509Certificate[],java.lang.String) -> checkServerTrusted

@@ -16,7 +16,6 @@ import launcher.request.update.UpdateRequest;
 import launcher.request.update.UpdateRequest.Action;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
-import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.LaunchServer;
 import launchserver.response.Response;
 
@@ -29,7 +28,7 @@ public final class UpdateResponse extends Response {
     public void reply() throws IOException {
         // Read update dir name
         String updateDirName = IOHelper.verifyFileName(input.readString(255));
-        SignedObjectHolder<HashedDir> hdir = server.getUpdateDir(updateDirName);
+        HashedDir hdir = server.getUpdateDir(updateDirName);
         if (hdir == null) {
             requestError(String.format("Unknown update dir: %s", updateDirName));
             return;
@@ -45,7 +44,7 @@ public final class UpdateResponse extends Response {
         // Prepare variables for actions queue
         Path dir = server.updatesDir.resolve(updateDirName);
         Deque<HashedDir> dirStack = new LinkedList<>();
-        dirStack.add(hdir.object);
+        dirStack.add(hdir);
 
         // Perform update
         // noinspection IOResourceOpenedButNotSafelyClosed

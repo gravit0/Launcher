@@ -59,13 +59,13 @@ var settings = {
         settings.lastProfiles.clear();
         var lastProfilesCount = input.readLength(0);
         for (var i = 0; i < lastProfilesCount; i++) {
-            settings.lastProfiles.add(new SignedObjectHolder(input, publicKey, ClientProfile.RO_ADAPTER));
+            settings.lastProfiles.add(new ClientProfile(input, true));
         }
         settings.lastHDirs.clear();
         var lastHDirsCount = input.readLength(0);
         for (var i = 0; i < lastHDirsCount; i++) {
             var name = IOHelper.verifyFileName(input.readString(255));
-            VerifyHelper.putIfAbsent(settings.lastHDirs, name, new SignedObjectHolder(input, publicKey, function(i) new HashedDir(i)),
+            VerifyHelper.putIfAbsent(settings.lastHDirs, name, new HashedDir(input),
                 java.lang.String.format("Duplicate offline hashed dir: '%s'", name));
         }
 

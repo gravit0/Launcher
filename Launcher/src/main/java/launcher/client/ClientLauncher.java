@@ -34,7 +34,6 @@ import launcher.helper.JVMHelper.OS;
 import launcher.request.update.LauncherRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
-import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
 import launcher.AvanguardStarter;
 
@@ -71,8 +70,8 @@ public final class ClientLauncher {
 
     @LauncherAPI
     public static Process launch(
-        SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
-        SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
+        HashedDir assetHDir, HashedDir clientHDir,
+        ClientProfile profile, Params params, boolean pipeOutput) throws Throwable {
         // Write params file (instead of CLI; Mustdie32 API can't handle command line > 32767 chars)
         LogHelper.debug("Writing ClientLauncher params");
         Path paramsFile = Files.createTempFile("ClientLauncherParams", ".bin");
@@ -108,11 +107,11 @@ public final class ClientLauncher {
 
         // Add classpath and main class
         StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
-        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
+        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.getClassPath());
         for (Path path : classPath) {
             classPathString.append(File.pathSeparatorChar).append(path.toString());
         }
-        Collections.addAll(args, profile.object.getJvmArgs());
+        Collections.addAll(args, profile.getJvmArgs());
         Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
@@ -152,25 +151,24 @@ public final class ClientLauncher {
         // Read and delete params file
         LogHelper.debug("Reading ClientLauncher params");
         Params params;
-        SignedObjectHolder<ClientProfile> profile;
-        SignedObjectHolder<HashedDir> assetHDir, clientHDir;
+        ClientProfile profile;
+        HashedDir assetHDir, clientHDir;
         RSAPublicKey publicKey = Launcher.getConfig().publicKey;
         try (HInput input = new HInput(IOHelper.newInput(paramsFile))) {
             params = new Params(input);
-            profile = new SignedObjectHolder<>(input, publicKey, ClientProfile.RO_ADAPTER);
+            profile = new ClientProfile(input, true);
 
             // Read hdirs
-            assetHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
-            clientHDir = new SignedObjectHolder<>(input, publicKey, HashedDir::new);
+            assetHDir = new HashedDir(input);
+            clientHDir = new HashedDir(input);
         } finally {
             Files.delete(paramsFile);
         }
 
         // Verify ClientLauncher sign and classpath
         LogHelper.debug("Verifying ClientLauncher sign and classpath");
-        SecurityHelper.verifySign(LauncherRequest.BINARY_PATH, params.launcherSign, publicKey);
         String[] classpath = JVMHelper.getClassPath();
-        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
+        LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.getClassPath());
         int counter = classPath.size();
         for (String classpathURL : classpath) {
             Path file = Paths.get(classpathURL);
@@ -188,25 +186,25 @@ public final class ClientLauncher {
         {
             throw new SecurityException(String.format("Forbidden classpath entry, %d != 0",counter));
         }
-        URL[] classpathurls = resolveClassPath(params.clientDir, profile.object.getClassPath());
+        URL[] classpathurls = resolveClassPath(params.clientDir, profile.getClassPath());
         classLoader = new LauncherClassLoader(classpathurls,ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
         // Start client with WatchService monitoring
-        boolean digest = !profile.object.isUpdateFastCheck();
+        boolean digest = !profile.isUpdateFastCheck();
         LogHelper.debug("Starting JVM and client WatchService");
-        FileNameMatcher assetMatcher = profile.object.getAssetUpdateMatcher();
-        FileNameMatcher clientMatcher = profile.object.getClientUpdateMatcher();
-        try (DirWatcher assetWatcher = new DirWatcher(params.assetDir, assetHDir.object, assetMatcher, digest);
-            DirWatcher clientWatcher = new DirWatcher(params.clientDir, clientHDir.object, clientMatcher, digest)) {
+        FileNameMatcher assetMatcher = profile.getAssetUpdateMatcher();
+        FileNameMatcher clientMatcher = profile.getClientUpdateMatcher();
+        try (DirWatcher assetWatcher = new DirWatcher(params.assetDir, assetHDir, assetMatcher, digest);
+            DirWatcher clientWatcher = new DirWatcher(params.clientDir, clientHDir, clientMatcher, digest)) {
             // Verify current state of all dirs
             //verifyHDir(IOHelper.JVM_DIR, jvmHDir.object, null, digest);
-            verifyHDir(params.assetDir, assetHDir.object, assetMatcher, digest);
-            verifyHDir(params.clientDir, clientHDir.object, clientMatcher, digest);
+            verifyHDir(params.assetDir, assetHDir, assetMatcher, digest);
+            verifyHDir(params.clientDir, clientHDir, clientMatcher, digest);
 
             // Start WatchService, and only then client
             CommonHelper.newThread("Asset Directory Watcher", true, assetWatcher).start();
             CommonHelper.newThread("Client Directory Watcher", true, clientWatcher).start();
-            launch(profile.object, params);
+            launch(profile, params);
         }
     }
 
@@ -351,12 +349,10 @@ public final class ClientLauncher {
         @LauncherAPI public final int ram;
         @LauncherAPI public final int width;
         @LauncherAPI public final int height;
-        private final byte[] launcherSign;
 
         @LauncherAPI
-        public Params(byte[] launcherSign, Path assetDir, Path clientDir, PlayerProfile pp, String accessToken,
+        public Params(Path assetDir, Path clientDir, PlayerProfile pp, String accessToken,
             boolean autoEnter, boolean fullScreen, int ram, int width, int height) {
-            this.launcherSign = launcherSign.clone();
 
             // Client paths
             this.assetDir = assetDir;
@@ -374,7 +370,6 @@ public final class ClientLauncher {
 
         @LauncherAPI
         public Params(HInput input) throws IOException {
-            launcherSign = input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH);
 
             // Client paths
             assetDir = IOHelper.toPath(input.readString(0));
@@ -392,7 +387,6 @@ public final class ClientLauncher {
 
         @Override
         public void write(HOutput output) throws IOException {
-            output.writeByteArray(launcherSign, -SecurityHelper.RSA_KEY_LENGTH);
 
             // Client paths
             output.writeString(assetDir.toString(), 0);

@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.security.SignatureException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +21,6 @@ import launcher.request.Request;
 import launcher.request.update.LauncherRequest.Result;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
-import launcher.serialize.signed.SignedObjectHolder;
 
 public final class LauncherRequest extends Request<Result> {
     @LauncherAPI public static final Path BINARY_PATH = IOHelper.getCodeSource(Launcher.class);
@@ -48,34 +48,32 @@ public final class LauncherRequest extends Request<Result> {
         output.flush();
         readError(input);
 
-        // Verify launcher sign
-        RSAPublicKey publicKey = config.publicKey;
-        byte[] sign = input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH);
-        boolean shouldUpdate = !SecurityHelper.isValidSign(BINARY_PATH, sign, publicKey);
-
+        // Verify launcher sign //TODO: FIX
+        //RSAPublicKey publicKey = config.publicKey;
+        //byte[] sign = input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH);
+        //boolean shouldUpdate = !SecurityHelper.isValidSign(BINARY_PATH, sign, publicKey);
+        boolean shouldUpdate = false;
         // Update launcher if need
         output.writeBoolean(shouldUpdate);
         output.flush();
         if (shouldUpdate) {
             byte[] binary = input.readByteArray(0);
-            SecurityHelper.verifySign(binary, sign, config.publicKey);
-            return new Result(binary, sign, Collections.emptyList());
+            return new Result(binary, Collections.emptyList());
         }
 
         // Read clients profiles list
         int count = input.readLength(0);
-        List<SignedObjectHolder<ClientProfile>> profiles = new ArrayList<>(count);
+        List<ClientProfile> profiles = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            profiles.add(new SignedObjectHolder<>(input, publicKey, ClientProfile.RO_ADAPTER));
+            profiles.add(new ClientProfile(input, true));
         }
 
         // Return request result
-        return new Result(null, sign, profiles);
+        return new Result(null, profiles);
     }
 
     @LauncherAPI
     public static void update(LauncherConfig config, Result result) throws SignatureException, IOException {
-        SecurityHelper.verifySign(result.binary, result.sign, config.publicKey);
 
         // Prepare process builder to start new instance (java -jar works for Launch4J's EXE too)
         List<String> args = new ArrayList<>(8);
@@ -101,24 +99,21 @@ public final class LauncherRequest extends Request<Result> {
     }
 
     public static final class Result {
-        @LauncherAPI public final List<SignedObjectHolder<ClientProfile>> profiles;
+        @LauncherAPI public final List<ClientProfile> profiles;
         private final byte[] binary;
-        private final byte[] sign;
 
-        private Result(byte[] binary, byte[] sign, List<SignedObjectHolder<ClientProfile>> profiles) {
+        private Result(byte[] binary, List<ClientProfile> profiles) {
             this.binary = binary == null ? null : binary.clone();
-            this.sign = sign.clone();
+            for(ClientProfile p : profiles)
+            {
+                System.out.println(p.getServerAddress());
+            }
             this.profiles = Collections.unmodifiableList(profiles);
         }
 
         @LauncherAPI
         public byte[] getBinary() {
             return binary == null ? null : binary.clone();
-        }
-
-        @LauncherAPI
-        public byte[] getSign() {
-            return sign.clone();
         }
     }
 }

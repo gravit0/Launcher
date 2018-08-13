@@ -30,12 +30,11 @@ import launcher.request.Request;
 import launcher.request.update.UpdateRequest.State.Callback;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
-import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.EnumSerializer;
 import launcher.serialize.stream.EnumSerializer.Itf;
 import launcher.serialize.stream.StreamObject;
 
-public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> {
+public final class UpdateRequest extends Request<HashedDir> {
     @LauncherAPI public static final int MAX_QUEUE_SIZE = 128;
 
     // Instance
@@ -71,7 +70,7 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
     }
 
     @Override
-    public SignedObjectHolder<HashedDir> request() throws Exception {
+    public HashedDir request() throws Exception {
         Files.createDirectories(dir);
         localDir = new HashedDir(dir, matcher, false, digest);
 
@@ -80,15 +79,15 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
     }
 
     @Override
-    protected SignedObjectHolder<HashedDir> requestDo(HInput input, HOutput output) throws IOException, SignatureException {
+    protected HashedDir requestDo(HInput input, HOutput output) throws IOException, SignatureException {
         // Write update dir name
         output.writeString(dirName, 255);
         output.flush();
         readError(input);
 
         // Get diff between local and remote dir
-        SignedObjectHolder<HashedDir> remoteHDirHolder = new SignedObjectHolder<>(input, config.publicKey, HashedDir::new);
-        Diff diff = remoteHDirHolder.object.diff(localDir, matcher);
+        HashedDir remoteHDirHolder = new HashedDir(input);
+        Diff diff = remoteHDirHolder.diff(localDir, matcher);
         totalSize = diff.mismatch.size();
         boolean compress = input.readBoolean();
 
