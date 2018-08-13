@@ -17,11 +17,11 @@
 
 -obfuscationdictionary 'dictionary.pro'
 -classobfuscationdictionary 'dictionary.pro'
+-adaptresourcefilecontents **.properties,**.MF
 -overloadaggressively
 -repackageclasses 'launcher'
 -keepattributes SourceFile,LineNumberTable,*Annotation*
 -renamesourcefileattribute SourceFile
--adaptresourcefilecontents META-INF/MANIFEST.MF
 
 -keeppackagenames com.eclipsesource.json.**,com.mojang.**
 

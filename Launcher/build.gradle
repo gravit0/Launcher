@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:6.0.3'
+        classpath 'net.sf.proguard:proguard-gradle:6.0.1'
     }
 }
 
@@ -31,6 +31,10 @@ task obfTask(type: proguard.gradle.ProGuardTask) {
     injars tasks.jar.archivePath
     outjars new File(buildDir, 'libs/Launcher-obf.jar')
 }
+
+def keystoreFile = parent.file('sign/sashok724.jks')
+def keystorepass = 'PSP1004'
+def keyalias = 'sashok724'
 
 task signJar(description: 'to Sign JAR.',group: 'Build', overwrite: true){
 	dependsOn tasks.jar
