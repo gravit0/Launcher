@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.jar.JarInputStream;
 import java.util.jar.Pack200;
+import java.util.zip.GZIPOutputStream;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.InputFile;
@@ -40,9 +40,10 @@ public class Pack200Task extends DefaultTask {
 	public void doTask() throws IOException {
 		JarInputStream in = new JarInputStream(new FileInputStream(jar));
 		packed.createNewFile();
-		OutputStream out = new FileOutputStream(packed);
+		GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(packed));
 		Pack200.newPacker().pack(in, out);
 		in.close();
+		out.finish();
 		out.close();
 	}
 }

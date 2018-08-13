@@ -1,7 +1,6 @@
 allprojects {
 	apply plugin: 'eclipse'
 	apply plugin: 'idea'
-	apply plugin: 'java'
 	
 	repositories {
 		mavenCentral()
@@ -9,6 +8,11 @@ allprojects {
 			url "http://clojars.org/repo/"
 		}
 	}
+}
+
+subprojects {
+	apply plugin: 'java'
+	
 	def keystoreFile = new File('sign/sashok724.jks')
 	def keystorepass = 'PSP1004'
 	def keyalias = 'sashok724'
