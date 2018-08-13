@@ -344,7 +344,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         // Start LaunchServer
         Instant start = Instant.now();
         try {
-            new LaunchServer(IOHelper.WORKING_DIR, false).run();
+        	try (LaunchServer lsrv = new LaunchServer(IOHelper.WORKING_DIR, false)) {
+        		lsrv.run();
+        	}
         } catch (Throwable exc) {
             LogHelper.error(exc);
             return;
