@@ -117,9 +117,7 @@ public class JsonAuthHandler extends CachedAuthHandler {
     public boolean joinServer(String username, String accessToken, String serverID) throws IOException {
         JsonObject request = Json.object().add(userKeyName, username).add(serverIDKeyName, serverID).add(accessTokenKeyName, accessToken);
         jsonRequest(request,urlJoinServer);
-        if(super.joinServer(username,accessToken,serverID))
-        return true;
-        else return false;
+        return super.joinServer(username, accessToken, serverID);
     }
 
     @Override
