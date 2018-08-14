@@ -12,11 +12,14 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.zip.ZipEntry;
 
 import org.kamranzafar.jtar.TarEntry;
 import org.kamranzafar.jtar.TarInputStream;
 import org.kamranzafar.jtar.TarOutputStream;
+import org.tukaani.xz.FilterOptions;
+import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.XZInputStream;
+import org.tukaani.xz.XZOutputStream;
 
 import launcher.LauncherAPI;
 
@@ -25,14 +28,18 @@ public class CompressorHelper {
 	@LauncherAPI
 	private CompressorHelper() {
 	}
-
+	@LauncherAPI
+	public static final FilterOptions[] opts = new FilterOptions[] {
+		new LZMA2Options()
+	};
+	
 	@LauncherAPI
 	public static InputStream wrapIn(InputStream in) throws IOException {
-		return in;
+		return new XZInputStream(in);
 	}
 	@LauncherAPI
 	public static OutputStream wrapOut(OutputStream out) throws IOException {
-		return out;
+		return new XZOutputStream(out, opts);
 	}
 	@LauncherAPI
 	public static void compressDir(File dir, File out) throws IOException {
@@ -77,11 +84,13 @@ public class CompressorHelper {
 			this.dir = dir;
 			this.out = out;
 		}
+		@LauncherAPI
 		@Override
 		public FileVisitResult preVisitDirectory(Path file, BasicFileAttributes attrs) throws IOException {
 			out.putNextEntry(new TarEntry(file.toFile(), this.dir.relativize(dir).toString()));
 			return super.preVisitDirectory(file, attrs);
-		}	
+		}
+		@LauncherAPI
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 			out.putNextEntry(new TarEntry(file.toFile(), this.dir.relativize(dir).toString()));
@@ -95,6 +104,7 @@ public class CompressorHelper {
 			}
 			return super.visitFile(file, attrs);
 		}
+		@LauncherAPI
 		@Override
 		public void close() throws IOException {
 			out.flush();

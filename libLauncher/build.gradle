@@ -3,6 +3,6 @@ dependencies {
 	compile files('../compat/authlib/authlib-clean.jar')
 	compile 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
 	compile 'org.kamranzafar:jtar:2.3'
-	// TODO compile норм коспрессор и доиплектировать CompressorHelper
+	compile 'org.tukaani:xz:1.8' // TODO compile норм коспрессор и доиплектировать CompressorHelper
 	compileOnly 'org.jline:jline:3.9.0'
 }
