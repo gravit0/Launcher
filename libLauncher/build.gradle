@@ -4,5 +4,4 @@ dependencies {
 	compile 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
 	compile 'org.kamranzafar:jtar:2.3'
 	compile 'org.tukaani:xz:1.8'
-	compileOnly 'org.jline:jline:3.9.0'
 }

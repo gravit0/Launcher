@@ -7,6 +7,9 @@ repositories {
     maven {
         url "http://maven.geomajas.org/"
     }
+	maven {
+		url "https://oss.sonatype.org/content/groups/public"
+	}
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
@@ -25,7 +28,8 @@ dependencies {
     compile 'commons-io:commons-io:2.6'
     compileOnly files('libs/launch4j.jar') // laggy dep
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
-    compileOnly files('libs/BungeeCord.jar') // laggy dep
+    compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT'
     compileOnly 'hikari-cp:hikari-cp:2.6.0'
-    compileOnly 'mysql:mysql-connector-java:8.0.12'
+    compileOnly 'mysql:mysql-connector-java:5.0.2'
+	compileOnly 'jline:jline:2.14.6'
 }
