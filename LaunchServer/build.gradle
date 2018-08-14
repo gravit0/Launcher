@@ -10,6 +10,9 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
+	maven {
+		url "http://repo.md-5.net/content/groups/public"
+	}
 }
 
 jar {
@@ -23,9 +26,12 @@ jar {
 dependencies {
     compile project(':libLauncher')
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    compileOnly files('libs/launch4j.jar') // laggy dep
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
-    compileOnly files('libs/BungeeCord.jar') // laggy dep
+    compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT'
     compileOnly 'hikari-cp:hikari-cp:2.6.0'
-    compileOnly 'mysql:mysql-connector-java:8.0.12'
+    compileOnly 'mysql:mysql-connector-java:5.0.2'
+	compileOnly 'jline:jline:2.14.6'
+	compile('net.sf.launch4j:launch4j:3.8.0') {
+		exclude group: '*'
+	}
 }
