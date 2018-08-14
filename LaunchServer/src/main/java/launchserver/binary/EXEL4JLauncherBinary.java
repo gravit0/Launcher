@@ -3,6 +3,8 @@ package launchserver.binary;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import launcher.Launcher;
 import launcher.LauncherAPI;
@@ -114,5 +116,22 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
         public void clear() {
             // Do nothing
         }
+    }
+    
+    public Map<String, String> parse(Path ini) throws IOException {
+    	Map<String, String> toRet = new HashMap<String, String>();
+    	int i = 0;
+    	for (String line : java.nio.file.Files.readAllLines(ini)) {
+    		/*for (char c : line.toCharArray()) {
+    			if (c == '=') {
+    				System.a
+    			} else i++;
+    		}
+    		String[] props = line.split("=");
+    		if (props.length > 1)
+    		toRet.put(props[0], props[1]);
+    		*/
+    	}
+    	return toRet;
     }
 }
