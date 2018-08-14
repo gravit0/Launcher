@@ -36,9 +36,9 @@ public final class GuardBind {
     static {
         LogHelper.debug("Anti-Cheat loading");
         if(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {
-            if(JVMHelper.OS_BITS == 32) {
+            if(JVMHelper.JVM_BITS == 32) {
                 System.loadLibrary("Avanguard32");
-            } else if(JVMHelper.OS_BITS == 64) {
+            } else if(JVMHelper.JVM_BITS == 64) {
                 System.loadLibrary("Avanguard64");
             }
         }

@@ -143,6 +143,10 @@ public final class ClientLauncher {
         {
             AvanguardStarter.main(args);
         }
+        if(JVMHelper.JVM_BITS != JVMHelper.OS_BITS)
+        {
+            JavafxAlert.info("У Вас установлена Java неправильной разрядности. Возможно это приведет к ошибкам","Разрядность Java");
+        }
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");
 
