@@ -28,54 +28,58 @@ public class CompressorHelper {
 	@LauncherAPI
 	private CompressorHelper() {
 	}
+
 	@LauncherAPI
-	public static final FilterOptions[] opts = new FilterOptions[] {
-		new LZMA2Options()
-	};
-	
+	public static final FilterOptions[] opts = new FilterOptions[] { new LZMA2Options() };
+
 	@LauncherAPI
 	public static InputStream wrapIn(InputStream in) throws IOException {
 		return new XZInputStream(in);
 	}
+
 	@LauncherAPI
 	public static OutputStream wrapOut(OutputStream out) throws IOException {
 		return new XZOutputStream(out, opts);
 	}
+
 	@LauncherAPI
 	public static void compressDir(File dir, File out) throws IOException {
-		try(CompressorDirVisitor visitor = new CompressorDirVisitor(dir.toPath(), new TarOutputStream(new BufferedOutputStream(wrapOut(new FileOutputStream(out)))))) {
+		try (CompressorDirVisitor visitor = new CompressorDirVisitor(dir.toPath(),
+				new TarOutputStream(new BufferedOutputStream(wrapOut(new FileOutputStream(out)))))) {
 			IOHelper.walk(dir.toPath(), visitor, true);
 		}
 	}
+
 	@LauncherAPI
 	public static void unCompress(File dir, File archive) throws IOException {
-		try(TarInputStream inp = new TarInputStream(new BufferedInputStream(wrapIn(new FileInputStream(archive))))) {
-            TarEntry entry = null;
-            String name = null;
-            File f = null;
-            byte data[] = new byte[2048];
-            while((entry=inp.getNextEntry())!=null){
-                  
-                name = entry.getName();
-                f = new File(dir, name);
-                if (entry.isDirectory()) {
-                	f.mkdirs();
-                	continue;
-                }
+		try (TarInputStream inp = new TarInputStream(new BufferedInputStream(wrapIn(new FileInputStream(archive))))) {
+			TarEntry entry = null;
+			String name = null;
+			File f = null;
+			byte data[] = new byte[2048];
+			while ((entry = inp.getNextEntry()) != null) {
 
-                if (f.getParentFile() != null) f.getParentFile().mkdirs();
-                f.createNewFile();
-                FileOutputStream fout = new FileOutputStream(f);   
+				name = entry.getName();
+				f = new File(dir, name);
+				if (entry.isDirectory()) {
+					f.mkdirs();
+					continue;
+				}
+
+				if (f.getParentFile() != null)
+					f.getParentFile().mkdirs();
+				f.createNewFile();
+				FileOutputStream fout = new FileOutputStream(f);
 				int count = -1;
 				while ((count = inp.read(data)) != -1) {
 					fout.write(data, 0, count);
 				}
-                fout.flush();
-                fout.close();
-            }
+				fout.flush();
+				fout.close();
+			}
 		}
 	}
-	
+
 	private static class CompressorDirVisitor extends SimpleFileVisitor<Path> implements AutoCloseable {
 		private final Path dir;
 		private final TarOutputStream out;
@@ -84,12 +88,14 @@ public class CompressorHelper {
 			this.dir = dir;
 			this.out = out;
 		}
+
 		@LauncherAPI
 		@Override
 		public FileVisitResult preVisitDirectory(Path file, BasicFileAttributes attrs) throws IOException {
 			out.putNextEntry(new TarEntry(file.toFile(), this.dir.relativize(dir).toString()));
 			return super.preVisitDirectory(file, attrs);
 		}
+
 		@LauncherAPI
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -104,6 +110,7 @@ public class CompressorHelper {
 			}
 			return super.visitFile(file, attrs);
 		}
+
 		@LauncherAPI
 		@Override
 		public void close() throws IOException {
