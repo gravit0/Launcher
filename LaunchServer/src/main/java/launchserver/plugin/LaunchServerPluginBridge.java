@@ -10,7 +10,14 @@ import launchserver.LaunchServer;
 
 public final class LaunchServerPluginBridge implements Runnable, AutoCloseable {
     private final LaunchServer server;
-
+    /**
+     * Permission.
+     */
+    public static final String perm = "launchserver.corecmdcall";
+    /**
+     * Err text.
+     */
+    public static final String nonInitText = "Лаунчсервер не был полностью загружен";
     public LaunchServerPluginBridge(Path dir) throws Throwable {
         LogHelper.addOutput(dir.resolve("LaunchServer.log"));
         LogHelper.printVersion("LaunchServer");

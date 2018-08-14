@@ -1,6 +1,8 @@
 package launchserver.plugin.bukkit;
 
 import launchserver.plugin.LaunchServerPluginBridge;
+
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class LaunchServerPluginBukkit extends JavaPlugin {
@@ -27,6 +29,8 @@ public final class LaunchServerPluginBukkit extends JavaPlugin {
         }
 
         // Register command
-        getCommand("launchserver").setExecutor(new LaunchServerCommandBukkit(this));
+        PluginCommand com = getCommand("launchserver");
+        com.setPermission(LaunchServerPluginBridge.perm);
+        com.setExecutor(new LaunchServerCommandBukkit(this));
     }
 }
