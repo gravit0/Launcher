@@ -1,20 +1,18 @@
-package launchserver.response;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.Socket;
-import java.net.SocketException;
-
+package launchserver.response.netty;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.*;
 import launcher.Launcher;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
-import launcher.request.Request.Type;
-import launcher.request.RequestException;
+import launcher.request.Request;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
+import launchserver.response.PingResponse;
+import launchserver.response.Response;
+import launchserver.response.ResponseThread;
 import launchserver.response.auth.AuthResponse;
 import launchserver.response.auth.CheckServerResponse;
 import launchserver.response.auth.JoinServerResponse;
@@ -25,56 +23,61 @@ import launchserver.response.update.LauncherResponse;
 import launchserver.response.update.UpdateListResponse;
 import launchserver.response.update.UpdateResponse;
 
-public class ResponseThread implements Runnable {
-    private final LaunchServer server;
-    private final long id;
-    private final Socket socket;
+import java.io.*;
+import java.math.BigInteger;
+import java.util.Arrays;
 
-    public ResponseThread(LaunchServer server, long id, Socket socket) throws SocketException {
-        this.server = server;
-        this.id = id;
-        this.socket = socket;
+public class LauncherNettyHandler extends io.netty.channel.ChannelInboundHandlerAdapter {
+    LaunchServer server;
+    public LauncherNettyHandler(LaunchServer s)
+    {
+        server = s;
+    }
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // Send greeting for a new connection.
+        System.out.println("Th");
 
-        // Fix socket flags
-        IOHelper.setSocketFlags(socket);
     }
 
     @Override
-    public void run() {
-        if (!server.serverSocketHandler.logConnections) {
-            LogHelper.debug("Connection #%d from %s", id, IOHelper.getIP(socket.getRemoteSocketAddress()));
-        }
+    public void channelRead(ChannelHandlerContext ctx, Object request) throws Exception {
+        // Generate and write a response.
+        boolean close = false;
+        ByteBuf buf = (ByteBuf) request;
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.readBytes(bytes);
+        System.out.println(Arrays.toString(bytes));
+        HInput hInput = new HInput(new ByteArrayInputStream(bytes));
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        HOutput hOutput = new HOutput(os);
+        Request.Type t = readHandshake(hInput,hOutput);
+        System.out.println(t.getNumber());
+        respond(t,hInput,hOutput,0);
+        // We do not need to write a ChannelBuffer here.
+        // We know the encoder inserted at TelnetPipelineFactory will do the conversion.
+        ChannelFuture future = ctx.write(os.toByteArray());
 
-        // Process connection
-        boolean cancelled = false;
-        Exception savedError = null;
-        try (HInput input = new HInput(socket.getInputStream());
-            HOutput output = new HOutput(socket.getOutputStream())) {
-            Type type = readHandshake(input, output);
-            if (type == null) { // Not accepted
-                cancelled = true;
-                return;
-            }
-
-            // Start response
-            try {
-                respond(type, input, output,server,id,socket);
-            } catch (RequestException e) {
-                LogHelper.subDebug(String.format("#%d Request error: %s", id, e.getMessage()));
-                output.writeString(e.getMessage(), 0);
-            }
-        } catch (Exception e) {
-            savedError = e;
-            LogHelper.error(e);
-        } finally {
-            IOHelper.close(socket);
-            if (!cancelled) {
-                server.serverSocketHandler.onDisconnect(id, savedError);
-            }
+        // Close the connection after sending 'Have a good day!'
+        // if the client has sent 'bye'.
+        if (close) {
+            future.addListener(ChannelFutureListener.CLOSE);
         }
     }
 
-    private Type readHandshake(HInput input, HOutput output) throws IOException {
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        System.out.println("ReadComplete");
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+
+    private Request.Type readHandshake(HInput input, HOutput output) throws IOException {
         boolean legacy = false;
 
         // Verify magic number
@@ -82,7 +85,7 @@ public class ResponseThread implements Runnable {
         if (magicNumber != Launcher.PROTOCOL_MAGIC) {
             if (magicNumber != Launcher.PROTOCOL_MAGIC - 1) { // Previous launcher protocol
                 output.writeBoolean(false);
-                throw new IOException(String.format("#%d Protocol magic mismatch", id));
+                throw new IOException(String.format("Protocol magic mismatch"));
             }
             legacy = true;
         }
@@ -91,19 +94,19 @@ public class ResponseThread implements Runnable {
         BigInteger keyModulus = input.readBigInteger(SecurityHelper.RSA_KEY_LENGTH + 1);
         if (!keyModulus.equals(server.privateKey.getModulus())) {
             output.writeBoolean(false);
-            throw new IOException(String.format("#%d Key modulus mismatch", id));
+            throw new IOException(String.format("Key modulus mismatch"));
         }
 
         // Read request type
-        Type type = Type.read(input);
-        if (legacy && type != Type.LAUNCHER) {
+        Request.Type type = Request.Type.read(input);
+        if (legacy && type != Request.Type.LAUNCHER) {
             output.writeBoolean(false);
-            throw new IOException(String.format("#%d Not LAUNCHER request on legacy protocol", id));
+            throw new IOException(String.format("Not LAUNCHER request on legacy protocol"));
         }
-        if (!server.serverSocketHandler.onHandshake(id, type)) {
-            output.writeBoolean(false);
-            return null;
-        }
+        //if (!server.serverSocketHandler.onHandshake(id, type)) {
+        //    output.writeBoolean(false);
+        //    return null;
+        //}
 
         // Protocol successfully verified
         output.writeBoolean(true);
@@ -111,13 +114,7 @@ public class ResponseThread implements Runnable {
         return type;
     }
 
-    private static void respond(Type type, HInput input, HOutput output,LaunchServer server, long id,Socket socket) throws Exception {
-        if (server.serverSocketHandler.logConnections) {
-            LogHelper.info("Connection #%d from %s: %s", id, IOHelper.getIP(socket.getRemoteSocketAddress()), type.name());
-        } else {
-            LogHelper.subDebug("#%d Type: %s", id, type.name());
-        }
-
+    private void respond(Request.Type type, HInput input, HOutput output, long id) throws Exception {
         // Choose response based on type
         Response response;
         switch (type) {
@@ -125,7 +122,7 @@ public class ResponseThread implements Runnable {
                 response = new PingResponse(server, id, input, output);
                 break;
             case AUTH:
-                response = new AuthResponse(server, id, input, output, IOHelper.getIP(socket.getRemoteSocketAddress()));
+                response = new AuthResponse(server, id, input, output, "");
                 break;
             case JOIN_SERVER:
                 response = new JoinServerResponse(server, id, input, output);

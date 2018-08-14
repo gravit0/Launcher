@@ -1287,10 +1287,10 @@ launcher.request.Request -> launcher.pqRxYwKh0F:
     32:33:void <init>() -> <init>
     launcher.request.Request$Type getType() -> getType
     java.lang.Object requestDo(launcher.serialize.HInput,launcher.serialize.HOutput) -> requestDo
-    44:58:java.lang.Object request() -> request
-    63:67:void readError(launcher.serialize.HInput) -> readError
-    71:80:void writeHandshake(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
-    84:84:void requestError(java.lang.String) -> requestError
+    44:57:java.lang.Object request() -> request
+    62:66:void readError(launcher.serialize.HInput) -> readError
+    70:79:void writeHandshake(launcher.serialize.HInput,launcher.serialize.HOutput) -> REnOc6Ki3M
+    83:83:void requestError(java.lang.String) -> requestError
 launcher.request.Request$Type -> launcher.FbDseUhV3e:
     launcher.request.Request$Type PING -> PING
     launcher.request.Request$Type LAUNCHER -> LAUNCHER
@@ -1306,12 +1306,12 @@ launcher.request.Request$Type -> launcher.FbDseUhV3e:
     launcher.serialize.stream.EnumSerializer SERIALIZER -> SERIALIZER
     int n -> n
     launcher.request.Request$Type[] $VALUES -> $VALUES
-    87:87:launcher.request.Request$Type[] values() -> values
-    87:87:launcher.request.Request$Type valueOf(java.lang.String) -> valueOf
-    97:99:void <init>(java.lang.String,int,int) -> <init>
-    103:103:int getNumber() -> getNumber
-    108:108:launcher.request.Request$Type read(launcher.serialize.HInput) -> read
-    87:94:void <clinit>() -> <clinit>
+    86:86:launcher.request.Request$Type[] values() -> values
+    86:86:launcher.request.Request$Type valueOf(java.lang.String) -> valueOf
+    96:98:void <init>(java.lang.String,int,int) -> <init>
+    102:102:int getNumber() -> getNumber
+    107:107:launcher.request.Request$Type read(launcher.serialize.HInput) -> read
+    86:93:void <clinit>() -> <clinit>
 launcher.request.RequestException -> launcher.rYrF2pyP6:
     long serialVersionUID -> REnOc6Ki3M
     12:13:void <init>(java.lang.String) -> <init>

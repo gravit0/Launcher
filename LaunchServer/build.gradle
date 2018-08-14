@@ -23,6 +23,7 @@ jar {
 dependencies {
     compile project(':libLauncher')
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'io.netty', name: 'netty-all', version: '4.1.28.Final'
     compileOnly files('libs/launch4j.jar') // laggy dep
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
     compileOnly files('libs/BungeeCord.jar') // laggy dep

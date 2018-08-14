@@ -1,26 +1,25 @@
 package launchserver.response;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.*;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.ssl.SslHandler;
 import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
@@ -32,6 +31,7 @@ import launcher.ssl.LauncherKeyStore;
 import launcher.ssl.LauncherTrustManager;
 import launchserver.LaunchServer;
 import launchserver.response.Response.Factory;
+import launchserver.response.netty.LauncherNettyHandler;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
@@ -71,7 +71,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         }
     }
 
-    public void SSLContextInit() throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, KeyManagementException, IOException, CertificateException {
+    public SSLContext SSLContextInit() throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, KeyManagementException, IOException, CertificateException {
         TrustManager[] trustAllCerts = new TrustManager[] {
                 new LauncherTrustManager()
         };
@@ -82,13 +82,14 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         kmf.init(ks, "PSP1000".toCharArray());
         SSLContext sc = SSLContext.getInstance("TLSv1.2");
         sc.init(kmf.getKeyManagers(), trustAllCerts, new SecureRandom());
-        ssf = sc.getServerSocketFactory();
+        return sc;
     }
 
     @Override
     public void run() {
+        SSLContext sc = null;
         try {
-            SSLContextInit();
+            sc = SSLContextInit();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (UnrecoverableKeyException e) {
@@ -112,6 +113,35 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
             e.printStackTrace();
         }
         LogHelper.info("Starting server socket thread");
+        SSLEngine engine = sc.createSSLEngine();
+        engine.setUseClientMode(false);
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        LauncherNettyHandler handler = new LauncherNettyHandler(server);
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .handler(new LoggingHandler(LogLevel.DEBUG))
+                    .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                        @Override
+                        public void initChannel(NioSocketChannel ch) throws Exception {
+                            ChannelPipeline p = ch.pipeline();
+                            //p.addLast(new LoggingHandler(LogLevel.INFO));
+                            System.out.println("P!");
+                            p.addLast(new SslHandler(engine));
+                            p.addLast(handler);
+                        }
+                    });
+            ChannelFuture f = b.bind(server.config.getSocketAddress()).sync();
+            f.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
+        /*
         try (SSLServerSocket serverSocket = (SSLServerSocket) ssf.createServerSocket()) {
             serverSocket.setEnabledProtocols(new String[] {"TLSv1.2"});
             if (!this.serverSocket.compareAndSet(null, serverSocket)) {
@@ -144,6 +174,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
                 LogHelper.error(e);
             }
         }
+        */
     }
 
     @LauncherAPI
