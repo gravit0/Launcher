@@ -26,7 +26,7 @@ jar {
 dependencies {
     compile project(':libLauncher')
     compile 'commons-io:commons-io:2.6'
-    compileOnly files('libs/launch4j.jar') // laggy dep
+	compileOnly('net.sf.launch4j:launch4j:3.9') { exclude group: '*' }
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
     compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT'
     compileOnly 'hikari-cp:hikari-cp:2.6.0'
