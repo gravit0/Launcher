@@ -349,7 +349,7 @@ public final class IOHelper {
     public static SSLSocket newSSLSocket(InetSocketAddress address) throws IOException {
         SSLSocket socket = (SSLSocket) sslContext.sf.createSocket(address.getHostName(),address.getPort());
         socket.startHandshake();
-        setSocketFlags(socket);
+        setSSLSocketFlags(socket);
         return socket;
     }
 
@@ -542,6 +542,22 @@ public final class IOHelper {
     public static void setSocketFlags(Socket socket) throws SocketException {
         // Set socket flags
         socket.setKeepAlive(false); // TODO To socket channels
+        socket.setTcpNoDelay(false);
+        socket.setReuseAddress(true);
+
+        // Set socket options
+        socket.setSoTimeout(SOCKET_TIMEOUT);
+        socket.setTrafficClass(0b11100);
+        // Allow OS to adjust buffer sizes
+        // socket.setSendBufferSize(0x100000);
+        // socket.setReceiveBufferSize(0x100000);
+        socket.setPerformancePreferences(1, 0, 2);
+    }
+
+    @LauncherAPI
+    public static void setSSLSocketFlags(SSLSocket socket) throws SocketException {
+        // Set socket flags
+        socket.setKeepAlive(true);
         socket.setTcpNoDelay(false);
         socket.setReuseAddress(true);
 

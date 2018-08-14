@@ -19,6 +19,7 @@ import javax.net.ssl.SSLSocket;
 
 public abstract class Request<R> {
     @LauncherAPI protected final LauncherConfig config;
+    protected static  SSLSocket socket;
     private final AtomicBoolean started = new AtomicBoolean(false);
 
     @LauncherAPI
@@ -43,16 +44,16 @@ public abstract class Request<R> {
         if (!started.compareAndSet(false, true)) {
             throw new IllegalStateException("Request already started");
         }
-
+        if(socket == null)
+        {
+            socket = IOHelper.newSSLSocket(config.address);
+        }
         // Make request to LaunchServer
-        try (SSLSocket socket = IOHelper.newSSLSocket(config.address)) {
-            socket.setEnabledProtocols(new String[] {"TLSv1", "TLSv1.1", "TLSv1.2", "SSLv3"});
-            System.out.println(Arrays.toString(socket.getEnabledCipherSuites()));
-            try (HInput input = new HInput(socket.getInputStream());
-                HOutput output = new HOutput(socket.getOutputStream())) {
-                writeHandshake(input, output);
-                return requestDo(input, output);
-            }
+        socket.setEnabledProtocols(new String[] {"TLSv1", "TLSv1.1", "TLSv1.2", "SSLv3"});
+        try (HInput input = new HInput(socket.getInputStream());
+            HOutput output = new HOutput(socket.getOutputStream())) {
+            writeHandshake(input, output);
+            return requestDo(input, output);
         }
     }
 

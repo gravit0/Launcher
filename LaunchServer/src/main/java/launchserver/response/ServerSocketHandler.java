@@ -6,11 +6,14 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +49,9 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
     // API
     private final Map<String, Factory> customResponses = new ConcurrentHashMap<>(2);
     private final AtomicLong idCounter = new AtomicLong(0L);
+    private Set<Socket> sockets;
+    private Selector selector;
+    private ServerSocketChannel serverChannel;
     private volatile Listener listener;
 
     public ServerSocketHandler(LaunchServer server) {
@@ -98,6 +104,13 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         }
         //System.setProperty( "javax.net.ssl.keyStore","keystore");
         //System.setProperty( "javax.net.ssl.keyStorePassword","PSP1000");
+        try {
+            selector = Selector.open();
+            serverChannel = ServerSocketChannel.open();
+            serverChannel.configureBlocking(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         LogHelper.info("Starting server socket thread");
         try (SSLServerSocket serverSocket = (SSLServerSocket) ssf.createServerSocket()) {
             serverSocket.setEnabledProtocols(new String[] {"TLSv1.2"});
@@ -114,6 +127,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
             // Listen for incoming connections
             while (serverSocket.isBound()) {
                 SSLSocket socket = (SSLSocket) serverSocket.accept();
+                sockets.add(socket);
                 socket.startHandshake();
                 // Invoke pre-connect listener
                 long id = idCounter.incrementAndGet();
