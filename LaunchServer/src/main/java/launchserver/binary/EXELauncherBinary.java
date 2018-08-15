@@ -27,6 +27,6 @@ public final class EXELauncherBinary extends LauncherBinary {
     
     @Override
     public boolean sync() throws IOException {
-    	return !IOHelper.exists(binaryFile);
+    	return !super.sync();
     }
 }
