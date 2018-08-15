@@ -23,7 +23,9 @@ public final class Launcher {
     @LauncherAPI public static final String RUNTIME_DIR = "runtime";
     @LauncherAPI public static final String CONFIG_FILE = "config.bin";
     @LauncherAPI public static final String INIT_SCRIPT_FILE = "init.js";
-
+    @LauncherAPI public static final String VERSIONREPLACE = "$VERSION$";
+    @LauncherAPI public static final String BUILDREPLACE = "$BUILDNUMBER$";
+    
     private static final Pattern UUID_PATTERN = Pattern.compile("-", Pattern.LITERAL);
 
 
@@ -81,4 +83,8 @@ public final class Launcher {
         }
     }
 
+    @LauncherAPI
+	public static String changeVerAndBuild(String in) {
+		return in.replace(Launcher.VERSIONREPLACE, Launcher.VERSION).replace(Launcher.BUILDREPLACE, Launcher.BUILD);
+	}
 }
