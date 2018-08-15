@@ -50,7 +50,6 @@ import launchserver.auth.AuthLimiter;
 import launchserver.auth.handler.AuthHandler;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.binary.EXEL4JLauncherBinary;
-import launchserver.binary.EXELauncherBinary;
 import launchserver.binary.JARLauncherBinary;
 import launchserver.binary.LauncherBinary;
 import launchserver.command.handler.CommandHandler;
@@ -76,7 +75,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
     // Launcher binary
     @LauncherAPI public final LauncherBinary launcherBinary;
-    @LauncherAPI public final LauncherBinary launcherEXEBinary;
+    @LauncherAPI public final EXEL4JLauncherBinary launcherEXEBinary;
 
     // Server
     @LauncherAPI public final CommandHandler commandHandler;
@@ -157,7 +156,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Set launcher EXE binary
         launcherBinary = new JARLauncherBinary(this);
-        launcherEXEBinary = config.launch4J ? new EXEL4JLauncherBinary(this) : new EXELauncherBinary(this);
+        launcherEXEBinary = new EXEL4JLauncherBinary(this);
         syncLauncherBinaries();
 
         // Sync updates dir
@@ -251,15 +250,12 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Syncing launcher binary
         LogHelper.subInfo("Syncing launcher binary file");
-        if (!launcherBinary.sync()) {
-            LogHelper.subWarning("Missing launcher binary file");
-        }
+        if (!launcherBinary.sync())  LogHelper.subWarning("Missing launcher binary file");
 
         // Syncing launcher EXE binary
         LogHelper.subInfo("Syncing launcher EXE binary file");
-        if (!launcherEXEBinary.sync()) {
-            LogHelper.subWarning("Missing launcher EXE binary file");
-        }
+        if (!launcherEXEBinary.sync() && launcherEXEBinary.config.enabled) LogHelper.subWarning("Missing launcher EXE binary file");
+        
     }
 
     @LauncherAPI
@@ -388,11 +384,12 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         @LauncherAPI public final TextureProvider textureProvider;
 
         // Misc options
-        @LauncherAPI public final boolean launch4J;
+        @LauncherAPI public final BlockConfigEntry launch4J;
         @LauncherAPI public final boolean compress;
         @LauncherAPI public final int authRateLimit;
         @LauncherAPI public final int authRateLimitMilis;
         @LauncherAPI public final String authRejectString;
+        @LauncherAPI public final String binaryName;
         private final StringConfigEntry address;
         private final String bindAddress;
 
@@ -422,7 +419,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                 block.getEntry("textureProviderConfig", BlockConfigEntry.class));
 
             // Set misc config
-            launch4J = block.getEntryValue("launch4J", BooleanConfigEntry.class);
+            launch4J = block.getEntry("launch4J", BlockConfigEntry.class);
+            binaryName = block.getEntryValue("binaryName", StringConfigEntry.class);
             compress = block.getEntryValue("compress", BooleanConfigEntry.class);
         }
 
