@@ -33,7 +33,7 @@ public abstract class LauncherBinary {
     }
 
     @LauncherAPI
-    public final boolean sync() throws IOException {
+    public boolean sync() throws IOException {
         boolean exists = exists();
         binary = exists ? new SignedBytesHolder(IOHelper.read(binaryFile), server.privateKey) : null;
         return exists;

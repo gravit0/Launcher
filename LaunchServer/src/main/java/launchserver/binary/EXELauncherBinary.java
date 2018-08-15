@@ -24,4 +24,9 @@ public final class EXELauncherBinary extends LauncherBinary {
             Files.delete(binaryFile);
         }
     }
+    
+    @Override
+    public boolean sync() throws IOException {
+    	return !super.sync();
+    }
 }
