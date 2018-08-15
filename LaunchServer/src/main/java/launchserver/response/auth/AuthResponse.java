@@ -57,7 +57,7 @@ public final class AuthResponse extends Response {
                 return;
             }
             if (AuthLimiter.isLimit(ip)) {
-                AuthProvider.authError(String.format("You rate limit: '%s'. Please wait few seconds", result.username));
+                AuthProvider.authError(server.config.authRejectString);
                 return;
             }
         } catch (AuthException e) {
