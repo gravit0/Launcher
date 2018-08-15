@@ -16,7 +16,7 @@ repositories {
 }
 
 jar {
-    dependsOn parent.childProjects.Launcher.tasks.build, parent.tasks.genRuntimeJS
+    dependsOn parent.childProjects.Launcher.tasks.build, parent.tasks.genRuntimeJS, parent.childProjects.Launcher.tasks.signJar
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
     from(parent.childProjects.Launcher.file("build/jars/signed/Launcher-obf.jar"), parent.tasks.genRuntimeJS.archivePath)
     manifest.attributes("Main-Class": mainClassName)
