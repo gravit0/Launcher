@@ -71,7 +71,6 @@ public class LauncherEngine {
     public static void main(String... args) throws Throwable {
         JVMHelper.verifySystemProperties(Launcher.class, true);
         LogHelper.printVersion("Launcher");
-
         // Start Launcher
         Instant start = Instant.now();
         try {

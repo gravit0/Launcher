@@ -16,20 +16,20 @@ repositories {
 }
 
 jar {
-    dependsOn parent.childProjects.Launcher.tasks.build, parent.tasks.genRuntimeJS
+    dependsOn parent.childProjects.Launcher.tasks.build, parent.tasks.genRuntimeJS, parent.childProjects.Launcher.tasks.signJar
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
     from(parent.childProjects.Launcher.file("build/jars/signed/Launcher-obf.jar"), parent.tasks.genRuntimeJS.archivePath)
     manifest.attributes("Main-Class": mainClassName)
-    manifest.attributes("Class-Path": "libraries/jansi.jar libraries/jline2.jar libraries/mysql.jar libraries/hikaricp/hikaricp.jar libraries/hikaricp/javassist.jar libraries/hikaricp/slf4j-api.jar libraries/hikaricp/slf4j-simple.jar libraries/launch4j/launch4j.jar")
+    manifest.attributes("Class-Path": "libraries/jansi-1.17.1.jar libraries/jline-2.14.6.jar libraries/mysql-connector-java-8.0.12.jar libraries/hikaricp/HikariCP-3.2.0.jar libraries/hikaricp/javassist-3.22.0-CR1.jar libraries/hikaricp/slf4j-api-1.7.25.jar libraries/hikaricp/slf4j-simple-1.7.25.jar libraries/commons-io-2.6.jar libraries/launch4j/launch4j.jar")
 }
 
 dependencies {
     compile project(':libLauncher')
-    compile 'commons-io:commons-io:2.6'
+    compileOnly 'commons-io:commons-io:2.6'
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
     compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT'
     compileOnly 'hikari-cp:hikari-cp:2.6.0'
-    compileOnly 'mysql:mysql-connector-java:5.0.2'
+    compileOnly 'mysql:mysql-connector-java:8.0.12'
 	compileOnly 'jline:jline:2.14.6'
 	compileOnly('net.sf.launch4j:launch4j:3.9') {
 		exclude group: '*'

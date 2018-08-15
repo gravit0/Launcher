@@ -38,6 +38,8 @@ import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
 import launcher.AvanguardStarter;
 
+import javax.swing.*;
+
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
     private static final String MAGICAL_INTEL_OPTION = "-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
@@ -68,9 +70,27 @@ public final class ClientLauncher {
     public static boolean isLaunched() {
         return LAUNCHED.get();
     }
-
+    @LauncherAPI
+    public static void checkJVMBitsAndVersion()
+    {
+        if(JVMHelper.JVM_BITS != JVMHelper.OS_BITS)
+        {
+            String error = String.format("У Вас установлена Java %d, но Ваша система определена как %d. Установите Java правильной разрядности",JVMHelper.JVM_BITS,JVMHelper.OS_BITS);
+            LogHelper.error(error);
+            JOptionPane.showMessageDialog(null, error);
+        }
+        String jvmVersion = JVMHelper.RUNTIME_MXBEAN.getVmVersion();
+        LogHelper.info(jvmVersion);
+        if(jvmVersion.startsWith("10.") || jvmVersion.startsWith("9."))
+        {
+            String error = String.format("У Вас установлена Java %s. Для правильной работы необходима Java 8",JVMHelper.RUNTIME_MXBEAN.getVmVersion());
+            LogHelper.error(error);
+            JOptionPane.showMessageDialog(null, error);
+        }
+    }
     @LauncherAPI
     public static Process launch(
+
         SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
         SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
         // Write params file (instead of CLI; Mustdie32 API can't handle command line > 32767 chars)
@@ -82,7 +102,6 @@ public final class ClientLauncher {
             assetHDir.write(output);
             clientHDir.write(output);
         }
-
         // Resolve java bin and set permissions
         LogHelper.debug("Resolving JVM binary");
         //Path javaBin = IOHelper.resolveJavaBin(jvmDir);
@@ -143,13 +162,9 @@ public final class ClientLauncher {
         {
             AvanguardStarter.main(args);
         }
-        if(JVMHelper.JVM_BITS != JVMHelper.OS_BITS)
-        {
-            JavafxAlert.info("У Вас установлена Java неправильной разрядности. Возможно это приведет к ошибкам","Разрядность Java");
-        }
+        checkJVMBitsAndVersion();
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
         LogHelper.printVersion("Client Launcher");
-
         // Resolve params file
         VerifyHelper.verifyInt(args.length, l -> l >= 1, "Missing args: <paramsFile>");
         Path paramsFile = IOHelper.toPath(args[0]);
