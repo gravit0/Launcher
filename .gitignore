@@ -1,5 +1,6 @@
 ### Eclipse ###
-
+cmd.bat
+cmd.sh
 .metadata
 bin/
 tmp/
