@@ -392,6 +392,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         @LauncherAPI public final boolean compress;
         @LauncherAPI public final int authRateLimit;
         @LauncherAPI public final int authRateLimitMilis;
+        @LauncherAPI public final String authRejectString;
         private final StringConfigEntry address;
         private final String bindAddress;
 
@@ -408,6 +409,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
             AuthLimiter.rateLimitMilis = authRateLimitMilis;
             bindAddress = block.hasEntry("bindAddress") ?
                 block.getEntryValue("bindAddress", StringConfigEntry.class) : getAddress();
+            authRejectString = block.hasEntry("authRejectString") ?
+                    block.getEntryValue("authRejectString", StringConfigEntry.class) : "Вы превысили лимит авторизаций. Подождите некоторое время перед повторной попыткой";
+
 
             // Set handlers & providers
             authHandler = AuthHandler.newHandler(block.getEntryValue("authHandler", StringConfigEntry.class),
