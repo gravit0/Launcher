@@ -28,7 +28,7 @@ public final class JARLauncherBinary extends LauncherBinary {
 
     @LauncherAPI
     public JARLauncherBinary(LaunchServer server) throws IOException {
-        super(server, server.dir.resolve("Launcher.jar"));
+        super(server, server.dir.resolve(server.config.binaryName + ".jar"));
         runtimeDir = server.dir.resolve(Launcher.RUNTIME_DIR);
         initScriptFile = runtimeDir.resolve(Launcher.INIT_SCRIPT_FILE);
         tryUnpackRuntime();
