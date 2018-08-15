@@ -42,17 +42,18 @@ public final class LauncherRequest extends Request<Result> {
     }
 
     @Override
+    public int getSize() {
+        return Long.BYTES;
+    }
+
+    @Override
     @SuppressWarnings("CallToSystemExit")
     protected Result requestDo(HInput input, HOutput output) throws Exception {
-        output.writeBoolean(EXE_BINARY);
+        output.writeLong(System.currentTimeMillis());
         output.flush();
         readError(input);
 
-        // Verify launcher sign //TODO: FIX
-        //RSAPublicKey publicKey = config.publicKey;
-        //byte[] sign = input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH);
-        //boolean shouldUpdate = !SecurityHelper.isValidSign(BINARY_PATH, sign, publicKey);
-        boolean shouldUpdate = false;
+        boolean shouldUpdate = input.readBoolean();
         // Update launcher if need
         output.writeBoolean(shouldUpdate);
         output.flush();

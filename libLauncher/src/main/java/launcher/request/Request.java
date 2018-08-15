@@ -1,15 +1,12 @@
 package launcher.request;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import launcher.Launcher;
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
-import launcher.helper.SecurityHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.stream.EnumSerializer;
@@ -34,6 +31,11 @@ public abstract class Request<R> {
 
     @LauncherAPI
     public abstract Type getType();
+
+    @LauncherAPI
+    public int getSize() {
+        throw new UnsupportedOperationException();
+    }
 
     @LauncherAPI
     protected abstract R requestDo(HInput input, HOutput output) throws Exception;
@@ -67,8 +69,7 @@ public abstract class Request<R> {
 
     private void writeHandshake(HInput input, HOutput output) throws IOException {
         // Write handshake
-        output.writeInt(Launcher.PROTOCOL_MAGIC);
-        output.writeBigInteger(config.publicKey.getModulus(), SecurityHelper.RSA_KEY_LENGTH + 1);
+        output.writeInt(getSize());
         EnumSerializer.write(output, getType());
         output.flush();
 

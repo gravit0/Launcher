@@ -17,7 +17,7 @@ public final class Launcher {
     // Version info
     @LauncherAPI public static final String VERSION = "15.4";
     @LauncherAPI public static final String BUILD = readBuildNumber();
-    @LauncherAPI public static final int PROTOCOL_MAGIC = 0x724724_00 + 23;
+    @LauncherAPI public static final long PROTOCOL_MAGIC = 0x23ada478443885L;
 
     // Constants
     @LauncherAPI public static final String RUNTIME_DIR = "runtime";

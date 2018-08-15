@@ -1,8 +1,8 @@
 package launchserver.response.netty;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
+import io.netty.util.AttributeKey;
 import launcher.Launcher;
-import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
@@ -12,7 +12,6 @@ import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 import launchserver.response.PingResponse;
 import launchserver.response.Response;
-import launchserver.response.ResponseThread;
 import launchserver.response.auth.AuthResponse;
 import launchserver.response.auth.CheckServerResponse;
 import launchserver.response.auth.JoinServerResponse;
@@ -26,9 +25,11 @@ import launchserver.response.update.UpdateResponse;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class LauncherNettyHandler extends io.netty.channel.ChannelInboundHandlerAdapter {
     LaunchServer server;
+    HashMap<Integer,RequestWorker> execCmd;
     public LauncherNettyHandler(LaunchServer s)
     {
         server = s;
@@ -45,18 +46,15 @@ public class LauncherNettyHandler extends io.netty.channel.ChannelInboundHandler
         // Generate and write a response.
         boolean close = false;
         ByteBuf buf = (ByteBuf) request;
-        byte[] bytes = new byte[buf.readableBytes()];
-        buf.readBytes(bytes);
-        System.out.println(Arrays.toString(bytes));
-        HInput hInput = new HInput(new ByteArrayInputStream(bytes));
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        HOutput hOutput = new HOutput(os);
-        Request.Type t = readHandshake(hInput,hOutput);
-        System.out.println(t.getNumber());
-        respond(t,hInput,hOutput,0);
-        // We do not need to write a ChannelBuffer here.
-        // We know the encoder inserted at TelnetPipelineFactory will do the conversion.
-        ChannelFuture future = ctx.write(os.toByteArray());
+        int size = buf.readInt();
+        if(buf.readableBytes() < size)
+        {
+            buf.resetReaderIndex();
+            return;
+        }
+        int type = buf.readInt();
+        execCmd.get(type).request(buf,ctx);
+        ChannelFuture future = ctx.write("");
 
         // Close the connection after sending 'Have a good day!'
         // if the client has sent 'bye'.
