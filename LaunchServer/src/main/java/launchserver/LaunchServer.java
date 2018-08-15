@@ -250,15 +250,12 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Syncing launcher binary
         LogHelper.subInfo("Syncing launcher binary file");
-        if (!launcherBinary.sync()) {
-            LogHelper.subWarning("Missing launcher binary file");
-        }
+        if (!launcherBinary.sync())  LogHelper.subWarning("Missing launcher binary file");
 
         // Syncing launcher EXE binary
         LogHelper.subInfo("Syncing launcher EXE binary file");
-        if (!launcherEXEBinary.sync()) {
-        	if (launcherEXEBinary.config.enabled) LogHelper.subWarning("Missing launcher EXE binary file");
-        }
+        if (!launcherEXEBinary.sync() && launcherEXEBinary.config.enabled) LogHelper.subWarning("Missing launcher EXE binary file");
+        
     }
 
     @LauncherAPI

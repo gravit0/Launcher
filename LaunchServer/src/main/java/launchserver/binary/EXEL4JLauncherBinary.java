@@ -13,7 +13,6 @@ import launcher.serialize.config.ConfigObject;
 import launcher.serialize.config.entry.BlockConfigEntry;
 import launcher.serialize.config.entry.BooleanConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
-import launcher.serialize.signed.SignedBytesHolder;
 import launchserver.LaunchServer;
 import net.sf.launch4j.Builder;
 import net.sf.launch4j.Log;
