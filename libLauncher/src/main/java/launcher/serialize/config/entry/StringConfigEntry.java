@@ -15,7 +15,7 @@ public final class StringConfigEntry extends ConfigEntry<String> {
 
     @LauncherAPI
     public StringConfigEntry(HInput input, boolean ro) throws IOException {
-        this(Launcher.changeVerAndBuild(input.readString(0)), ro, 0);
+        this(Launcher.formatVars(input.readString(0)), ro, 0);
     }
 
     @Override

@@ -164,9 +164,9 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 			trademarks = block.hasEntry("trademarks") ? block.getEntryValue("trademarks", StringConfigEntry.class)
 					: "This product is licensed under MIT License";
 			txtFileVersion = block.hasEntry("txtFileVersion") ? block.getEntryValue("txtFileVersion", StringConfigEntry.class)
-					: Launcher.changeVerAndBuild("$VERSION$, build $BUILDNUMBER$");
+					: Launcher.formatVars("$VERSION$, build $BUILDNUMBER$");
 			txtProductVersion = block.hasEntry("txtProductVersion") ? block.getEntryValue("txtProductVersion", StringConfigEntry.class)
-					: Launcher.changeVerAndBuild("$VERSION$, build $BUILDNUMBER$");
+					: Launcher.formatVars("$VERSION$, build $BUILDNUMBER$");
 		}
 	} 
 }
