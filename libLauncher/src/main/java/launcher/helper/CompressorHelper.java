@@ -48,7 +48,7 @@ public class CompressorHelper {
 	}
 
 	@LauncherAPI
-	public static void unCompress(Path dir, Path archive) throws IOException {
+	public static void decompressDir(Path dir, Path archive) throws IOException {
 		try (TarInputStream inp = new TarInputStream(new BufferedInputStream(wrapIn(IOHelper.newInput(archive))))) {
 			TarEntry entry = null;
 			String name = null;
@@ -79,15 +79,8 @@ public class CompressorHelper {
 
 		@LauncherAPI
 		@Override
-		public FileVisitResult preVisitDirectory(Path file, BasicFileAttributes attrs) throws IOException {
-			out.putNextEntry(new TarEntry(file.toFile(), this.dir.relativize(dir).toString()));
-			return super.preVisitDirectory(file, attrs);
-		}
-
-		@LauncherAPI
-		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-			out.putNextEntry(new TarEntry(file.toFile(), this.dir.relativize(dir).toString()));
+			out.putNextEntry(new TarEntry(file.toFile(), this.dir.relativize(file).toString()));
 			IOHelper.transfer(file, out);
 			out.flush();
 			return super.visitFile(file, attrs);
