@@ -706,4 +706,19 @@ public final class IOHelper {
             throw new IllegalArgumentException("Invalid URL", e);
         }
     }
+    
+    @LauncherAPI
+    public static void close(InputStream in) {
+        try {
+            in.close();
+        } catch (Exception ign) { }
+    }
+    
+    @LauncherAPI
+    public static void close(OutputStream out) {
+        try {
+            out.flush();
+            out.close();
+        } catch (Exception ign) { }
+    }
 }

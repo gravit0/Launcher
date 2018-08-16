@@ -12,6 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import org.kamranzafar.jtar.TarEntry;
 import org.kamranzafar.jtar.TarInputStream;
 import org.kamranzafar.jtar.TarOutputStream;
+import org.tukaani.xz.DeltaOptions;
 import org.tukaani.xz.FilterOptions;
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
@@ -25,7 +26,7 @@ public class CompressorHelper {
 	}
 
 	@LauncherAPI
-	public static final FilterOptions[] opts = new FilterOptions[] { new LZMA2Options() };
+	public static final FilterOptions[] opts = new FilterOptions[] { new DeltaOptions(), new LZMA2Options() };
 
 	@LauncherAPI
 	public static InputStream wrapIn(InputStream in) throws IOException {
