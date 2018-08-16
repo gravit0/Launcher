@@ -45,7 +45,7 @@ public final class JARLauncherBinary extends LauncherBinary {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
                     output.putNextEntry(e);
-                    org.apache.commons.io.IOUtils.copy(input, output);
+                    IOHelper.transfer(input, output);
                     e = input.getNextEntry();
                 }
             }

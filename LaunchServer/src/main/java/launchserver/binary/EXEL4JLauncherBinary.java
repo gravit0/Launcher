@@ -104,8 +104,8 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 		info.setTrademarks(configCnt.trademarks);
 		info.setInternalName(configCnt.internalName);
 		// Prepare version info (file)
-		info.setTxtFileVersion(Launcher.VERSION + ", build " + Launcher.BUILD);
-		info.setTxtProductVersion(Launcher.VERSION + ", build " + Launcher.BUILD);
+		info.setTxtFileVersion(configCnt.txtFileVersion);
+		info.setTxtProductVersion(configCnt.txtProductVersion);
 		// Prepare version info (misc)
 		info.setOriginalFilename(binaryFile.getFileName().toString());
 		info.setLanguage(LanguageID.RUSSIAN);
@@ -143,7 +143,10 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 		public String internalName;
 		public String copyright;
 		public String trademarks;
-
+		
+		public String txtFileVersion;
+		public String txtProductVersion;
+		
 		private ExeConf(BlockConfigEntry block) {
 			super(block);
 			enabled = block.getEntryValue("enabled", BooleanConfigEntry.class);
@@ -160,6 +163,10 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 					: "© sashok724 LLC";
 			trademarks = block.hasEntry("trademarks") ? block.getEntryValue("trademarks", StringConfigEntry.class)
 					: "This product is licensed under MIT License";
+			txtFileVersion = block.hasEntry("txtFileVersion") ? block.getEntryValue("txtFileVersion", StringConfigEntry.class)
+					: Launcher.formatVars("$VERSION$, build $BUILDNUMBER$");
+			txtProductVersion = block.hasEntry("txtProductVersion") ? block.getEntryValue("txtProductVersion", StringConfigEntry.class)
+					: Launcher.formatVars("$VERSION$, build $BUILDNUMBER$");
 		}
-	}
+	} 
 }
