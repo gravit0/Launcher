@@ -558,8 +558,8 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static int transfer(InputStream input, OutputStream output) throws IOException {
-        int transferred = 0;
+    public static long transfer(InputStream input, OutputStream output) throws IOException {
+        long transferred = 0;
         byte[] buffer = newBuffer();
         for (int length = input.read(buffer); length >= 0; length = input.read(buffer)) {
             output.write(buffer, 0, length);
@@ -576,12 +576,12 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static int transfer(InputStream input, Path file) throws IOException {
+    public static long transfer(InputStream input, Path file) throws IOException {
         return transfer(input, file, false);
     }
 
     @LauncherAPI
-    public static int transfer(InputStream input, Path file, boolean append) throws IOException {
+    public static long transfer(InputStream input, Path file, boolean append) throws IOException {
         try (OutputStream output = newOutput(file, append)) {
             return transfer(input, output);
         }
