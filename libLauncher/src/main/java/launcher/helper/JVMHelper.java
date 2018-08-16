@@ -3,6 +3,7 @@ package launcher.helper;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,14 +12,13 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Locale;
 
-import com.sun.management.OperatingSystemMXBean;
 import launcher.LauncherAPI;
 
 public final class JVMHelper {
     // MXBeans exports
     @LauncherAPI public static final RuntimeMXBean RUNTIME_MXBEAN = ManagementFactory.getRuntimeMXBean();
     @LauncherAPI public static final OperatingSystemMXBean OPERATING_SYSTEM_MXBEAN =
-        (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        ManagementFactory.getOperatingSystemMXBean();
 
     // System properties
     @LauncherAPI public static final OS OS_TYPE = OS.byName(OPERATING_SYSTEM_MXBEAN.getName());
@@ -115,7 +115,8 @@ public final class JVMHelper {
     }
 
     private static int getRAMAmount() {
-        int physicalRam = (int) (OPERATING_SYSTEM_MXBEAN.getTotalPhysicalMemorySize() >> 20);
+    	// TODO Normal fix.
+        int physicalRam = (int) (((com.sun.management.OperatingSystemMXBean)OPERATING_SYSTEM_MXBEAN).getTotalPhysicalMemorySize() >> 20);
         return Math.min(physicalRam, OS_BITS == 32 ? 1536 : 4096); // Limit 32-bit OS to 1536 MiB, and 64-bit OS to 4096 MiB (because it's enough)
     }
 

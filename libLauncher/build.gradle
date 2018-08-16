@@ -2,6 +2,7 @@ dependencies {
 	compileOnly 'org.fusesource.jansi:jansi:1.17.1'
 	compile files('../compat/authlib/authlib-clean.jar')
 	compile 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
+	//compile 'com.github.oshi:oshi-core:3.7.2' // for normal operating with os property, such as arch
 	//compile 'org.kamranzafar:jtar:2.3'
 	//compile 'org.tukaani:xz:1.8' // for issue with file downloading
 }

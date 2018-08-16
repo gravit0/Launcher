@@ -16,7 +16,7 @@ public final class CommonHelper {
     public static String low(String s) {
         return s.toLowerCase(Locale.US);
     }
-
+    
     @LauncherAPI
     public static ScriptEngine newScriptEngine() {
         return new NashornScriptEngineFactory().getScriptEngine(SCRIPT_ENGINE_ARGS);
