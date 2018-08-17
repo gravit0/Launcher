@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.CommonHelper;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;

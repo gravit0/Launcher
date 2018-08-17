@@ -25,12 +25,14 @@ import launcher.Launcher;
 import launcher.LauncherClassLoader;
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
-import launcher.client.ClientProfile.Version;
+import launcher.profiles.ClientProfile;
+import launcher.profiles.ClientProfile.Version;
 import launcher.hasher.DirWatcher;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
 import launcher.helper.*;
 import launcher.helper.JVMHelper.OS;
+import launcher.profiles.PlayerProfile;
 import launcher.request.update.LauncherRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
@@ -91,8 +93,8 @@ public final class ClientLauncher {
     @LauncherAPI
     public static Process launch(
 
-        SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
-        SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
+            SignedObjectHolder<HashedDir> assetHDir, SignedObjectHolder<HashedDir> clientHDir,
+            SignedObjectHolder<ClientProfile> profile, Params params, boolean pipeOutput) throws Throwable {
         // Write params file (instead of CLI; Mustdie32 API can't handle command line > 32767 chars)
         LogHelper.debug("Writing ClientLauncher params");
         Path paramsFile = Files.createTempFile("ClientLauncherParams", ".bin");
@@ -115,14 +117,14 @@ public final class ClientLauncher {
             args.add("-Xms" + params.ram + 'M');
             args.add("-Xmx" + params.ram + 'M');
         }
-        args.add(Launcher.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
+        args.add(JVMHelper.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
         if (LauncherConfig.ADDRESS_OVERRIDE != null) {
-            args.add(Launcher.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
+            args.add(JVMHelper.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
         }
         if (JVMHelper.OS_TYPE == OS.MUSTDIE && JVMHelper.OS_VERSION.startsWith("10.")) {
             LogHelper.debug("MustDie 10 fix is applied");
-            args.add(Launcher.jvmProperty("os.name", "Windows 10"));
-            args.add(Launcher.jvmProperty("os.version", "10.0"));
+            args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
+            args.add(JVMHelper.jvmProperty("os.version", "10.0"));
         }
 
         // Add classpath and main class

@@ -139,6 +139,12 @@ public final class JVMHelper {
             throw new InternalError(exc);
         }
     }
+
+    @LauncherAPI
+    public static String jvmProperty(String name, String value) {
+        return String.format("-D%s=%s", name, value);
+    }
+
     @SuppressWarnings("unused")
     @LauncherAPI
     public enum OS {

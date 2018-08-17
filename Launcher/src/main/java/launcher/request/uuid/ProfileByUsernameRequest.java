@@ -1,38 +1,37 @@
 package launcher.request.uuid;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.UUID;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
+import launcher.helper.VerifyHelper;
 import launcher.request.Request;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 
-public final class ProfileByUUIDRequest extends Request<PlayerProfile> {
-    private final UUID uuid;
+public final class ProfileByUsernameRequest extends Request<PlayerProfile> {
+    private final String username;
 
     @LauncherAPI
-    public ProfileByUUIDRequest(LauncherConfig config, UUID uuid) {
+    public ProfileByUsernameRequest(LauncherConfig config, String username) {
         super(config);
-        this.uuid = Objects.requireNonNull(uuid, "uuid");
+        this.username = VerifyHelper.verifyUsername(username);
     }
 
     @LauncherAPI
-    public ProfileByUUIDRequest(UUID uuid) {
-        this(null, uuid);
+    public ProfileByUsernameRequest(String username) {
+        this(null, username);
     }
 
     @Override
     public Type getType() {
-        return Type.PROFILE_BY_UUID;
+        return Type.PROFILE_BY_USERNAME;
     }
 
     @Override
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
-        output.writeUUID(uuid);
+        output.writeString(username, 64);
         output.flush();
 
         // Return profile

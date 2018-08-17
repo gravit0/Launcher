@@ -7,7 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import launcher.LauncherAPI;
-import launcher.client.Texture;
+import launcher.profiles.Texture;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.config.ConfigObject;
 import launcher.serialize.config.entry.BlockConfigEntry;

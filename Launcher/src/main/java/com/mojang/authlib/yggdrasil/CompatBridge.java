@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import launcher.LauncherAPI;
 import launcher.client.ClientLauncher;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.LogHelper;
 import launcher.request.auth.CheckServerRequest;
 import launcher.request.auth.JoinServerRequest;

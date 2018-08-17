@@ -1,40 +1,45 @@
-package launcher.request.uuid;
+package launcher.request.auth;
 
 import java.io.IOException;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
+import launcher.request.auth.JoinServerRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 
-public final class ProfileByUsernameRequest extends Request<PlayerProfile> {
+public final class CheckServerRequest extends Request<PlayerProfile> {
     private final String username;
+    private final String serverID;
 
     @LauncherAPI
-    public ProfileByUsernameRequest(LauncherConfig config, String username) {
+    public CheckServerRequest(LauncherConfig config, String username, String serverID) {
         super(config);
         this.username = VerifyHelper.verifyUsername(username);
+        this.serverID = JoinServerRequest.verifyServerID(serverID);
     }
 
     @LauncherAPI
-    public ProfileByUsernameRequest(String username) {
-        this(null, username);
+    public CheckServerRequest(String username, String serverID) {
+        this(null, username, serverID);
     }
 
     @Override
     public Type getType() {
-        return Type.PROFILE_BY_USERNAME;
+        return Type.CHECK_SERVER;
     }
 
     @Override
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
         output.writeString(username, 64);
+        output.writeASCII(serverID, 41); // 1 char for minus sign
         output.flush();
 
-        // Return profile
+        // Read response
+        readError(input);
         return input.readBoolean() ? new PlayerProfile(input) : null;
     }
 }

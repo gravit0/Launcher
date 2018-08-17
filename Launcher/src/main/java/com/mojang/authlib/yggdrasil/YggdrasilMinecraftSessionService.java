@@ -20,7 +20,7 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import launcher.client.ClientLauncher;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;

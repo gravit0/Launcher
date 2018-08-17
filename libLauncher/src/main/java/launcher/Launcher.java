@@ -29,36 +29,12 @@ public final class Launcher {
 	public static final String CONFIG_FILE = "config.bin";
 	@LauncherAPI
 	public static final String INIT_SCRIPT_FILE = "init.js";
-	@LauncherAPI
-	public static final String VERSIONREPLACE = "$VERSION$";
-	@LauncherAPI
-	public static final String BUILDREPLACE = "$BUILDNUMBER$";
 
 	private static final Pattern UUID_PATTERN = Pattern.compile("-", Pattern.LITERAL);
-	@LauncherAPI
-	public static final String[] repArray = genReps();
 
 	@LauncherAPI
 	public static String toHash(UUID uuid) {
 		return UUID_PATTERN.matcher(uuid.toString()).replaceAll("");
-	}
-
-	private static String[] genReps() {
-		Replace[] replace = new Replace[] { new Replace(Launcher.VERSIONREPLACE, Launcher.VERSION),
-				new Replace(Launcher.BUILDREPLACE, Launcher.BUILD), };
-		String[] repArray = new String[replace.length * 2];
-		int i = 0;
-		for (Replace r : replace) {
-			repArray[i] = r.getSearch();
-			repArray[i + 1] = r.getReplacement();
-			i += 2;
-		}
-		return repArray;
-	}
-
-	@LauncherAPI
-	public static String jvmProperty(String name, String value) {
-		return String.format("-D%s=%s", name, value);
 	}
 
 	@LauncherAPI
@@ -107,26 +83,4 @@ public final class Launcher {
 		}
 	}
 
-	@LauncherAPI
-	public static String formatVars(String in) {
-		return CommonHelper.replace(in, repArray);
-	}
-
-	public static final class Replace {
-		private final String search;
-		private final String replacement;
-
-		public Replace(String search, String replacement) {
-			this.search = search;
-			this.replacement = replacement;
-		}
-
-		public String getReplacement() {
-			return replacement;
-		}
-
-		public String getSearch() {
-			return search;
-		}
-	}
 }

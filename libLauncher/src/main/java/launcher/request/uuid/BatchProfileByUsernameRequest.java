@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.IOHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;

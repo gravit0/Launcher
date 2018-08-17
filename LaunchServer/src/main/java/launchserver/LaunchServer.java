@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.CRC32;
 
 import launcher.LauncherAPI;
-import launcher.client.ClientProfile;
+import launcher.profiles.ClientProfile;
 import launcher.hasher.HashedDir;
 import launcher.helper.CommonHelper;
 import launcher.helper.IOHelper;

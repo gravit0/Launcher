@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import launcher.Launcher;
 import launcher.LauncherAPI;
+import launcher.helper.CommonHelper;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.serialize.config.ConfigObject;
@@ -164,9 +164,9 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 			trademarks = block.hasEntry("trademarks") ? block.getEntryValue("trademarks", StringConfigEntry.class)
 					: "This product is licensed under MIT License";
 			txtFileVersion = block.hasEntry("txtFileVersion") ? block.getEntryValue("txtFileVersion", StringConfigEntry.class)
-					: Launcher.formatVars("$VERSION$, build $BUILDNUMBER$");
+					: CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
 			txtProductVersion = block.hasEntry("txtProductVersion") ? block.getEntryValue("txtProductVersion", StringConfigEntry.class)
-					: Launcher.formatVars("$VERSION$, build $BUILDNUMBER$");
+					: CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
 		}
 	} 
 }

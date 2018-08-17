@@ -1,4 +1,4 @@
-package launcher.client;
+package launcher.profiles;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

@@ -2,8 +2,8 @@ package launcher.serialize.config.entry;
 
 import java.io.IOException;
 
-import launcher.Launcher;
 import launcher.LauncherAPI;
+import launcher.helper.CommonHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 
@@ -15,7 +15,7 @@ public final class StringConfigEntry extends ConfigEntry<String> {
 
     @LauncherAPI
     public StringConfigEntry(HInput input, boolean ro) throws IOException {
-        this(Launcher.formatVars(input.readString(0)), ro, 0);
+        this(CommonHelper.formatVars(input.readString(0)), ro, 0);
     }
 
     @Override
