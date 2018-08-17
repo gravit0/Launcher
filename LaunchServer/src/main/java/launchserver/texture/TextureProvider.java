@@ -24,10 +24,10 @@ public abstract class TextureProvider extends ConfigObject implements AutoClosea
     public abstract void close() throws IOException;
 
     @LauncherAPI
-    public abstract Texture getCloakTexture(UUID uuid, String username) throws IOException;
+    public abstract Texture getCloakTexture(UUID uuid, String username, String client) throws IOException;
 
     @LauncherAPI
-    public abstract Texture getSkinTexture(UUID uuid, String username) throws IOException;
+    public abstract Texture getSkinTexture(UUID uuid, String username, String client) throws IOException;
 
     @LauncherAPI
     public static TextureProvider newProvider(String name, BlockConfigEntry block) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
@@ -32,8 +33,8 @@ public final class ProfileByUsernameRequest extends Request<PlayerProfile> {
     @Override
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
         output.writeString(username, 64);
+        output.writeString(ClientLauncher.profile.getTitle(),64);
         output.flush();
-
         // Return profile
         return input.readBoolean() ? new PlayerProfile(input) : null;
     }

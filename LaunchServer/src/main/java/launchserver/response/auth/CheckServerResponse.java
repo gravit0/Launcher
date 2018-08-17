@@ -22,6 +22,7 @@ public final class CheckServerResponse extends Response {
     public void reply() throws IOException {
         String username = VerifyHelper.verifyUsername(input.readString(64));
         String serverID = JoinServerRequest.verifyServerID(input.readASCII(41)); // With minus sign
+        String client = input.readString(64);
         debug("Username: %s, Server ID: %s", username, serverID);
 
         // Try check server with auth handler
@@ -41,7 +42,7 @@ public final class CheckServerResponse extends Response {
         // Write profile and UUID
         output.writeBoolean(uuid != null);
         if (uuid != null) {
-            ProfileByUUIDResponse.getProfile(server, uuid, username).write(output);
+            ProfileByUUIDResponse.getProfile(server, uuid, username, client).write(output);
         }
     }
 }

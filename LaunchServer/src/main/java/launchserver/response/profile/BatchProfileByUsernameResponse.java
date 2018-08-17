@@ -17,15 +17,18 @@ public final class BatchProfileByUsernameResponse extends Response {
 
     @Override
     public void reply() throws IOException {
-        String[] usernames = new String[input.readLength(BatchProfileByUsernameRequest.MAX_BATCH_SIZE)];
+        int length = input.readLength(BatchProfileByUsernameRequest.MAX_BATCH_SIZE);
+        String[] usernames = new String[length];
+        String[] clients = new String[length];
         for (int i = 0; i < usernames.length; i++) {
             usernames[i] = VerifyHelper.verifyUsername(input.readString(64));
+            clients[i] = input.readString(64);
         }
         debug("Usernames: " + Arrays.toString(usernames));
 
         // Respond with profiles array
-        for (String username : usernames) {
-            ProfileByUsernameResponse.writeProfile(server, output, username);
+        for (int i = 0; i < usernames.length; i++) {
+            ProfileByUsernameResponse.writeProfile(server, output, usernames[i],clients[i]);
         }
     }
 }

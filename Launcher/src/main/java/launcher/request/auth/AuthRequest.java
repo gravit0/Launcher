@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
@@ -36,6 +37,7 @@ public final class AuthRequest extends Request<Result> {
     @Override
     protected Result requestDo(HInput input, HOutput output) throws IOException {
         output.writeString(login, 255);
+        output.writeString(ClientLauncher.profile.getTitle(), 64);
         output.writeByteArray(encryptedPassword, SecurityHelper.CRYPTO_MAX_LENGTH);
         output.flush();
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
@@ -36,6 +37,7 @@ public final class CheckServerRequest extends Request<PlayerProfile> {
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
         output.writeString(username, 64);
         output.writeASCII(serverID, 41); // 1 char for minus sign
+        output.writeString(ClientLauncher.profile.getTitle(), 64);
         output.flush();
 
         // Read response

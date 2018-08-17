@@ -25,13 +25,13 @@ public final class NullTextureProvider extends TextureProvider {
     }
 
     @Override
-    public Texture getCloakTexture(UUID uuid, String username) throws IOException {
-        return getProvider().getCloakTexture(uuid, username);
+    public Texture getCloakTexture(UUID uuid, String username, String client) throws IOException {
+        return getProvider().getCloakTexture(uuid, username, client);
     }
 
     @Override
-    public Texture getSkinTexture(UUID uuid, String username) throws IOException {
-        return getProvider().getSkinTexture(uuid, username);
+    public Texture getSkinTexture(UUID uuid, String username, String client) throws IOException {
+        return getProvider().getSkinTexture(uuid, username, client);
     }
 
     @LauncherAPI

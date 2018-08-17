@@ -40,6 +40,7 @@ public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]
         output.writeLength(usernames.length, MAX_BATCH_SIZE);
         for (String username : usernames) {
             output.writeString(username, 64);
+            output.writeString("", 64); //TODO: Что это за запрос и для чего он нужен?
         }
         output.flush();
 

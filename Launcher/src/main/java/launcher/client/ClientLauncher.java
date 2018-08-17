@@ -58,6 +58,7 @@ public final class ClientLauncher {
     private static LauncherClassLoader classLoader;
     // Authlib constants
     @LauncherAPI public static final String SKIN_URL_PROPERTY = "skinURL";
+    @LauncherAPI public static ClientProfile profile = null;
     @LauncherAPI public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
     @LauncherAPI public static final String CLOAK_URL_PROPERTY = "cloakURL";
     @LauncherAPI public static final String CLOAK_DIGEST_PROPERTY = "cloakDigest";
@@ -89,6 +90,12 @@ public final class ClientLauncher {
             LogHelper.error(error);
             JOptionPane.showMessageDialog(null, error);
         }
+    }
+    @LauncherAPI
+    public static void setProfile(ClientProfile profile)
+    {
+        ClientLauncher.profile = profile;
+        LogHelper.debug("New Profile name: %s",profile.getTitle());
     }
     @LauncherAPI
     public static Process launch(

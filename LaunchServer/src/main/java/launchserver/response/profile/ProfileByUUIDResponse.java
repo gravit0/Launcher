@@ -20,7 +20,7 @@ public final class ProfileByUUIDResponse extends Response {
     public void reply() throws IOException {
         UUID uuid = input.readUUID();
         debug("UUID: " + uuid);
-
+        String client = input.readString(64);
         // Verify has such profile
         String username = server.config.authHandler.uuidToUsername(uuid);
         if (username == null) {
@@ -30,14 +30,14 @@ public final class ProfileByUUIDResponse extends Response {
 
         // Write profile
         output.writeBoolean(true);
-        getProfile(server, uuid, username).write(output);
+        getProfile(server, uuid, username, client).write(output);
     }
 
-    public static PlayerProfile getProfile(LaunchServer server, UUID uuid, String username) {
+    public static PlayerProfile getProfile(LaunchServer server, UUID uuid, String username, String client) {
         // Get skin texture
         Texture skin;
         try {
-            skin = server.config.textureProvider.getSkinTexture(uuid, username);
+            skin = server.config.textureProvider.getSkinTexture(uuid, username, client);
         } catch (IOException e) {
             LogHelper.error(new IOException(String.format("Can't get skin texture: '%s'", username), e));
             skin = null;
@@ -46,7 +46,7 @@ public final class ProfileByUUIDResponse extends Response {
         // Get cloak texture
         Texture cloak;
         try {
-            cloak = server.config.textureProvider.getCloakTexture(uuid, username);
+            cloak = server.config.textureProvider.getCloakTexture(uuid, username, client);
         } catch (IOException e) {
             LogHelper.error(new IOException(String.format("Can't get cloak texture: '%s'", username), e));
             cloak = null;

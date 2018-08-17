@@ -35,6 +35,7 @@ public final class AuthResponse extends Response {
     @Override
     public void reply() throws Exception {
         String login = input.readString(255);
+        String client = input.readString(64);
         byte[] encryptedPassword = input.readByteArray(SecurityHelper.CRYPTO_MAX_LENGTH);
 
         // Decrypt password
@@ -85,7 +86,7 @@ public final class AuthResponse extends Response {
         writeNoError(output);
 
         // Write profile and UUID
-        ProfileByUUIDResponse.getProfile(server, uuid, result.username).write(output);
+        ProfileByUUIDResponse.getProfile(server, uuid, result.username, client).write(output);
         output.writeASCII(result.accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
     }
 

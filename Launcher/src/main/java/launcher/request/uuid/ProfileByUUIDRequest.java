@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
 import launcher.request.Request;
 import launcher.serialize.HInput;
@@ -33,6 +34,7 @@ public final class ProfileByUUIDRequest extends Request<PlayerProfile> {
     @Override
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
         output.writeUUID(uuid);
+        output.writeString(ClientLauncher.profile.getTitle(),64);
         output.flush();
 
         // Return profile
