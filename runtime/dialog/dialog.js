@@ -98,7 +98,7 @@ function goAuth(event) {
     }
     else
     {
-        ClientLauncher.setProfile(profile);
+        ClientLauncher.setProfile(profile.object);
     }
 
     // Get login

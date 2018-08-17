@@ -103,6 +103,7 @@ public class LauncherEngine {
     public static void addLauncherClassBindings(Map<String, Object> bindings) {
         bindings.put("LauncherClass", Launcher.class);
         bindings.put("LauncherConfigClass", LauncherConfig.class);
+        bindings.put("HTTPRequestClass", HTTPRequest.class);
 
         // Set client class bindings
         bindings.put("PlayerProfileClass", PlayerProfile.class);

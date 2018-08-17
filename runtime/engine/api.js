@@ -1,5 +1,6 @@
 var Launcher = LauncherClass.static;
 var LauncherConfig = LauncherConfigClass.static;
+var HTTPRequest = HTTPRequestClass.static;
 
 // Hasher class API imports
 var PlayerProfile = PlayerProfileClass.static;
