@@ -32,7 +32,8 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
     private final String username;
     private final String password;
     private final String database;
-
+    private String timeZone;
+    
     // Cache
     private DataSource source;
     private boolean hikari;
@@ -50,7 +51,8 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
         password = block.getEntryValue("password", StringConfigEntry.class);
         database = VerifyHelper.verify(block.getEntryValue("database", StringConfigEntry.class),
             VerifyHelper.NOT_EMPTY, "MySQL database can't be empty");
-
+        timeZone = block.hasEntry("timezone") ?  VerifyHelper.verify(block.getEntryValue("timezone", StringConfigEntry.class),
+                VerifyHelper.NOT_EMPTY, "MySQL time zone can't be empty") : null;
         // Password shouldn't be verified
     }
 
@@ -87,7 +89,8 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
             mysqlSource.setUser(username);
             mysqlSource.setPassword(password);
             mysqlSource.setDatabaseName(database);
-
+			if (timeZone != null) mysqlSource.setServerTimezone(timeZone);
+			            
             // Try using HikariCP
             source = mysqlSource;
             try {
