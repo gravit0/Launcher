@@ -20,7 +20,7 @@ public final class Launcher {
 	@LauncherAPI
 	public static final String BUILD = readBuildNumber();
 	@LauncherAPI
-	public static final int PROTOCOL_MAGIC = 0x724724_00 + 23;
+	public static final int PROTOCOL_MAGIC = 0x724724_00 + 24;
 
 	// Constants
 	@LauncherAPI

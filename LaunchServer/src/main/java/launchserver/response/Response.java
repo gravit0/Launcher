@@ -12,26 +12,26 @@ import launchserver.LaunchServer;
 
 public abstract class Response {
     @LauncherAPI protected final LaunchServer server;
-    @LauncherAPI protected final long id;
     @LauncherAPI protected final HInput input;
     @LauncherAPI protected final HOutput output;
     @LauncherAPI protected final Socket socket;
+    @LauncherAPI protected final long session;
 
-    protected Response(LaunchServer server, long id, HInput input, HOutput output,Socket socket) {
+    protected Response(LaunchServer server,long session, HInput input, HOutput output,Socket socket) {
         this.server = server;
-        this.id = id;
         this.input = input;
         this.output = output;
         this.socket = socket;
+        this.session = session;
     }
 
     @LauncherAPI
-    protected Response(LaunchServer server, long id, HInput input, HOutput output) {
+    protected Response(LaunchServer server,long session, HInput input, HOutput output) {
         this.server = server;
-        this.id = id;
         this.input = input;
         this.output = output;
         this.socket = null;
+        this.session = session;
     }
 
     @LauncherAPI
@@ -39,7 +39,7 @@ public abstract class Response {
 
     @LauncherAPI
     protected final void debug(String message) {
-        LogHelper.subDebug("#%d %s", id, message);
+        LogHelper.subDebug("#%d %s", session, message);
     }
 
     @LauncherAPI
