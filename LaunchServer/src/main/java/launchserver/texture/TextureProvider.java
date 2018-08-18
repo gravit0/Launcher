@@ -14,7 +14,8 @@ import launcher.serialize.config.entry.BlockConfigEntry;
 
 public abstract class TextureProvider extends ConfigObject implements AutoCloseable {
     private static final Map<String, Adapter<TextureProvider>> TEXTURE_PROVIDERS = new ConcurrentHashMap<>(2);
-
+    private static boolean registredProv = false;
+    
     @LauncherAPI
     protected TextureProvider(BlockConfigEntry block) {
         super(block);
@@ -44,10 +45,13 @@ public abstract class TextureProvider extends ConfigObject implements AutoClosea
     }
 
     public static void registerProviders() {
-        registerProvider("null", NullTextureProvider::new);
-        registerProvider("void", VoidTextureProvider::new);
+    	if (!registredProv) {
+    		registerProvider("null", NullTextureProvider::new);
+        	registerProvider("void", VoidTextureProvider::new);
 
-        // Auth providers that doesn't do nothing :D
-        registerProvider("request", RequestTextureProvider::new);
+        	// Auth providers that doesn't do nothing :D
+        	registerProvider("request", RequestTextureProvider::new);
+        	registredProv = true;
+    	}
     }
 }

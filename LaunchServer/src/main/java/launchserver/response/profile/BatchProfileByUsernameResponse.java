@@ -7,6 +7,7 @@ import launcher.helper.VerifyHelper;
 import launcher.request.uuid.BatchProfileByUsernameRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 import launchserver.response.Response;
 
@@ -22,7 +23,7 @@ public final class BatchProfileByUsernameResponse extends Response {
         String[] clients = new String[length];
         for (int i = 0; i < usernames.length; i++) {
             usernames[i] = VerifyHelper.verifyUsername(input.readString(64));
-            clients[i] = input.readString(64);
+            clients[i] = input.readString(SerializeLimits.MAX_CLIENT);
         }
         debug("Usernames: " + Arrays.toString(usernames));
 

@@ -11,6 +11,7 @@ import launcher.request.Request;
 import launcher.request.auth.JoinServerRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 
 public final class CheckServerRequest extends Request<PlayerProfile> {
     private final String username;
@@ -35,8 +36,8 @@ public final class CheckServerRequest extends Request<PlayerProfile> {
 
     @Override
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
-        output.writeString(username, 64);
-        output.writeASCII(serverID, 41); // 1 char for minus sign
+        output.writeString(username, SerializeLimits.MAX_LOGIN);
+        output.writeASCII(serverID, SerializeLimits.MAX_SERVERID); // 1 char for minus sign
         output.writeString(ClientLauncher.profile.getTitle(), 64);
         output.flush();
 

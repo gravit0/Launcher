@@ -15,7 +15,8 @@ import launchserver.auth.provider.AuthProviderResult;
 
 public abstract class AuthHandler extends ConfigObject implements AutoCloseable {
     private static final Map<String, Adapter<AuthHandler>> AUTH_HANDLERS = new ConcurrentHashMap<>(4);
-
+    private static boolean registredHandl = false;
+    
     @LauncherAPI
     protected AuthHandler(BlockConfigEntry block) {
         super(block);
@@ -59,12 +60,15 @@ public abstract class AuthHandler extends ConfigObject implements AutoCloseable 
     }
 
     public static void registerHandlers() {
-        registerHandler("null", NullAuthHandler::new);
-        registerHandler("memory", MemoryAuthHandler::new);
+    	if (!registredHandl) {
+    		registerHandler("null", NullAuthHandler::new);
+    		registerHandler("memory", MemoryAuthHandler::new);
 
-        // Auth handler that doesn't do nothing :D
-        registerHandler("binaryFile", BinaryFileAuthHandler::new);
-        registerHandler("textFile", TextFileAuthHandler::new);
-        registerHandler("mysql", MySQLAuthHandler::new);
+    		// Auth handler that doesn't do nothing :D
+    		registerHandler("binaryFile", BinaryFileAuthHandler::new);
+    		registerHandler("textFile", TextFileAuthHandler::new);
+    		registerHandler("mysql", MySQLAuthHandler::new);
+    		registredHandl = true;
+    	}
     }
 }

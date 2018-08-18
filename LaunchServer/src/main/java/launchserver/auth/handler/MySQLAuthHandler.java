@@ -59,8 +59,10 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
             LogHelper.info("Fetching all AuthHandler entries");
             String query = String.format("SELECT %s, %s, %s, %s FROM %s",
                 uuidColumn, usernameColumn, accessTokenColumn, serverIDColumn, table);
-            try (Connection c = mySQLHolder.getConnection(); Statement statement = c.createStatement();
-                ResultSet set = statement.executeQuery(query)) {
+            try {
+                Connection c = mySQLHolder.getConnection();
+                Statement statement = c.createStatement();
+                ResultSet set = statement.executeQuery(query);
                 for (Entry entry = constructEntry(set); entry != null; entry = constructEntry(set)) {
                     addEntry(entry);
                 }
@@ -87,7 +89,9 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
 
     @Override
     protected boolean updateAuth(UUID uuid, String username, String accessToken) throws IOException {
-        try (Connection c = mySQLHolder.getConnection(); PreparedStatement s = c.prepareStatement(updateAuthSQL)) {
+        try {
+            Connection c = mySQLHolder.getConnection();
+            PreparedStatement s = c.prepareStatement(updateAuthSQL);
             s.setString(1, username); // Username case
             s.setString(2, accessToken);
             s.setString(3, uuid.toString());
@@ -102,7 +106,8 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
 
     @Override
     protected boolean updateServerID(UUID uuid, String serverID) throws IOException {
-        try (Connection c = mySQLHolder.getConnection(); PreparedStatement s = c.prepareStatement(updateServerIDSQL)) {
+        try {
+            Connection c = mySQLHolder.getConnection(); PreparedStatement s = c.prepareStatement(updateServerIDSQL);
             s.setString(1, serverID);
             s.setString(2, uuid.toString());
 
@@ -120,7 +125,9 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
     }
 
     private Entry query(String sql, String value) throws IOException {
-        try (Connection c = mySQLHolder.getConnection(); PreparedStatement s = c.prepareStatement(sql)) {
+        try {
+            Connection c = mySQLHolder.getConnection();
+            PreparedStatement s = c.prepareStatement(sql);
             s.setString(1, value);
 
             // Execute query

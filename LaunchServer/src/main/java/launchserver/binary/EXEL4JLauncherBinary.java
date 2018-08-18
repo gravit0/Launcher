@@ -15,11 +15,7 @@ import launcher.serialize.config.entry.StringConfigEntry;
 import launchserver.LaunchServer;
 import net.sf.launch4j.Builder;
 import net.sf.launch4j.Log;
-import net.sf.launch4j.config.Config;
-import net.sf.launch4j.config.ConfigPersister;
-import net.sf.launch4j.config.Jre;
-import net.sf.launch4j.config.LanguageID;
-import net.sf.launch4j.config.VersionInfo;
+import net.sf.launch4j.config.*;
 
 public final class EXEL4JLauncherBinary extends LauncherBinary {
 	// URL constants
@@ -70,7 +66,7 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 
 	@Override
 	public boolean sync() throws IOException {
-		return config.enabled ? super.sync() : !super.sync();
+		return config.enabled == super.sync();
 	}
 
 	private void setConfig(ExeConf configCnt) {

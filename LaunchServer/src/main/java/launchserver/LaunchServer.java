@@ -47,6 +47,7 @@ import launcher.serialize.config.entry.IntegerConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
 import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.auth.AuthLimiter;
+import launchserver.auth.HWIDHandler;
 import launchserver.auth.handler.AuthHandler;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.binary.EXEL4JLauncherBinary;
@@ -77,6 +78,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     @LauncherAPI public final LauncherBinary launcherBinary;
     @LauncherAPI public final EXEL4JLauncherBinary launcherEXEBinary;
 
+    // HWID ban + anti-brutforce
+    @LauncherAPI public final AuthLimiter limiter;
+    @LauncherAPI public final HWIDHandler HWhandler;
     // Server
     @LauncherAPI public final CommandHandler commandHandler;
     @LauncherAPI public final ServerSocketHandler serverSocketHandler;
@@ -89,7 +93,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     public LaunchServer(Path dir, boolean portable) throws IOException, InvalidKeySpecException {
         //setScriptBindings();
         this.portable = portable;
-
+        
         // Setup config locations
         this.dir = dir;
         configFile = dir.resolve("LaunchServer.cfg");
@@ -102,7 +106,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         AuthHandler.registerHandlers();
         AuthProvider.registerProviders();
         TextureProvider.registerProviders();
-
+        
         // Set command handler
         CommandHandler localCommandHandler;
         if (portable) {
@@ -153,7 +157,11 @@ public final class LaunchServer implements Runnable, AutoCloseable {
             config = new Config(TextConfigReader.read(reader, true));
         }
         config.verify();
-
+        
+        // init hwid and anti-brutforce
+        limiter = new AuthLimiter(this);
+        HWhandler = new HWIDHandler(this);
+        
         // Set launcher EXE binary
         launcherBinary = new JARLauncherBinary(this);
         launcherEXEBinary = new EXEL4JLauncherBinary(this);
@@ -400,10 +408,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                 VerifyHelper.range(0, 65535), "Illegal LaunchServer port");
             authRateLimit = VerifyHelper.verifyInt(block.getEntryValue("authRateLimit", IntegerConfigEntry.class),
                     VerifyHelper.range(0, 1000000), "Illegal authRateLimit");
-            AuthLimiter.rateLimit = authRateLimit;
             authRateLimitMilis = VerifyHelper.verifyInt(block.getEntryValue("authRateLimitMilis", IntegerConfigEntry.class),
-                    VerifyHelper.range(10, 1000000), "Illegal authRateLimitMillis");
-            AuthLimiter.rateLimitMilis = authRateLimitMilis;
+                    VerifyHelper.range(10, 10000000), "Illegal authRateLimitMillis");
             bindAddress = block.hasEntry("bindAddress") ?
                 block.getEntryValue("bindAddress", StringConfigEntry.class) : getAddress();
             authRejectString = block.hasEntry("authRejectString") ?

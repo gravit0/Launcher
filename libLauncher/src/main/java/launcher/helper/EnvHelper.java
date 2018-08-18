@@ -36,12 +36,12 @@ public class EnvHelper {
 	@LauncherAPI
 	public static void addEnv(ProcessBuilder builder) {
 		if (hasOptsVar()) {
-			Map<String, String> repl = new HashMap<String, String>();
+			Map<String, String> repl = new HashMap<>();
 			for (String str : toTest) {
 				repl.put(str, "");
 				repl.put(str.toLowerCase(Locale.ENGLISH), "");
 			}
-			builder.environment().putAll(repl);
+			JVMHelper.appendVars(builder, repl);
 		}
 	}
 	

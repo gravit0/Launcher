@@ -65,7 +65,7 @@ public final class CommonHelper {
 
     @LauncherAPI
     public static String multiReplace(Pattern[] pattern, String from, String replace) {
-    	Matcher m = null;
+    	Matcher m;
     	String tmp = null;
     	for (Pattern p : pattern) {
     		m = p.matcher(from);

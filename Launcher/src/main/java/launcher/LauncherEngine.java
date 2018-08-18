@@ -103,6 +103,7 @@ public class LauncherEngine {
     public static void addLauncherClassBindings(Map<String, Object> bindings) {
         bindings.put("LauncherClass", Launcher.class);
         bindings.put("LauncherConfigClass", LauncherConfig.class);
+        bindings.put("HTTPRequestClass", HTTPRequest.class);
 
         // Set client class bindings
         bindings.put("PlayerProfileClass", PlayerProfile.class);
@@ -158,7 +159,6 @@ public class LauncherEngine {
         // Set helper class bindings
         bindings.put("CommonHelperClass", CommonHelper.class);
         bindings.put("IOHelperClass", IOHelper.class);
-        bindings.put("CompressorHelperClass", CompressorHelper.class);
         bindings.put("EnvHelperClass", EnvHelper.class);
         bindings.put("JVMHelperClass", JVMHelper.class);
         bindings.put("JVMHelperOSClass", JVMHelper.OS.class);

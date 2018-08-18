@@ -10,6 +10,7 @@ import launcher.helper.VerifyHelper;
 import launcher.request.Request;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 
 public final class JoinServerRequest extends Request<Boolean> {
     private static final Pattern SERVERID_PATTERN = Pattern.compile("-?[0-9a-f]{1,40}");
@@ -39,9 +40,9 @@ public final class JoinServerRequest extends Request<Boolean> {
 
     @Override
     protected Boolean requestDo(HInput input, HOutput output) throws IOException {
-        output.writeString(username, 64);
+        output.writeString(username, SerializeLimits.MAX_LOGIN);
         output.writeASCII(accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
-        output.writeASCII(serverID, 41); // 1 char for minus sign
+        output.writeASCII(serverID, SerializeLimits.MAX_SERVERID); // 1 char for minus sign
         output.flush();
 
         // Read response

@@ -114,3 +114,4 @@ Launcher/build
 libLauncher/build
 buildnumber
 Launcher.iws
+*.directory

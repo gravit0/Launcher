@@ -48,7 +48,7 @@ task genRuntimeJS(type: Zip) {
 Map<String, String> parseIni(File ini) throws IOException {
 	Map<String, String> toRet = new HashMap<String, String>()
 	for (String line : java.nio.file.Files.readAllLines(ini.toPath())) {
-		String[] props = line.split("=");
+		String[] props = line.split("=")
 		toRet.put(props[0], props[1])
 	}
 	return toRet

@@ -162,8 +162,7 @@ public final class ClientLauncher {
             builder.redirectOutput(Redirect.PIPE);
         }
         // Let's rock!
-        Process process = builder.start();
-        return process;
+        return builder.start();
     }
 
     @LauncherAPI

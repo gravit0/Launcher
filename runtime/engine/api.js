@@ -1,5 +1,6 @@
 var Launcher = LauncherClass.static;
 var LauncherConfig = LauncherConfigClass.static;
+var HTTPRequest = HTTPRequestClass.static;
 
 // Hasher class API imports
 var PlayerProfile = PlayerProfileClass.static;
@@ -58,7 +59,6 @@ var IOHelper = IOHelperClass.static;
 var JVMHelper = JVMHelperClass.static;
 var JVMHelperOS = JVMHelperOSClass.static;
 var LogHelper = LogHelperClass.static;
-var CompressorHelper = CompressorHelperClass.static;
 var EnvHelper = EnvHelperClass.static;
 var SecurityHelper = SecurityHelperClass.static;
 var DigestAlgorithm = DigestAlgorithmClass.static;

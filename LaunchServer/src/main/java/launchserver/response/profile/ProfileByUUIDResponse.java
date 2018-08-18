@@ -8,6 +8,7 @@ import launcher.profiles.Texture;
 import launcher.helper.LogHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 import launchserver.response.Response;
 
@@ -20,7 +21,7 @@ public final class ProfileByUUIDResponse extends Response {
     public void reply() throws IOException {
         UUID uuid = input.readUUID();
         debug("UUID: " + uuid);
-        String client = input.readString(64);
+        String client = input.readString(SerializeLimits.MAX_CLIENT);
         // Verify has such profile
         String username = server.config.authHandler.uuidToUsername(uuid);
         if (username == null) {
