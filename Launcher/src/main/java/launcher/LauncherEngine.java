@@ -158,6 +158,8 @@ public class LauncherEngine {
         // Set helper class bindings
         bindings.put("CommonHelperClass", CommonHelper.class);
         bindings.put("IOHelperClass", IOHelper.class);
+        bindings.put("CompressorHelperClass", CompressorHelper.class);
+        bindings.put("EnvHelperClass", EnvHelper.class);
         bindings.put("JVMHelperClass", JVMHelper.class);
         bindings.put("JVMHelperOSClass", JVMHelper.OS.class);
         bindings.put("LogHelperClass", LogHelper.class);

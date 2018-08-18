@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
 import launcher.LauncherAPI;
 
@@ -145,6 +146,16 @@ public final class JVMHelper {
         return String.format("-D%s=%s", name, value);
     }
 
+    @LauncherAPI
+    public static void appendVars(ProcessBuilder builder, Map<String, String> vars) {
+    	builder.environment().putAll(vars);
+    }
+    
+    @LauncherAPI
+    public static String getEnvPropertyCaseSensitive(String name) {
+        return System.getenv().get(name);
+    }
+    
     @SuppressWarnings("unused")
     @LauncherAPI
     public enum OS {

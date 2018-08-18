@@ -1,6 +1,9 @@
 package launcher.helper;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.script.ScriptEngine;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -60,6 +63,25 @@ public final class CommonHelper {
         return repArray;
     }
 
+    @LauncherAPI
+    public static String multiReplace(Pattern[] pattern, String from, String replace) {
+    	Matcher m = null;
+    	String tmp = null;
+    	for (Pattern p : pattern) {
+    		m = p.matcher(from);
+    		if (m.matches()) tmp = m.replaceAll(replace);
+    	}
+    	return tmp != null ? tmp : from;
+    }
+    
+    @LauncherAPI
+    public static boolean multiMatches(Pattern[] pattern, String from) {
+    	for (Pattern p : pattern) {
+    		if (p.matcher(from).matches()) return true;
+    	}
+    	return false;
+    }
+    
     @LauncherAPI
     public static String formatVars(String in) {
         return replace(in, repArray);
