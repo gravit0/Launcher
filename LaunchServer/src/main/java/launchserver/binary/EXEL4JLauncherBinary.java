@@ -1,6 +1,5 @@
 package launchserver.binary;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +47,7 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 			// Set favicon path
 			Config config = ConfigPersister.getInstance().getConfig();
 			if (IOHelper.isFile(faviconFile)) {
-				config.setIcon(new File("favicon.ico"));
+				config.setIcon(faviconFile.toFile());
 			} else {
 				config.setIcon(null);
 				LogHelper.warning("Missing favicon.ico file");
@@ -97,15 +96,15 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 		// Prepare version info (product)
 		VersionInfo info = new VersionInfo();
 		info.setProductName(configCnt.productName);
-		info.setProductVersion(configCnt.productVer);
+		info.setProductVersion(CommonHelper.formatVars(configCnt.productVer));
 		info.setFileDescription(configCnt.fileDesc);
-		info.setFileVersion(configCnt.fileVer);
+		info.setFileVersion(CommonHelper.formatVars(configCnt.fileVer));
 		info.setCopyright(configCnt.copyright);
 		info.setTrademarks(configCnt.trademarks);
-		info.setInternalName(configCnt.internalName);
+		info.setInternalName(CommonHelper.formatVars(configCnt.internalName));
 		// Prepare version info (file)
-		info.setTxtFileVersion(configCnt.txtFileVersion);
-		info.setTxtProductVersion(configCnt.txtProductVersion);
+		info.setTxtFileVersion(CommonHelper.formatVars(configCnt.txtFileVersion));
+		info.setTxtProductVersion(CommonHelper.formatVars(configCnt.txtProductVersion));
 		// Prepare version info (misc)
 		info.setOriginalFilename(binaryFile.getFileName().toString());
 		info.setLanguage(LanguageID.RUSSIAN);

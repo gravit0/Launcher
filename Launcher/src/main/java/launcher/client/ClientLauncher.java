@@ -154,6 +154,7 @@ public final class ClientLauncher {
         LogHelper.debug("Launching client instance");
         ProcessBuilder builder = new ProcessBuilder(args);
         builder.environment().put("CLASSPATH",classPathString.toString());
+        EnvHelper.addEnv(builder);
         builder.directory(params.clientDir.toFile());
         builder.inheritIO();
         if (pipeOutput) {

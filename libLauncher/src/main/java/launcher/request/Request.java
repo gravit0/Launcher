@@ -2,7 +2,6 @@ package launcher.request;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.security.SecureRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import launcher.Launcher;
