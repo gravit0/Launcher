@@ -1,6 +1,7 @@
 package launchserver.plugin.bungee;
 
 import launchserver.plugin.LaunchServerPluginBridge;
+import net.md_5.bungee.api.plugin.Plugin;
 
 public final class LaunchServerPluginBungee extends Plugin {
     public volatile LaunchServerPluginBridge bridge = null;

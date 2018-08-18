@@ -13,6 +13,9 @@ import launcher.serialize.config.entry.BlockConfigEntry;
 import launcher.serialize.config.entry.BooleanConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
 import launchserver.LaunchServer;
+import net.sf.launch4j.Builder;
+import net.sf.launch4j.Log;
+import net.sf.launch4j.config.*;
 
 public final class EXEL4JLauncherBinary extends LauncherBinary {
 	// URL constants
