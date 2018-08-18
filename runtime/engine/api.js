@@ -59,7 +59,6 @@ var IOHelper = IOHelperClass.static;
 var JVMHelper = JVMHelperClass.static;
 var JVMHelperOS = JVMHelperOSClass.static;
 var LogHelper = LogHelperClass.static;
-var CompressorHelper = CompressorHelperClass.static;
 var EnvHelper = EnvHelperClass.static;
 var SecurityHelper = SecurityHelperClass.static;
 var DigestAlgorithm = DigestAlgorithmClass.static;
