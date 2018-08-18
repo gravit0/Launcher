@@ -25,8 +25,8 @@ public final class RequestTextureProvider extends TextureProvider {
         cloakURL = block.getEntryValue("cloaksURL", StringConfigEntry.class);
 
         // Verify
-        IOHelper.verifyURL(getTextureURL(skinURL, ZERO_UUID, "skinUsername"));
-        IOHelper.verifyURL(getTextureURL(cloakURL, ZERO_UUID, "cloakUsername"));
+        IOHelper.verifyURL(getTextureURL(skinURL, ZERO_UUID, "skinUsername",""));
+        IOHelper.verifyURL(getTextureURL(cloakURL, ZERO_UUID, "cloakUsername",""));
     }
 
     @Override
