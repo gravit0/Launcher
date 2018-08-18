@@ -37,8 +37,10 @@ public final class AuthResponse extends Response {
     public void reply() throws Exception {
         String login = input.readString(SerializeLimits.MAX_LOGIN);
         String client = input.readString(SerializeLimits.MAX_CLIENT);
+        long hwid_hdd = input.readLong();
+        long hwid_cpu = input.readLong();
+        long hwid_bios = input.readLong();
         byte[] encryptedPassword = input.readByteArray(SecurityHelper.CRYPTO_MAX_LENGTH);
-
         // Decrypt password
         String password;
         try {
