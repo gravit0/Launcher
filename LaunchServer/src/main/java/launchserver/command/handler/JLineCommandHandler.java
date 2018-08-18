@@ -2,7 +2,6 @@ package launchserver.command.handler;
 
 import java.io.IOException;
 
-import jline.console.ConsoleReader;
 import launcher.helper.LogHelper;
 import launcher.helper.LogHelper.Output;
 import launchserver.LaunchServer;
@@ -10,7 +9,7 @@ import launchserver.LaunchServer;
 public final class JLineCommandHandler extends CommandHandler {
     private final ConsoleReader reader;
 
-    public JLineCommandHandler(LaunchServer server) throws IOException {
+    public JLineCommandHandler(LaunchServer server) {
         super(server);
 
         // Set reader
@@ -23,17 +22,17 @@ public final class JLineCommandHandler extends CommandHandler {
     }
 
     @Override
-    public void bell() throws IOException {
+    public void bell() {
         reader.beep();
     }
 
     @Override
-    public void clear() throws IOException {
+    public void clear() {
         reader.clearScreen();
     }
 
     @Override
-    public String readLine() throws IOException {
+    public String readLine() {
         return reader.readLine();
     }
 

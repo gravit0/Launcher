@@ -88,7 +88,6 @@ public final class ResponseThread implements Runnable {
         int magicNumber = input.readInt();
         if (magicNumber != Launcher.PROTOCOL_MAGIC) {
             if (magicNumber != Launcher.PROTOCOL_MAGIC - 1) { // Previous launcher protocol
-                session = 0;
             }
             session = 0;
             legacy = true;

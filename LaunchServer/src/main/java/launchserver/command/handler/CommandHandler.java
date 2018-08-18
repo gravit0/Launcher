@@ -77,10 +77,10 @@ public abstract class CommandHandler implements Runnable {
     }
 
     @LauncherAPI
-    public abstract void bell() throws IOException;
+    public abstract void bell();
 
     @LauncherAPI
-    public abstract void clear() throws IOException;
+    public abstract void clear();
 
     @LauncherAPI
     public abstract String readLine() throws IOException;

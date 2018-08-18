@@ -9,14 +9,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import org.kamranzafar.jtar.TarEntry;
-import org.kamranzafar.jtar.TarInputStream;
-import org.kamranzafar.jtar.TarOutputStream;
-import org.tukaani.xz.DeltaOptions;
-import org.tukaani.xz.FilterOptions;
-import org.tukaani.xz.LZMA2Options;
-import org.tukaani.xz.XZInputStream;
-import org.tukaani.xz.XZOutputStream;
+
 import launcher.LauncherAPI;
 
 @LauncherAPI
@@ -29,12 +22,12 @@ public class CompressorHelper {
 	public static final FilterOptions[] opts = new FilterOptions[] { new DeltaOptions(), new LZMA2Options() };
 
 	@LauncherAPI
-	public static InputStream wrapIn(InputStream in) throws IOException {
+	public static InputStream wrapIn(InputStream in) {
 		return new XZInputStream(in);
 	}
 
 	@LauncherAPI
-	public static OutputStream wrapOut(OutputStream out) throws IOException {
+	public static OutputStream wrapOut(OutputStream out) {
 		return new XZOutputStream(out, opts);
 	}
 
@@ -51,9 +44,9 @@ public class CompressorHelper {
 	@LauncherAPI
 	public static void decompressDir(Path dir, Path archive) throws IOException {
 		try (TarInputStream inp = new TarInputStream(new BufferedInputStream(wrapIn(IOHelper.newInput(archive))))) {
-			TarEntry entry = null;
-			String name = null;
-			Path f = null;
+			TarEntry entry;
+			String name;
+			Path f;
 			while ((entry = inp.getNextEntry()) != null) {
 				name = entry.getName();
 				f = dir.resolve(name);
@@ -89,7 +82,7 @@ public class CompressorHelper {
 
 		@LauncherAPI
 		@Override
-		public void close() throws IOException {
+		public void close() {
 			out.flush();
 			out.close();
 		}

@@ -2,10 +2,8 @@ package launchserver.plugin.bungee;
 
 import launchserver.plugin.LaunchServerPluginBridge;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.plugin.Command;
 //import net.md_5.bungee.command.ConsoleCommandSender;
 
 public final class LaunchServerCommandBungee extends Command {

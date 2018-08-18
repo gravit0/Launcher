@@ -129,8 +129,7 @@ public class JsonAuthHandler extends CachedAuthHandler {
         String serverID = result.getString(serverIDKeyName, null);
         if(username == null || accessToken == null || serverID == null) return null;
 
-        Entry entry = new Entry(uuid,username,accessToken,serverID);
-        return entry;
+        return new Entry(uuid,username,accessToken,serverID);
     }
 
     @Override
@@ -140,10 +139,9 @@ public class JsonAuthHandler extends CachedAuthHandler {
         UUID uuid = UUID.fromString(result.getString(uuidKeyName, null));
         String accessToken = result.getString(accessTokenKeyName, null);
         String serverID = result.getString(serverIDKeyName, null);
-        if(uuid == null || accessToken == null || serverID == null) return null;
+        if(accessToken == null || serverID == null) return null;
 
-        Entry entry = new Entry(uuid,username,accessToken,serverID);
-        return entry;
+        return new Entry(uuid,username,accessToken,serverID);
     }
 
     @Override
