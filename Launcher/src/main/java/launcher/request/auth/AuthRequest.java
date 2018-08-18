@@ -12,6 +12,7 @@ import launcher.request.Request;
 import launcher.request.auth.AuthRequest.Result;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 
 public final class AuthRequest extends Request<Result> {
     private final String login;
@@ -36,8 +37,8 @@ public final class AuthRequest extends Request<Result> {
 
     @Override
     protected Result requestDo(HInput input, HOutput output) throws IOException {
-        output.writeString(login, 255);
-        output.writeString(ClientLauncher.profile.getTitle(), 64);
+        output.writeString(login, SerializeLimits.MAX_LOGIN);
+        output.writeString(ClientLauncher.profile.getTitle(), SerializeLimits.MAX_CLIENT);
         output.writeByteArray(encryptedPassword, SecurityHelper.CRYPTO_MAX_LENGTH);
         output.flush();
 

@@ -6,6 +6,7 @@ import java.util.UUID;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 import launchserver.response.Response;
 
@@ -18,7 +19,7 @@ public final class ProfileByUsernameResponse extends Response {
     public void reply() throws IOException {
         String username = VerifyHelper.verifyUsername(input.readString(64));
         debug("Username: " + username);
-        String client = input.readString(64);
+        String client = input.readString(SerializeLimits.MAX_CLIENT);
         // Write response
         writeProfile(server, output, username,client);
     }

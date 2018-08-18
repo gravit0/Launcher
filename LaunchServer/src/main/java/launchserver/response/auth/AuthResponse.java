@@ -12,6 +12,7 @@ import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 import launchserver.auth.AuthException;
 import launchserver.auth.AuthLimiter;
@@ -34,8 +35,8 @@ public final class AuthResponse extends Response {
 
     @Override
     public void reply() throws Exception {
-        String login = input.readString(255);
-        String client = input.readString(64);
+        String login = input.readString(SerializeLimits.MAX_LOGIN);
+        String client = input.readString(SerializeLimits.MAX_CLIENT);
         byte[] encryptedPassword = input.readByteArray(SecurityHelper.CRYPTO_MAX_LENGTH);
 
         // Decrypt password
