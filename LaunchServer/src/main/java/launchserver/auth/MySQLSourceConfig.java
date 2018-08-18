@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import launcher.LauncherAPI;
 import launcher.helper.LogHelper;
@@ -96,20 +97,23 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
             try {
                 Class.forName("com.zaxxer.hikari.HikariDataSource");
                 hikari = true; // Used for shutdown. Not instanceof because of possible classpath error
-
+                HikariConfig cfg = new HikariConfig();
+                cfg.setDataSourceClassName(mysqlSource.getClass().getCanonicalName());
+                cfg.setUsername(username);
+                cfg.setPassword(password);
+                cfg.addDataSourceProperty("serverName", address);
+                cfg.addDataSourceProperty("databaseName", database);
+                cfg.addDataSourceProperty("portNumber",port);
+                cfg.setPoolName(poolName);
+                //cfg.setMinimumIdle(0);
+                cfg.setMaximumPoolSize(MAX_POOL_SIZE);
+                //cfg.setIdleTimeout(TIMEOUT * 1000L);
                 // Set HikariCP pool
-                HikariDataSource hikariSource = new HikariDataSource();
-                hikariSource.setDataSource(source);
-
-                // Set pool settings
-                hikariSource.setPoolName(poolName);
-                hikariSource.setMinimumIdle(0);
-                hikariSource.setMaximumPoolSize(MAX_POOL_SIZE);
-                hikariSource.setIdleTimeout(TIMEOUT * 1000L);
-
+                HikariDataSource hikariSource = new HikariDataSource(cfg);
                 // Replace source with hds
                 source = hikariSource;
                 LogHelper.info("HikariCP pooling enabled for '%s'", poolName);
+                return hikariSource.getConnection();
             } catch (ClassNotFoundException ignored) {
                 LogHelper.warning("HikariCP isn't in classpath for '%s'", poolName);
             }
