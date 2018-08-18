@@ -36,12 +36,12 @@ public final class RequestTextureProvider extends TextureProvider {
 
     @Override
     public Texture getCloakTexture(UUID uuid, String username, String client) throws IOException {
-        return getTexture(getTextureURL(cloakURL, uuid, username), true);
+        return getTexture(getTextureURL(cloakURL, uuid, username,client), true);
     }
 
     @Override
     public Texture getSkinTexture(UUID uuid, String username, String client) throws IOException {
-        return getTexture(getTextureURL(skinURL, uuid, username), false);
+        return getTexture(getTextureURL(skinURL, uuid, username,client), false);
     }
 
     private static Texture getTexture(String url, boolean cloak) throws IOException {
@@ -54,8 +54,9 @@ public final class RequestTextureProvider extends TextureProvider {
         }
     }
 
-    private static String getTextureURL(String url, UUID uuid, String username) {
+    private static String getTextureURL(String url, UUID uuid, String username, String client) {
         return CommonHelper.replace(url, "username", IOHelper.urlEncode(username),
-            "uuid", IOHelper.urlEncode(uuid.toString()), "hash", IOHelper.urlEncode(Launcher.toHash(uuid)));
+            "uuid", IOHelper.urlEncode(uuid.toString()), "hash", IOHelper.urlEncode(Launcher.toHash(uuid)),
+                "client", IOHelper.urlEncode(client));
     }
 }
