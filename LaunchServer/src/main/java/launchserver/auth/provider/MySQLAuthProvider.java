@@ -32,7 +32,8 @@ public final class MySQLAuthProvider extends AuthProvider {
 
     @Override
     public AuthProviderResult auth(String login, String password, String ip) throws SQLException, AuthException {
-        try (Connection c = mySQLHolder.getConnection(); PreparedStatement s = c.prepareStatement(query)) {
+            Connection c = mySQLHolder.getConnection();
+            PreparedStatement s = c.prepareStatement(query);
             String[] replaceParams = { "login", login, "password", password, "ip", ip };
             for (int i = 0; i < queryParams.length; i++) {
                 s.setString(i + 1, CommonHelper.replace(queryParams[i], replaceParams));
@@ -43,7 +44,6 @@ public final class MySQLAuthProvider extends AuthProvider {
             try (ResultSet set = s.executeQuery()) {
                 return set.next() ? new AuthProviderResult(set.getString(1), SecurityHelper.randomStringToken()) : authError("Incorrect username or password");
             }
-        }
     }
 
     @Override

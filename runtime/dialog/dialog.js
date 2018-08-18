@@ -96,6 +96,10 @@ function goAuth(event) {
     if (profile === null) {
         return; // No profile selected
     }
+    else
+    {
+        ClientLauncher.setProfile(profile.object);
+    }
 
     // Get login
     var login = loginField.getText();

@@ -1,4 +1,4 @@
-package launcher.client;
+package launcher.profiles;
 
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;

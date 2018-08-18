@@ -75,7 +75,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
 
                 // Invoke pre-connect listener
                 long id = idCounter.incrementAndGet();
-                if (listener != null && !listener.onConnect(id, socket.getInetAddress())) {
+                if (listener != null && !listener.onConnect(socket.getInetAddress())) {
                     continue; // Listener didn't accepted this connection
                 }
 
@@ -109,24 +109,24 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         this.listener = listener;
     }
 
-    /*package*/ void onDisconnect(long id, Exception e) {
+    /*package*/ void onDisconnect(Exception e) {
         if (listener != null) {
-            listener.onDisconnect(id, e);
+            listener.onDisconnect(e);
         }
     }
 
-    /*package*/ boolean onHandshake(long id, Type type) {
-        return listener == null || listener.onHandshake(id, type);
+    /*package*/ boolean onHandshake(long session, Type type) {
+        return listener == null || listener.onHandshake(session, type);
     }
 
     public interface Listener {
         @LauncherAPI
-        boolean onConnect(long id, InetAddress address);
+        boolean onConnect(InetAddress address);
 
         @LauncherAPI
-        void onDisconnect(long id, Exception e);
+        void onDisconnect(Exception e);
 
         @LauncherAPI
-        boolean onHandshake(long id, Type type);
+        boolean onHandshake(long session, Type type);
     }
 }

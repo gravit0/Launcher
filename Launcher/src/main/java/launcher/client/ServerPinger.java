@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import launcher.LauncherAPI;
-import launcher.client.ClientProfile.Version;
+import launcher.profiles.ClientProfile.Version;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;

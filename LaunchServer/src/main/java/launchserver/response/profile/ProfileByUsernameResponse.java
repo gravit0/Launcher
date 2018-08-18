@@ -6,6 +6,7 @@ import java.util.UUID;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 import launchserver.response.Response;
 
@@ -18,12 +19,12 @@ public final class ProfileByUsernameResponse extends Response {
     public void reply() throws IOException {
         String username = VerifyHelper.verifyUsername(input.readString(64));
         debug("Username: " + username);
-
+        String client = input.readString(SerializeLimits.MAX_CLIENT);
         // Write response
-        writeProfile(server, output, username);
+        writeProfile(server, output, username,client);
     }
 
-    public static void writeProfile(LaunchServer server, HOutput output, String username) throws IOException {
+    public static void writeProfile(LaunchServer server, HOutput output, String username,String client) throws IOException {
         UUID uuid = server.config.authHandler.usernameToUUID(username);
         if (uuid == null) {
             output.writeBoolean(false);
@@ -32,6 +33,6 @@ public final class ProfileByUsernameResponse extends Response {
 
         // Write profile
         output.writeBoolean(true);
-        ProfileByUUIDResponse.getProfile(server, uuid, username).write(output);
+        ProfileByUUIDResponse.getProfile(server, uuid, username, client).write(output);
     }
 }

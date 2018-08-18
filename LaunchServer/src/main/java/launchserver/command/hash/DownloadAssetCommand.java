@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import launcher.client.ClientProfile.Version;
+import launcher.profiles.ClientProfile.Version;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;

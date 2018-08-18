@@ -28,7 +28,7 @@ public final class JARLauncherBinary extends LauncherBinary {
 
     @LauncherAPI
     public JARLauncherBinary(LaunchServer server) throws IOException {
-        super(server, server.dir.resolve("Launcher.jar"));
+        super(server, server.dir.resolve(server.config.binaryName + ".jar"));
         runtimeDir = server.dir.resolve(Launcher.RUNTIME_DIR);
         initScriptFile = runtimeDir.resolve(Launcher.INIT_SCRIPT_FILE);
         tryUnpackRuntime();
@@ -45,7 +45,7 @@ public final class JARLauncherBinary extends LauncherBinary {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
                     output.putNextEntry(e);
-                    org.apache.commons.io.IOUtils.copy(input, output);
+                    IOHelper.transfer(input, output);
                     e = input.getNextEntry();
                 }
             }

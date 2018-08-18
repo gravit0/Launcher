@@ -6,6 +6,9 @@ import launcher.hasher.HashedDir;
 import launcher.hasher.HashedEntry;
 import launcher.hasher.HashedFile;
 import launcher.helper.*;
+import launcher.profiles.ClientProfile;
+import launcher.profiles.PlayerProfile;
+import launcher.profiles.Texture;
 import launcher.request.CustomRequest;
 import launcher.request.PingRequest;
 import launcher.request.Request;
@@ -100,6 +103,7 @@ public class LauncherEngine {
     public static void addLauncherClassBindings(Map<String, Object> bindings) {
         bindings.put("LauncherClass", Launcher.class);
         bindings.put("LauncherConfigClass", LauncherConfig.class);
+        bindings.put("HTTPRequestClass", HTTPRequest.class);
 
         // Set client class bindings
         bindings.put("PlayerProfileClass", PlayerProfile.class);
@@ -155,6 +159,7 @@ public class LauncherEngine {
         // Set helper class bindings
         bindings.put("CommonHelperClass", CommonHelper.class);
         bindings.put("IOHelperClass", IOHelper.class);
+        bindings.put("EnvHelperClass", EnvHelper.class);
         bindings.put("JVMHelperClass", JVMHelper.class);
         bindings.put("JVMHelperOSClass", JVMHelper.OS.class);
         bindings.put("LogHelperClass", LogHelper.class);

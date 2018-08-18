@@ -6,10 +6,12 @@ import java.util.UUID;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile;
+import launcher.client.ClientLauncher;
+import launcher.profiles.PlayerProfile;
 import launcher.request.Request;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 
 public final class ProfileByUUIDRequest extends Request<PlayerProfile> {
     private final UUID uuid;
@@ -33,6 +35,7 @@ public final class ProfileByUUIDRequest extends Request<PlayerProfile> {
     @Override
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
         output.writeUUID(uuid);
+        output.writeString(ClientLauncher.profile.getTitle(),SerializeLimits.MAX_CLIENT);
         output.flush();
 
         // Return profile

@@ -46,6 +46,7 @@ public final class SecurityHelper {
     // Certificate constants
     @LauncherAPI public static final String CERTIFICATE_DIGEST = "229f90000b89d5a542aaef77b4c1e405e83f3a02682968e1327f1811effcbe6d";
     @LauncherAPI public static final String HEX = "0123456789abcdef";
+    @LauncherAPI public static final SecureRandom  secureRandom = new SecureRandom();
 
     // Random generator constants
     private static final char[] VOWELS = { 'e', 'u', 'i', 'o', 'a' };

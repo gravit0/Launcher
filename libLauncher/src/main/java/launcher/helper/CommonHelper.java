@@ -1,12 +1,22 @@
 package launcher.helper;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.script.ScriptEngine;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import launcher.Launcher;
 import launcher.LauncherAPI;
 
 public final class CommonHelper {
+    @LauncherAPI
+    public static final String VERSIONREPLACE = "$VERSION$";
+    @LauncherAPI
+    public static final String BUILDREPLACE = "$BUILDNUMBER$";
+    @LauncherAPI
+    public static final String[] repArray = genReps();
     private static final String[] SCRIPT_ENGINE_ARGS = { "-strict" };
 
     private CommonHelper() {
@@ -16,7 +26,7 @@ public final class CommonHelper {
     public static String low(String s) {
         return s.toLowerCase(Locale.US);
     }
-
+    
     @LauncherAPI
     public static ScriptEngine newScriptEngine() {
         return new NashornScriptEngineFactory().getScriptEngine(SCRIPT_ENGINE_ARGS);
@@ -38,5 +48,60 @@ public final class CommonHelper {
             source = source.replace('%' + params[i] + '%', params[i + 1]);
         }
         return source;
+    }
+
+    private static String[] genReps() {
+        Replace[] replace = new Replace[] { new Replace(VERSIONREPLACE, Launcher.VERSION),
+                new Replace(BUILDREPLACE, Launcher.BUILD), };
+        String[] repArray = new String[replace.length * 2];
+        int i = 0;
+        for (Replace r : replace) {
+            repArray[i] = r.getSearch();
+            repArray[i + 1] = r.getReplacement();
+            i += 2;
+        }
+        return repArray;
+    }
+
+    @LauncherAPI
+    public static String multiReplace(Pattern[] pattern, String from, String replace) {
+    	Matcher m;
+    	String tmp = null;
+    	for (Pattern p : pattern) {
+    		m = p.matcher(from);
+    		if (m.matches()) tmp = m.replaceAll(replace);
+    	}
+    	return tmp != null ? tmp : from;
+    }
+    
+    @LauncherAPI
+    public static boolean multiMatches(Pattern[] pattern, String from) {
+    	for (Pattern p : pattern) {
+    		if (p.matcher(from).matches()) return true;
+    	}
+    	return false;
+    }
+    
+    @LauncherAPI
+    public static String formatVars(String in) {
+        return replace(in, repArray);
+    }
+
+    public static final class Replace {
+        private final String search;
+        private final String replacement;
+
+        public Replace(String search, String replacement) {
+            this.search = search;
+            this.replacement = replacement;
+        }
+
+        public String getReplacement() {
+            return replacement;
+        }
+
+        public String getSearch() {
+            return search;
+        }
     }
 }

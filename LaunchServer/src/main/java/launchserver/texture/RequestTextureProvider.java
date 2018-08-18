@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import launcher.Launcher;
-import launcher.client.Texture;
+import launcher.profiles.Texture;
 import launcher.helper.CommonHelper;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
@@ -35,12 +35,12 @@ public final class RequestTextureProvider extends TextureProvider {
     }
 
     @Override
-    public Texture getCloakTexture(UUID uuid, String username) throws IOException {
+    public Texture getCloakTexture(UUID uuid, String username, String client) throws IOException {
         return getTexture(getTextureURL(cloakURL, uuid, username), true);
     }
 
     @Override
-    public Texture getSkinTexture(UUID uuid, String username) throws IOException {
+    public Texture getSkinTexture(UUID uuid, String username, String client) throws IOException {
         return getTexture(getTextureURL(skinURL, uuid, username), false);
     }
 

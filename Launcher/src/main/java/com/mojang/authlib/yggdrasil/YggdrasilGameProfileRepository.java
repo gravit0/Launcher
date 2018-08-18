@@ -7,7 +7,7 @@ import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.uuid.BatchProfileByUsernameRequest;

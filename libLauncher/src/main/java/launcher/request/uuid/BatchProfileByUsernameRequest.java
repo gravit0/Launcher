@@ -4,12 +4,13 @@ import java.io.IOException;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.IOHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 
 public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]> {
     @LauncherAPI public static final int MAX_BATCH_SIZE = 128;
@@ -39,7 +40,8 @@ public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]
     protected PlayerProfile[] requestDo(HInput input, HOutput output) throws IOException {
         output.writeLength(usernames.length, MAX_BATCH_SIZE);
         for (String username : usernames) {
-            output.writeString(username, 64);
+            output.writeString(username, SerializeLimits.MAX_LOGIN);
+            output.writeString("", SerializeLimits.MAX_CLIENT); //TODO: Что это за запрос и для чего он нужен?
         }
         output.flush();
 

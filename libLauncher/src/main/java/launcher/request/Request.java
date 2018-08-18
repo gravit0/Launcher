@@ -17,7 +17,7 @@ import launcher.serialize.stream.EnumSerializer.Itf;
 public abstract class Request<R> {
     @LauncherAPI protected final LauncherConfig config;
     private final AtomicBoolean started = new AtomicBoolean(false);
-
+    private static final long session = SecurityHelper.secureRandom.nextLong();
     @LauncherAPI
     protected Request(LauncherConfig config) {
         this.config = config == null ? Launcher.getConfig() : config;
@@ -64,6 +64,7 @@ public abstract class Request<R> {
         // Write handshake
         output.writeInt(Launcher.PROTOCOL_MAGIC);
         output.writeBigInteger(config.publicKey.getModulus(), SecurityHelper.RSA_KEY_LENGTH + 1);
+        output.writeLong(session);
         EnumSerializer.write(output, getType());
         output.flush();
 

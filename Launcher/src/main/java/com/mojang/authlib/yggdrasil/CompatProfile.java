@@ -5,7 +5,7 @@ import java.util.UUID;
 import launcher.Launcher;
 import launcher.LauncherAPI;
 import launcher.client.ClientLauncher;
-import launcher.client.PlayerProfile;
+import launcher.profiles.PlayerProfile;
 import launcher.helper.SecurityHelper;
 
 @SuppressWarnings("unused")
