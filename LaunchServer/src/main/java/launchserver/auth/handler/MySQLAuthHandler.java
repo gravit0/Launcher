@@ -53,23 +53,6 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
             table, usernameColumn, accessTokenColumn, serverIDColumn, uuidColumn);
         updateServerIDSQL = String.format("UPDATE %s SET %s=? WHERE %s=? LIMIT 1",
             table, serverIDColumn, uuidColumn);
-
-        // Fetch all entries
-        if (block.getEntryValue("fetchAll", BooleanConfigEntry.class)) {
-            LogHelper.info("Fetching all AuthHandler entries");
-            String query = String.format("SELECT %s, %s, %s, %s FROM %s",
-                uuidColumn, usernameColumn, accessTokenColumn, serverIDColumn, table);
-            try {
-                Connection c = mySQLHolder.getConnection();
-                Statement statement = c.createStatement();
-                ResultSet set = statement.executeQuery(query);
-                for (Entry entry = constructEntry(set); entry != null; entry = constructEntry(set)) {
-                    addEntry(entry);
-                }
-            } catch (SQLException e) {
-                LogHelper.error(e);
-            }
-        }
     }
 
     @Override
