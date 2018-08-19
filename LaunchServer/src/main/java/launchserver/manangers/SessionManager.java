@@ -1,4 +1,4 @@
-package launchserver.response;
+package launchserver.manangers;
 
 import launcher.LauncherAPI;
 

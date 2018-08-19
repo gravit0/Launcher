@@ -4,7 +4,7 @@ import launcher.helper.JVMHelper;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
 import launchserver.command.Command;
-import launchserver.response.SessionManager;
+import launchserver.manangers.SessionManager;
 
 public final class GCCommand extends Command {
     public GCCommand(LaunchServer server) {

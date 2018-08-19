@@ -56,6 +56,7 @@ import launchserver.binary.LauncherBinary;
 import launchserver.command.handler.CommandHandler;
 import launchserver.command.handler.JLineCommandHandler;
 import launchserver.command.handler.StdCommandHandler;
+import launchserver.manangers.ModulesManager;
 import launchserver.response.ServerSocketHandler;
 import launchserver.texture.TextureProvider;
 
@@ -344,6 +345,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         JVMHelper.verifySystemProperties(LaunchServer.class, true);
         LogHelper.addOutput(IOHelper.WORKING_DIR.resolve("LaunchServer.log"));
         LogHelper.printVersion("LaunchServer");
+        ModulesManager.autoload();
 
         // Start LaunchServer
         Instant start = Instant.now();
