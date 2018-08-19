@@ -15,7 +15,7 @@ import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 import launchserver.auth.AuthException;
-import launchserver.auth.AuthLimiter;
+import launchserver.auth.HWID;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.auth.provider.AuthProviderResult;
 import launchserver.response.Response;
@@ -60,10 +60,11 @@ public final class AuthResponse extends Response {
                 AuthProvider.authError(String.format("Illegal result: '%s'", result.username));
                 return;
             }
-            if (AuthLimiter.isLimit(ip)) {
+            if (server.limiter.isLimit(ip)) {
                 AuthProvider.authError(server.config.authRejectString);
                 return;
             }
+            server.HWhandler.handle(HWID.gen(hwid_hdd, hwid_bios, hwid_cpu), result.username);
         } catch (AuthException e) {
             requestError(e.getMessage());
             return;
@@ -73,7 +74,6 @@ public final class AuthResponse extends Response {
             return;
         }
         debug("Auth: '%s' -> '%s', '%s'", login, result.username, result.accessToken);
-
         // Authenticate on server (and get UUID)
         UUID uuid;
         try {
@@ -87,7 +87,6 @@ public final class AuthResponse extends Response {
             return;
         }
         writeNoError(output);
-
         // Write profile and UUID
         ProfileByUUIDResponse.getProfile(server, uuid, result.username, client).write(output);
         output.writeASCII(result.accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);

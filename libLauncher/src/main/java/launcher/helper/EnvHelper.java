@@ -41,7 +41,7 @@ public class EnvHelper {
 				repl.put(str, "");
 				repl.put(str.toLowerCase(Locale.ENGLISH), "");
 			}
-			builder.environment().putAll(repl);
+			JVMHelper.appendVars(builder, repl);
 		}
 	}
 	

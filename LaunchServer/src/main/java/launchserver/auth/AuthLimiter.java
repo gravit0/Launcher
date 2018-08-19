@@ -2,14 +2,18 @@ package launchserver.auth;
 
 import java.util.HashMap;
 
+import launchserver.LaunchServer;
+
 public class AuthLimiter {
-    public static int rateLimit;
-    public static int rateLimitMilis;
-    static private HashMap<String,AuthEntry> map;
-    static {
+    public final int rateLimit;
+    public final int rateLimitMilis;
+    private HashMap<String,AuthEntry> map;
+    public AuthLimiter(LaunchServer srv) {
         map = new HashMap<>();
+        rateLimit = srv.config.authRateLimit;
+        rateLimitMilis = srv.config.authRateLimitMilis;
     }
-    public static boolean isLimit(String ip)
+    public boolean isLimit(String ip)
     {
         if(map.containsKey(ip))
         {
@@ -29,7 +33,42 @@ public class AuthLimiter {
     }
     static class AuthEntry
     {
-        public int value;
+        @Override
+		public String toString() {
+			return String.format("AuthEntry {value=%s, ts=%s}", value, ts);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (int) (ts ^ (ts >>> 32));
+			result = prime * result + value;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof AuthEntry)) {
+				return false;
+			}
+			AuthEntry other = (AuthEntry) obj;
+			if (ts != other.ts) {
+				return false;
+			}
+			if (value != other.value) {
+				return false;
+			}
+			return true;
+		}
+
+		public int value;
         public long ts;
 
         public AuthEntry(int i, long l) {
