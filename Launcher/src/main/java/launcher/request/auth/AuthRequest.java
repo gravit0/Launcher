@@ -41,9 +41,9 @@ public final class AuthRequest extends Request<Result> {
     protected Result requestDo(HInput input, HOutput output) throws IOException {
         output.writeString(login, SerializeLimits.MAX_LOGIN);
         output.writeString(ClientLauncher.profile.getTitle(), SerializeLimits.MAX_CLIENT);
-        output.writeLong(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE ? GuardBind.avnGetHddId() : 0);
-        output.writeLong(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE ? GuardBind.avnGetCpuid() : 0);
-        output.writeLong(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE ? GuardBind.avnGetSmbiosId() : 0);
+        output.writeLong(0);
+        output.writeLong(0);
+        output.writeLong(0);
         output.writeByteArray(encryptedPassword, SecurityHelper.CRYPTO_MAX_LENGTH);
         output.flush();
 
