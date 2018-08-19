@@ -162,7 +162,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         // init hwid and anti-brutforce
         limiter = new AuthLimiter(this);
         HWhandler = new HWIDHandler(this);
-        
+        ModulesManager.setLaunchServer(this);
+        ModulesManager.autoload();
+
         // Set launcher EXE binary
         launcherBinary = new JARLauncherBinary(this);
         launcherEXEBinary = new EXEL4JLauncherBinary(this);
@@ -345,7 +347,6 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         JVMHelper.verifySystemProperties(LaunchServer.class, true);
         LogHelper.addOutput(IOHelper.WORKING_DIR.resolve("LaunchServer.log"));
         LogHelper.printVersion("LaunchServer");
-        ModulesManager.autoload();
 
         // Start LaunchServer
         Instant start = Instant.now();

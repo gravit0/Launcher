@@ -36,6 +36,8 @@ import launchserver.command.hash.SyncBinariesCommand;
 import launchserver.command.hash.SyncProfilesCommand;
 import launchserver.command.hash.SyncUpdatesCommand;
 import launchserver.command.hash.UnindexAssetCommand;
+import launchserver.command.modules.LoadModuleCommand;
+import launchserver.command.modules.ModulesCommand;
 
 public abstract class CommandHandler implements Runnable {
     private final Map<String, Command> commands = new ConcurrentHashMap<>(32);
@@ -51,6 +53,8 @@ public abstract class CommandHandler implements Runnable {
         registerCommand("clear", new ClearCommand(server));
         registerCommand("gc", new GCCommand(server));
         registerCommand("logConnections", new LogConnectionsCommand(server));
+        registerCommand("loadModule", new LoadModuleCommand(server));
+        registerCommand("modules", new ModulesCommand(server));
 
         // Register sync commands
         registerCommand("indexAsset", new IndexAssetCommand(server));
