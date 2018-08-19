@@ -12,6 +12,7 @@ import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.config.ConfigObject;
 import launcher.serialize.config.entry.BlockConfigEntry;
+import launcher.serialize.config.entry.BooleanConfigEntry;
 import launcher.serialize.config.entry.IntegerConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
 
@@ -30,6 +31,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
     // Config
     private final String address;
     private final int port;
+    private final boolean useSSL;
     private final String username;
     private final String password;
     private final String database;
@@ -55,6 +57,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
         timeZone = block.hasEntry("timezone") ?  VerifyHelper.verify(block.getEntryValue("timezone", StringConfigEntry.class),
                 VerifyHelper.NOT_EMPTY, "MySQL time zone can't be empty") : null;
         // Password shouldn't be verified
+        useSSL = block.hasEntry("useSSL") ?  block.getEntryValue("timezone", BooleanConfigEntry.class) : true;
     }
 
     @Override
@@ -83,7 +86,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
             mysqlSource.setMaintainTimeStats(false);
             mysqlSource.setUseUnbufferedInput(false);
             mysqlSource.setUseReadAheadInput(false);
-
+            mysqlSource.setUseSSL(useSSL);
             // Set credentials
             mysqlSource.setServerName(address);
             mysqlSource.setPortNumber(port);
