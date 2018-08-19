@@ -32,6 +32,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
     private final String address;
     private final int port;
     private final boolean useSSL;
+    private final boolean verifyCertificates;
     private final String username;
     private final String password;
     private final String database;
@@ -57,7 +58,8 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
         timeZone = block.hasEntry("timezone") ?  VerifyHelper.verify(block.getEntryValue("timezone", StringConfigEntry.class),
                 VerifyHelper.NOT_EMPTY, "MySQL time zone can't be empty") : null;
         // Password shouldn't be verified
-        useSSL = block.hasEntry("useSSL") ?  block.getEntryValue("timezone", BooleanConfigEntry.class) : true;
+        useSSL = block.hasEntry("useSSL") ?  block.getEntryValue("useSSL", BooleanConfigEntry.class) : true;
+        verifyCertificates = block.hasEntry("verifyCertificates") ?  block.getEntryValue("verifyCertificates", BooleanConfigEntry.class) : false;
     }
 
     @Override
@@ -87,6 +89,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
             mysqlSource.setUseUnbufferedInput(false);
             mysqlSource.setUseReadAheadInput(false);
             mysqlSource.setUseSSL(useSSL);
+            mysqlSource.setVerifyServerCertificate(verifyCertificates);
             // Set credentials
             mysqlSource.setServerName(address);
             mysqlSource.setPortNumber(port);
@@ -101,12 +104,9 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
                 Class.forName("com.zaxxer.hikari.HikariDataSource");
                 hikari = true; // Used for shutdown. Not instanceof because of possible classpath error
                 HikariConfig cfg = new HikariConfig();
-                cfg.setDataSourceClassName(mysqlSource.getClass().getCanonicalName());
                 cfg.setUsername(username);
                 cfg.setPassword(password);
-                cfg.addDataSourceProperty("serverName", address);
-                cfg.addDataSourceProperty("databaseName", database);
-                cfg.addDataSourceProperty("portNumber",port);
+                cfg.setDataSource(mysqlSource);
                 cfg.setPoolName(poolName);
                 //cfg.setMinimumIdle(0);
                 cfg.setMaximumPoolSize(MAX_POOL_SIZE);
