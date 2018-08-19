@@ -24,6 +24,6 @@ public class LoadModuleCommand extends Command {
     @Override
     public void invoke(String... args) throws Exception {
         URI uri = new URI(args[0]);
-        ModulesManager.loadModule(uri.toURL());
+        ModulesManager.loadModule(uri.toURL(),false);
     }
 }

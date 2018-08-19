@@ -25,26 +25,37 @@ public class ModulesManager {
     public static LauncherClassLoader classloader = new LauncherClassLoader(new URL[0],ClassLoader.getSystemClassLoader());
     public static LaunchServer launchserver;
     @LauncherAPI
-    public static void loadModule(URL jarpath) throws ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, IOException {
+    public static void loadModule(URL jarpath,boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, IOException {
         JarFile f = new JarFile(Paths.get(jarpath.toURI()).toString());
         Manifest m = f.getManifest();
         String mainclass = m.getMainAttributes().getValue("Main-Class");
-        loadModule(jarpath,mainclass);
+        loadModule(jarpath,mainclass,preload);
         f.close();
     }
     @LauncherAPI
-    public static void loadModule(URL jarpath, String classname) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static void loadModule(URL jarpath, String classname,boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         classloader.addURL(jarpath);
         Class moduleclass = Class.forName(classname,true,classloader);
         Module module = (Module) moduleclass.newInstance();
         modules.add(module);
+        if(!preload) module.init();
         LogHelper.info("Module %s version: %s loaded",module.getName(),module.getVersion());
     }
     @LauncherAPI
-    public static void registerModule(Module module)
+    public static void registerModule(Module module,boolean preload)
     {
         modules.add(module);
+        if(!preload) module.init();
         LogHelper.info("Module %s version: %s registered",module.getName(),module.getVersion());
+    }
+    @LauncherAPI
+    public static void initModules()
+    {
+        for(Module m : modules)
+        {
+            m.init();
+            LogHelper.info("Module %s version: %s init",m.getName(),m.getVersion());
+        }
     }
     @LauncherAPI
     public static void printModules() {
@@ -61,6 +72,7 @@ public class ModulesManager {
     public static void autoload() throws IOException {
         LogHelper.info("Load modules");
         IOHelper.walk(Paths.get("modules"),new ModulesVisitor(),false);
+        initModules();
     }
     private static final class ModulesVisitor extends SimpleFileVisitor<Path> {
         private ModulesVisitor() {
@@ -72,7 +84,7 @@ public class ModulesManager {
                 JarFile f = new JarFile(file.toString());
                 Manifest m = f.getManifest();
                 String mainclass = m.getMainAttributes().getValue("Main-Class");
-                loadModule(file.toUri().toURL(),mainclass);
+                loadModule(file.toUri().toURL(),mainclass,true);
                 f.close();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
