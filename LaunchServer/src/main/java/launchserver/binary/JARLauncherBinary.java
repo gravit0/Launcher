@@ -12,6 +12,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javassist.*;
+import launcher.JAConfig;
 import launcher.Launcher;
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
@@ -41,11 +43,27 @@ public final class JARLauncherBinary extends LauncherBinary {
         // Build launcher binary
         LogHelper.info("Building launcher binary file");
         try (ZipOutputStream output =new ZipOutputStream(IOHelper.newOutput(binaryFile))) {
-            try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher-obf.jar")))) {
+            ClassPool pool = ClassPool.getDefault();
+            CtClass ctClass = pool.get(JAConfig.class.getCanonicalName());
+            CtConstructor ctConstructor = ctClass.getDeclaredConstructor(null);
+            ctConstructor.setBody("{ this.address = \""+server.config.getAddress()+"\";"+
+                    "this.port = "+server.config.port+"; }");
+            String findName = "launcher/"+JAConfig.class.getSimpleName()+".class";
+            System.out.println(findName);
+            try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
-                    output.putNextEntry(e);
-                    IOHelper.transfer(input, output);
+                    if(e.getName().equals(findName))
+                    {
+                        System.out.println("FOUND!");
+                        ZipEntry en = new ZipEntry(e.getName());
+                        output.putNextEntry(en);
+                        output.write(ctClass.toBytecode());
+                    }
+                    else {
+                        output.putNextEntry(e);
+                        IOHelper.transfer(input, output);
+                    }
                     e = input.getNextEntry();
                 }
             }
@@ -56,7 +74,6 @@ public final class JARLauncherBinary extends LauncherBinary {
             // Write launcher runtime dir
             Map<String, byte[]> runtime = new HashMap<>(256);
             IOHelper.walk(runtimeDir, new RuntimeDirVisitor(output, runtime), false);
-
             // Create launcher config file
             byte[] launcherConfigBytes;
             try (ByteArrayOutputStream configArray = IOHelper.newByteArrayOutput()) {
@@ -69,6 +86,10 @@ public final class JARLauncherBinary extends LauncherBinary {
             // Write launcher config file
             output.putNextEntry(IOHelper.newZipEntry(Launcher.CONFIG_FILE));
             output.write(launcherConfigBytes);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
         }
     }
 

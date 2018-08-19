@@ -32,6 +32,9 @@ public final class LauncherConfig extends StreamObject {
 
     @LauncherAPI
     public LauncherConfig(HInput input) throws IOException, InvalidKeySpecException {
+        JAConfig config = new JAConfig();
+        System.out.println(config.address);
+        System.out.println(config.port);
         String localAddress = input.readASCII(255);
         address = InetSocketAddress.createUnresolved(
             ADDRESS_OVERRIDE == null ? localAddress : ADDRESS_OVERRIDE, input.readLength(65535));

@@ -18,7 +18,7 @@ repositories {
 jar {
     dependsOn parent.childProjects.Launcher.tasks.build, parent.tasks.genRuntimeJS, parent.childProjects.Launcher.tasks.signJar
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-    from(parent.childProjects.Launcher.file("build/jars/signed/Launcher-obf.jar"), parent.tasks.genRuntimeJS.archivePath)
+    from(parent.childProjects.Launcher.file("build/libs/Launcher.jar"), parent.tasks.genRuntimeJS.archivePath)
     manifest.attributes("Main-Class": mainClassName)
     manifest.attributes("Class-Path": "libraries/jansi-1.17.1.jar libraries/jline-2.14.6.jar libraries/mysql-connector-java-8.0.12.jar libraries/hikaricp/HikariCP-3.2.0.jar libraries/hikaricp/javassist-3.22.0-CR1.jar libraries/hikaricp/slf4j-api-1.7.25.jar libraries/hikaricp/slf4j-simple-1.7.25.jar libraries/commons-io-2.6.jar libraries/launch4j/launch4j.jar")
 }
@@ -31,6 +31,7 @@ dependencies {
     compileOnly 'hikari-cp:hikari-cp:2.6.0'
     compileOnly 'mysql:mysql-connector-java:8.0.12'
 	compileOnly 'jline:jline:2.14.6'
+	compile group: 'javassist', name: 'javassist', version: '3.12.1.GA'
 	compileOnly('net.sf.launch4j:launch4j:3.9') {
 		exclude group: '*'
 	}
