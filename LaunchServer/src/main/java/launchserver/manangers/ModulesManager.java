@@ -11,10 +11,7 @@ import launchserver.Module;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
@@ -71,7 +68,9 @@ public class ModulesManager {
     @LauncherAPI
     public static void autoload() throws IOException {
         LogHelper.info("Load modules");
-        IOHelper.walk(Paths.get("modules"),new ModulesVisitor(),false);
+        Path modules = Paths.get("modules");
+        if(Files.notExists(modules)) Files.createDirectory(modules);
+        IOHelper.walk(modules,new ModulesVisitor(),true);
         initModules();
     }
     private static final class ModulesVisitor extends SimpleFileVisitor<Path> {

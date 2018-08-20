@@ -40,7 +40,7 @@ public final class AuthRequest extends Request<Result> {
     @Override
     protected Result requestDo(HInput input, HOutput output) throws IOException {
         output.writeString(login, SerializeLimits.MAX_LOGIN);
-        output.writeString(ClientLauncher.profile.getTitle(), SerializeLimits.MAX_CLIENT);
+        output.writeString(ClientLauncher.title, SerializeLimits.MAX_CLIENT);
         output.writeLong(0);
         output.writeLong(0);
         output.writeLong(0);

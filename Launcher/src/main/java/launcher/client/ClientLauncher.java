@@ -36,6 +36,7 @@ import launcher.profiles.PlayerProfile;
 import launcher.request.update.LauncherRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
 import launcher.AvanguardStarter;
@@ -45,6 +46,7 @@ import javax.swing.*;
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
     private static final String MAGICAL_INTEL_OPTION = "-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
+    @LauncherAPI public static final String TITLE_PROPERTY = "launcher.title";
     @SuppressWarnings("unused")
 	private static final Set<PosixFilePermission> BIN_POSIX_PERMISSIONS = Collections.unmodifiableSet(EnumSet.of(
         PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE, // Owner
@@ -58,7 +60,7 @@ public final class ClientLauncher {
     private static LauncherClassLoader classLoader;
     // Authlib constants
     @LauncherAPI public static final String SKIN_URL_PROPERTY = "skinURL";
-    @LauncherAPI public static ClientProfile profile = null;
+    @LauncherAPI public static String title = null;
     @LauncherAPI public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
     @LauncherAPI public static final String CLOAK_URL_PROPERTY = "cloakURL";
     @LauncherAPI public static final String CLOAK_DIGEST_PROPERTY = "cloakDigest";
@@ -68,7 +70,11 @@ public final class ClientLauncher {
 
     private ClientLauncher() {
     }
-
+    static {
+        String title_property = System.getProperty(TITLE_PROPERTY);
+        if(title_property != null) title = title_property;
+        else title = "";
+    }
     @LauncherAPI
     public static boolean isLaunched() {
         return LAUNCHED.get();
@@ -94,7 +100,7 @@ public final class ClientLauncher {
     @LauncherAPI
     public static void setProfile(ClientProfile profile)
     {
-        ClientLauncher.profile = profile;
+        ClientLauncher.title = profile.getTitle();
         LogHelper.debug("New Profile name: %s",profile.getTitle());
     }
     @LauncherAPI
@@ -193,7 +199,7 @@ public final class ClientLauncher {
         } finally {
             Files.delete(paramsFile);
         }
-
+        title = params.title;
         // Verify ClientLauncher sign and classpath
         LogHelper.debug("Verifying ClientLauncher sign and classpath");
         SecurityHelper.verifySign(LauncherRequest.BINARY_PATH, params.launcherSign, publicKey);
@@ -374,6 +380,7 @@ public final class ClientLauncher {
         // Client params
         @LauncherAPI public final PlayerProfile pp;
         @LauncherAPI public final String accessToken;
+        @LauncherAPI public final String title;
         @LauncherAPI public final boolean autoEnter;
         @LauncherAPI public final boolean fullScreen;
         @LauncherAPI public final int ram;
@@ -389,7 +396,7 @@ public final class ClientLauncher {
             // Client paths
             this.assetDir = assetDir;
             this.clientDir = clientDir;
-
+            this.title = ClientLauncher.title;
             // Client params
             this.pp = pp;
             this.accessToken = SecurityHelper.verifyToken(accessToken);
@@ -403,7 +410,7 @@ public final class ClientLauncher {
         @LauncherAPI
         public Params(HInput input) throws IOException {
             launcherSign = input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH);
-
+            title = input.readString(SerializeLimits.MAX_CLIENT);
             // Client paths
             assetDir = IOHelper.toPath(input.readString(0));
             clientDir = IOHelper.toPath(input.readString(0));
@@ -421,7 +428,7 @@ public final class ClientLauncher {
         @Override
         public void write(HOutput output) throws IOException {
             output.writeByteArray(launcherSign, -SecurityHelper.RSA_KEY_LENGTH);
-
+            output.writeString(title,SerializeLimits.MAX_CLIENT);
             // Client paths
             output.writeString(assetDir.toString(), 0);
             output.writeString(clientDir.toString(), 0);

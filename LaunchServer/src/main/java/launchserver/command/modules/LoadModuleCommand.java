@@ -5,6 +5,7 @@ import launchserver.command.Command;
 import launchserver.manangers.ModulesManager;
 
 import java.net.URI;
+import java.nio.file.Paths;
 
 public class LoadModuleCommand extends Command {
     public LoadModuleCommand(LaunchServer server) {
@@ -23,7 +24,8 @@ public class LoadModuleCommand extends Command {
 
     @Override
     public void invoke(String... args) throws Exception {
-        URI uri = new URI(args[0]);
+        verifyArgs(args, 1);
+        URI uri = Paths.get(args[0]).toUri();
         ModulesManager.loadModule(uri.toURL(),false);
     }
 }
