@@ -8,12 +8,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
-//import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import launcher.Launcher;
 import launcher.LauncherAPI;
 
 public final class CommonHelper {
-    //private static final String[] SCRIPT_ENGINE_ARGS;
 	@LauncherAPI
     public static final String VERSIONREPLACE;
     @LauncherAPI
@@ -26,7 +24,6 @@ public final class CommonHelper {
     public static final ScriptEngineFactory nashornFactory;
 
     static {
-    	//SCRIPT_ENGINE_ARGS = new String[] { "-strict" };
     	VERSIONREPLACE = "$VERSION$";
     	BUILDREPLACE = "$BUILDNUMBER$";
     	repArray = genReps();
@@ -51,7 +48,6 @@ public final class CommonHelper {
     
     @LauncherAPI
     public static ScriptEngine newScriptEngine() {
-        //return new NashornScriptEngineFactory().getScriptEngine(SCRIPT_ENGINE_ARGS);
     	return nashornFactory.getScriptEngine();
     }
 
