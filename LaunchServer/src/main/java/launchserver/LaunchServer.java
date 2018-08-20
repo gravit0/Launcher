@@ -56,6 +56,7 @@ import launchserver.binary.LauncherBinary;
 import launchserver.command.handler.CommandHandler;
 import launchserver.command.handler.JLineCommandHandler;
 import launchserver.command.handler.StdCommandHandler;
+import launchserver.manangers.ModulesManager;
 import launchserver.response.ServerSocketHandler;
 import launchserver.texture.TextureProvider;
 
@@ -161,7 +162,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         // init hwid and anti-brutforce
         limiter = new AuthLimiter(this);
         HWhandler = new HWIDHandler(this);
-        
+        ModulesManager.setLaunchServer(this);
+        ModulesManager.autoload();
+
         // Set launcher EXE binary
         launcherBinary = new JARLauncherBinary(this);
         launcherEXEBinary = new EXEL4JLauncherBinary(this);

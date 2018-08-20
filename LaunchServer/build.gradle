@@ -30,9 +30,9 @@ dependencies {
     compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT'
     compileOnly 'hikari-cp:hikari-cp:2.6.0'
     compileOnly 'mysql:mysql-connector-java:8.0.12'
-	compileOnly 'jline:jline:2.14.6'
-	compileOnly 'org.fusesource.jansi:jansi:1.17.1'
-	compileOnly('net.sf.launch4j:launch4j:3.9') {
+	  compileOnly 'jline:jline:2.14.6'
+	  compileOnly 'org.fusesource.jansi:jansi:1.17.1'
+	  compileOnly('net.sf.launch4j:launch4j:3.9') {
 		exclude group: '*'
 	}
 }
