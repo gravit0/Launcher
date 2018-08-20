@@ -12,7 +12,7 @@ allprojects {
 
 subprojects {
 	apply plugin: 'java'
-	compileJava.options.encoding = 'UTF-8'
+	tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 	def ini = new File('sign/info.ini')
 	Map<String, String> map = parseIni(ini)
 	def keystoreFile = new File("sign/" + map.get("keyname"))
@@ -38,12 +38,6 @@ subprojects {
 	}
 	
 	build.dependsOn tasks.signJar
-}
-
-task genRuntimeJS(type: Zip) {
-    archiveName = "runtime.zip"
-    destinationDir = file("${buildDir}/dist")
-    from "runtime/"
 }
 
 Map<String, String> parseIni(File ini) throws IOException {
