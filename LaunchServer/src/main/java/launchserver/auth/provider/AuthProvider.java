@@ -13,7 +13,8 @@ import launchserver.auth.AuthException;
 
 public abstract class AuthProvider extends ConfigObject implements AutoCloseable {
     private static final Map<String, Adapter<AuthProvider>> AUTH_PROVIDERS = new ConcurrentHashMap<>(8);
-
+    private static boolean registredProv = false;
+    
     @LauncherAPI
     protected AuthProvider(BlockConfigEntry block) {
         super(block);
@@ -45,15 +46,18 @@ public abstract class AuthProvider extends ConfigObject implements AutoCloseable
     }
 
     public static void registerProviders() {
-        registerProvider("null", NullAuthProvider::new);
-        registerProvider("accept", AcceptAuthProvider::new);
-        registerProvider("reject", RejectAuthProvider::new);
+    	if (!registredProv) {
+    		registerProvider("null", NullAuthProvider::new);
+    		registerProvider("accept", AcceptAuthProvider::new);
+    		registerProvider("reject", RejectAuthProvider::new);
 
-        // Auth providers that doesn't do nothing :D
-        registerProvider("mojang", MojangAuthProvider::new);
-        registerProvider("mysql", MySQLAuthProvider::new);
-        registerProvider("file", FileAuthProvider::new);
-        registerProvider("request", RequestAuthProvider::new);
-        registerProvider("json", JsonAuthProvider::new);
+    		// Auth providers that doesn't do nothing :D
+    		registerProvider("mojang", MojangAuthProvider::new);
+    		registerProvider("mysql", MySQLAuthProvider::new);
+        	registerProvider("file", FileAuthProvider::new);
+        	registerProvider("request", RequestAuthProvider::new);
+        	registerProvider("json", JsonAuthProvider::new);
+        	registredProv = true;
+    	}
     }
 }

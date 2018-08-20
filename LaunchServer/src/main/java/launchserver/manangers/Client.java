@@ -1,4 +1,4 @@
-package launchserver.response;
+package launchserver.manangers;
 
 public class Client {
     public Client(long session)
