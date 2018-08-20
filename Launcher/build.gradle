@@ -57,4 +57,10 @@ task signJar(group: 'Build', overwrite: true){
     }
 }
 
-build.dependsOn tasks.obfTask, tasks.signJar
+task genRuntimeJS(type: Zip) {
+    archiveName = "runtime.zip"
+    destinationDir = file("${buildDir}/tmp")
+    from "runtime/"
+}
+
+build.dependsOn tasks.obfTask, tasks.signJar, tasks.genRuntimeJS

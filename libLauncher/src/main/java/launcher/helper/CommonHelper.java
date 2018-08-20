@@ -5,31 +5,54 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
 
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+//import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import launcher.Launcher;
 import launcher.LauncherAPI;
 
 public final class CommonHelper {
+    //private static final String[] SCRIPT_ENGINE_ARGS;
+	@LauncherAPI
+    public static final String VERSIONREPLACE;
     @LauncherAPI
-    public static final String VERSIONREPLACE = "$VERSION$";
+    public static final String BUILDREPLACE;
     @LauncherAPI
-    public static final String BUILDREPLACE = "$BUILDNUMBER$";
+    public static final String[] repArray;
     @LauncherAPI
-    public static final String[] repArray = genReps();
-    private static final String[] SCRIPT_ENGINE_ARGS = { "-strict" };
+    public static final ScriptEngineManager scriptManager;
+    @LauncherAPI
+    public static final ScriptEngineFactory nashornFactory;
 
-    private CommonHelper() {
+    static {
+    	//SCRIPT_ENGINE_ARGS = new String[] { "-strict" };
+    	VERSIONREPLACE = "$VERSION$";
+    	BUILDREPLACE = "$BUILDNUMBER$";
+    	repArray = genReps();
+    	scriptManager = new ScriptEngineManager();
+    	nashornFactory = getEngineFactories(scriptManager);
     }
 
-    @LauncherAPI
+	private static ScriptEngineFactory getEngineFactories(ScriptEngineManager manager) {
+    	for (ScriptEngineFactory fact :  manager.getEngineFactories()) {
+			if (fact.getNames().contains("nashorn") || fact.getNames().contains("Nashorn")) return fact;
+		}
+    	return null;
+	}
+    
+    private CommonHelper() {
+    }
+    
+	@LauncherAPI
     public static String low(String s) {
         return s.toLowerCase(Locale.US);
     }
     
     @LauncherAPI
     public static ScriptEngine newScriptEngine() {
-        return new NashornScriptEngineFactory().getScriptEngine(SCRIPT_ENGINE_ARGS);
+        //return new NashornScriptEngineFactory().getScriptEngine(SCRIPT_ENGINE_ARGS);
+    	return nashornFactory.getScriptEngine();
     }
 
     @LauncherAPI
@@ -87,11 +110,11 @@ public final class CommonHelper {
         return replace(in, repArray);
     }
 
-    public static final class Replace {
+    private static final class Replace {
         private final String search;
         private final String replacement;
 
-        public Replace(String search, String replacement) {
+        private Replace(String search, String replacement) {
             this.search = search;
             this.replacement = replacement;
         }
