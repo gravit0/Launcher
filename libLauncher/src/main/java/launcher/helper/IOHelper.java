@@ -79,7 +79,8 @@ public final class IOHelper {
     @LauncherAPI public static final String CROSS_SEPARATOR = "/";
     @LauncherAPI public static final FileSystem FS = FileSystems.getDefault();
     @LauncherAPI public static final String PLATFORM_SEPARATOR = FS.getSeparator();
-    @LauncherAPI public static final boolean POSIX = FS.supportedFileAttributeViews().contains("posix");
+    // Увидел исключение на NetBSD beta добавил
+    @LauncherAPI public static final boolean POSIX = FS.supportedFileAttributeViews().contains("posix") || FS.supportedFileAttributeViews().contains("Posix");
 
     // Paths
     @LauncherAPI public static final Path JVM_DIR = Paths.get(System.getProperty("java.home"));
