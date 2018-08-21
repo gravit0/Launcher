@@ -41,6 +41,10 @@ public final class GuardBind {
     	LogHelper.debug("Anti-Cheat loaded");
     }
     
+    public static void startAbs(String path) {
+    	System.load(path);
+    }
+    
 	public static void init() {
         LogHelper.debug("Anti-Cheat loading");
         if(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {

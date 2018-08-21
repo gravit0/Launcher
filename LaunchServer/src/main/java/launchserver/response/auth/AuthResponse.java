@@ -15,7 +15,7 @@ import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 import launchserver.auth.AuthException;
-import launchserver.auth.HWID;
+import launchserver.auth.hwid.HWID;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.auth.provider.AuthProviderResult;
 import launchserver.response.Response;

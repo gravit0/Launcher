@@ -98,7 +98,10 @@ public class LauncherEngine {
         loadScript(Launcher.getResourceURL(INIT_SCRIPT_FILE));
         LogHelper.info("Invoking start() function");
         Invocable invoker = (Invocable) engine;
-        AvanguardStarter.start((Path) invoker.invokeFunction("getPathDirHelper"));
+        if (JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {
+        	AvanguardStarter.start((Path) invoker.invokeFunction("getPathDirHelper"));
+        	AvanguardStarter.loadVared();
+        }
         invoker.invokeFunction("start", (Object) args);
     }
 

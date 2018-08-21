@@ -41,6 +41,7 @@ import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
+import ru.zaxar163.GuardBind;
 import launcher.AvanguardStarter;
 
 public final class ClientLauncher {
@@ -134,12 +135,15 @@ public final class ClientLauncher {
         if (LauncherConfig.ADDRESS_OVERRIDE != null) {
             args.add(JVMHelper.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
         }
-        if (JVMHelper.OS_TYPE == OS.MUSTDIE && JVMHelper.OS_VERSION.startsWith("10.")) {
-            LogHelper.debug("MustDie 10 fix is applied");
-            args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
-            args.add(JVMHelper.jvmProperty("os.version", "10.0"));
+        if (JVMHelper.OS_TYPE == OS.MUSTDIE) { 
+        	if ( JVMHelper.OS_VERSION.startsWith("10.")) {
+            	LogHelper.debug("MustDie 10 fix is applied");
+            	args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
+            	args.add(JVMHelper.jvmProperty("os.version", "10.0"));
+        	}
+        	args.add(JVMHelper.jvmProperty("avn32", System.getProperty("avn32")));
+        	args.add(JVMHelper.jvmProperty("avn64", System.getProperty("avn64")));
         }
-
         // Add classpath and main class
         StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
         LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
@@ -147,7 +151,7 @@ public final class ClientLauncher {
             classPathString.append(File.pathSeparatorChar).append(path.toString());
         }
         Collections.addAll(args, profile.object.getJvmArgs());
-        Collections.addAll(args, JVMHelper.jvmProperty("-Djava.library.path", params.clientDir.resolve(NATIVES_DIR).toString() + File.pathSeparatorChar + AvanguardStarter.avnDir)); // Add Native Path
+        Collections.addAll(args, JVMHelper.jvmProperty("-Djava.library.path", params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
         Collections.addAll(args, ClientLauncher.class.getName());
@@ -175,7 +179,8 @@ public final class ClientLauncher {
     public static void main(String... args) throws Throwable {
         if(JVMHelper.OS_TYPE == OS.MUSTDIE)
         {
-            AvanguardStarter.main(true);
+        	AvanguardStarter.loadVared();
+            AvanguardStarter.main(false);
         }
         checkJVMBitsAndVersion();
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);

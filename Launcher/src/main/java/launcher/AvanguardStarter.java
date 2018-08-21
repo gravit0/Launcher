@@ -14,7 +14,6 @@ import launcher.helper.SecurityHelper.DigestAlgorithm;
 import ru.zaxar163.GuardBind;
 
 public class AvanguardStarter {
-	public static String avnDir = null;
     public static void main(boolean init) {
     	if (init) GuardBind.init();
     	GuardBind.avnRegisterThreatNotifier((int threatType) -> {
@@ -30,14 +29,17 @@ public class AvanguardStarter {
     
     public static void start (Path path1) {
     	Path path = path1.resolve("guard");
-    	avnDir = path.toString();
-    	if (JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {
-    		if (JVMHelper.JVM_BITS == 32) handle(path.resolve("Avanguard32.dll"), "Avanguard32.dll");
-    		else if (JVMHelper.JVM_BITS == 64) handle(path.resolve("Avanguard64.dll"), "Avanguard64.dll");
-    	}
+    	processArched(
+    			handle(path.resolve("Avanguard32.dll"), "Avanguard32.dll"),
+    			handle(path.resolve("Avanguard64.dll"), "Avanguard64.dll"));
     }
     
-    private static void handle(Path mustdiedll, String resource) {
+    private static void processArched(Path arch32, Path arch64) {
+    	System.setProperty("avn32", arch32.normalize().toAbsolutePath().toFile().getAbsolutePath());
+    	System.setProperty("avn64", arch64.normalize().toAbsolutePath().toFile().getAbsolutePath());
+    }
+    
+    private static Path handle(Path mustdiedll, String resource) {
 		try {
 			InputStream in = IOHelper.newInput(IOHelper.getResourceURL(resource));
 			if (IOHelper.exists(mustdiedll)) {
@@ -52,7 +54,7 @@ public class AvanguardStarter {
 			if (e instanceof RuntimeException) throw (RuntimeException) e;
 			else throw new RuntimeException(e);
 		}
-		GuardBind.start(mustdiedll);
+		return mustdiedll;
 	}
 
 	private static boolean matches(Path mustdiedll, InputStream in) {
@@ -94,4 +96,9 @@ public class AvanguardStarter {
             }
         }
     }
+
+	public static void loadVared() {
+    	if (JVMHelper.JVM_BITS == 32) GuardBind.startAbs(System.getProperty("avn32"));
+    	else if (JVMHelper.JVM_BITS == 64) GuardBind.startAbs(System.getProperty("avn64"));
+	}
 }
