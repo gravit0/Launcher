@@ -42,7 +42,9 @@ public final class GuardBind {
     }
     
     public static void startAbs(String path) {
+    	LogHelper.debug("Anti-Cheat loading");
     	System.load(path);
+    	LogHelper.debug("Anti-Cheat loaded");
     }
     
 	public static void init() {

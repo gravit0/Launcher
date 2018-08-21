@@ -34,6 +34,11 @@ public class AvanguardStarter {
     			handle(path.resolve("Avanguard64.dll"), "Avanguard64.dll"));
     }
     
+	public static void loadVared() {
+    	if (JVMHelper.JVM_BITS == 32) GuardBind.startAbs(System.getProperty("avn32"));
+    	else if (JVMHelper.JVM_BITS == 64) GuardBind.startAbs(System.getProperty("avn64"));
+	}
+    
     private static void processArched(Path arch32, Path arch64) {
     	System.setProperty("avn32", arch32.normalize().toAbsolutePath().toFile().getAbsolutePath());
     	System.setProperty("avn64", arch64.normalize().toAbsolutePath().toFile().getAbsolutePath());
@@ -96,9 +101,4 @@ public class AvanguardStarter {
             }
         }
     }
-
-	public static void loadVared() {
-    	if (JVMHelper.JVM_BITS == 32) GuardBind.startAbs(System.getProperty("avn32"));
-    	else if (JVMHelper.JVM_BITS == 64) GuardBind.startAbs(System.getProperty("avn64"));
-	}
 }

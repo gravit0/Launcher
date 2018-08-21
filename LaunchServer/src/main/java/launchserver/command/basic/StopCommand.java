@@ -22,6 +22,7 @@ public final class StopCommand extends Command {
     @Override
     @SuppressWarnings("CallToSystemExit")
     public void invoke(String... args) {
+    	server.HWhandler.stop();
         JVMHelper.RUNTIME.exit(0);
     }
 }

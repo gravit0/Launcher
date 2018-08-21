@@ -151,7 +151,7 @@ public final class ClientLauncher {
             classPathString.append(File.pathSeparatorChar).append(path.toString());
         }
         Collections.addAll(args, profile.object.getJvmArgs());
-        Collections.addAll(args, JVMHelper.jvmProperty("-Djava.library.path", params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
+        Collections.addAll(args, "-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
         Collections.addAll(args, ClientLauncher.class.getName());
