@@ -1,24 +1,76 @@
 package launcher;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Arrays;
+
 import launcher.helper.CommonHelper;
+import launcher.helper.IOHelper;
+import launcher.helper.JVMHelper;
 import launcher.helper.LogHelper;
+import launcher.helper.SecurityHelper;
+import launcher.helper.SecurityHelper.DigestAlgorithm;
 import ru.zaxar163.GuardBind;
 
 public class AvanguardStarter {
-    public static void main(String[] args) {
-        GuardBind.avnRegisterThreatNotifier((int threatType) -> {
+	public static String avnDir = null;
+    public static void main(boolean init) {
+    	if (init) GuardBind.init();
+    	GuardBind.avnRegisterThreatNotifier((int threatType) -> {
             System.err.println("Threat " + GuardBind.ThreatType.getThreat(threatType).name());
 			      // Вот блок обработки чита... тут решать оставлять ли процесс в живых true да, false краш.
             return false;
         });
+    	// нужно делать до пуска таймера!
+    	GuardBind.setCheckTime(3000);
         GuardBind.avnStartDefence();
-        GuardBind.setCheckTime(3000);
         CommonHelper.newThread("Security Thread",true,new SecurityThread()).start();
-        //GuardBind.avnEliminateThreat(GuardBind.ThreatType.UNKNOWN_APC_DESTINATION.getValue());
-
-        //GuardBind.avnRegisterThreatNotifier(null);
-        //GuardBind.avnEliminateThreat(GuardBind.ThreatType.UNKNOWN_APC_DESTINATION.getValue());
     }
+    
+    public static void start (Path path1) {
+    	Path path = path1.resolve("guard");
+    	avnDir = path.toString();
+    	if (JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {
+    		if (JVMHelper.JVM_BITS == 32) handle(path.resolve("Avanguard32.dll"), "Avanguard32.dll");
+    		else if (JVMHelper.JVM_BITS == 64) handle(path.resolve("Avanguard64.dll"), "Avanguard64.dll");
+    	}
+    }
+    
+    private static void handle(Path mustdiedll, String resource) {
+		try {
+			InputStream in = IOHelper.newInput(IOHelper.getResourceURL(resource));
+			if (IOHelper.exists(mustdiedll)) {
+				if (!matches(mustdiedll, in)) {
+					mustdiedll.toFile().delete();
+					transfer(in, mustdiedll);
+				}
+			} else {
+				transfer(in, mustdiedll);
+			}
+		} catch (Exception e) {
+			if (e instanceof RuntimeException) throw (RuntimeException) e;
+			else throw new RuntimeException(e);
+		}
+    	GuardBind.start(mustdiedll);
+	}
+
+	private static boolean matches(Path mustdiedll, InputStream in) {
+		try {
+			return Arrays.equals(SecurityHelper.digest(DigestAlgorithm.MD5, in), SecurityHelper.digest(DigestAlgorithm.MD5, mustdiedll)) 
+					&& Arrays.equals(SecurityHelper.digest(DigestAlgorithm.SHA256, in), SecurityHelper.digest(DigestAlgorithm.SHA256, mustdiedll)) 
+					&&  Arrays.equals(SecurityHelper.digest(DigestAlgorithm.SHA1, in), SecurityHelper.digest(DigestAlgorithm.SHA1, mustdiedll));
+		} catch (IOException e) {
+			return false;
+		}
+	}
+
+	private static void transfer(InputStream in, Path mustdiedll) throws IOException {
+		IOHelper.createParentDirs(mustdiedll);
+		mustdiedll.toFile().createNewFile();
+		IOHelper.transfer(in, mustdiedll);
+	}
+    
     static class SecurityThread implements Runnable
     {
         @Override

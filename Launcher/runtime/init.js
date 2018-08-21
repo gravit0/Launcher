@@ -56,7 +56,6 @@ function start(args) {
     // Set font rendering properties
     LogHelper.debug("Setting FX properties");
     java.lang.System.setProperty("prism.lcdtext", "false");
-
     // Start laucher JavaFX stage
     LogHelper.debug("Launching JavaFX application");
     javafx.application.Application.launch(LauncherApp.class, args);

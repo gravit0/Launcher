@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.swing.JOptionPane;
+
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.WriterConfig;
@@ -40,8 +42,6 @@ import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
 import launcher.AvanguardStarter;
-
-import javax.swing.*;
 
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
@@ -147,7 +147,7 @@ public final class ClientLauncher {
             classPathString.append(File.pathSeparatorChar).append(path.toString());
         }
         Collections.addAll(args, profile.object.getJvmArgs());
-        Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
+        Collections.addAll(args, JVMHelper.jvmProperty("-Djava.library.path", params.clientDir.resolve(NATIVES_DIR).toString() + File.pathSeparatorChar + AvanguardStarter.avnDir)); // Add Native Path
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
         Collections.addAll(args, ClientLauncher.class.getName());
@@ -175,7 +175,7 @@ public final class ClientLauncher {
     public static void main(String... args) throws Throwable {
         if(JVMHelper.OS_TYPE == OS.MUSTDIE)
         {
-            AvanguardStarter.main(args);
+            AvanguardStarter.main(true);
         }
         checkJVMBitsAndVersion();
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
