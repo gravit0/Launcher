@@ -6,6 +6,7 @@ import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
+import launcher.helper.JVMHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
@@ -13,6 +14,7 @@ import launcher.request.auth.AuthRequest.Result;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
+import ru.zaxar163.GuardBind;
 
 public final class AuthRequest extends Request<Result> {
     private final String login;
@@ -39,9 +41,9 @@ public final class AuthRequest extends Request<Result> {
     protected Result requestDo(HInput input, HOutput output) throws IOException {
         output.writeString(login, SerializeLimits.MAX_LOGIN);
         output.writeString(ClientLauncher.title, SerializeLimits.MAX_CLIENT);
-        output.writeLong(0); // TODO фикс
-        output.writeLong(0);
-        output.writeLong(0);
+        output.writeLong(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE ? GuardBind.avnGetHddId() : 0);
+        output.writeLong(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE ? GuardBind.avnGetCpuid() : 0);
+        output.writeLong(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE ? GuardBind.avnGetSmbiosId() : 0);
         output.writeByteArray(encryptedPassword, SecurityHelper.CRYPTO_MAX_LENGTH);
         output.flush();
 

@@ -37,7 +37,7 @@ public final class GuardBind {
 
     public static void start (Path path) {
     	LogHelper.debug("Anti-Cheat loading");
-    	System.load(path.toFile().getAbsolutePath());
+    	System.load(path.normalize().toAbsolutePath().toFile().getAbsolutePath());
     	LogHelper.debug("Anti-Cheat loaded");
     }
     

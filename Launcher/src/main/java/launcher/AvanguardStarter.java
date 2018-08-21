@@ -42,7 +42,7 @@ public class AvanguardStarter {
 			InputStream in = IOHelper.newInput(IOHelper.getResourceURL(resource));
 			if (IOHelper.exists(mustdiedll)) {
 				if (!matches(mustdiedll, in)) {
-					mustdiedll.toFile().delete();
+					in.reset();
 					transfer(in, mustdiedll);
 				}
 			} else {
@@ -52,14 +52,12 @@ public class AvanguardStarter {
 			if (e instanceof RuntimeException) throw (RuntimeException) e;
 			else throw new RuntimeException(e);
 		}
-    	GuardBind.start(mustdiedll);
+		GuardBind.start(mustdiedll);
 	}
 
 	private static boolean matches(Path mustdiedll, InputStream in) {
 		try {
-			return Arrays.equals(SecurityHelper.digest(DigestAlgorithm.MD5, in), SecurityHelper.digest(DigestAlgorithm.MD5, mustdiedll)) 
-					&& Arrays.equals(SecurityHelper.digest(DigestAlgorithm.SHA256, in), SecurityHelper.digest(DigestAlgorithm.SHA256, mustdiedll)) 
-					&&  Arrays.equals(SecurityHelper.digest(DigestAlgorithm.SHA1, in), SecurityHelper.digest(DigestAlgorithm.SHA1, mustdiedll));
+			return Arrays.equals(SecurityHelper.digest(DigestAlgorithm.MD5, in), SecurityHelper.digest(DigestAlgorithm.MD5, mustdiedll));
 		} catch (IOException e) {
 			return false;
 		}
@@ -68,7 +66,7 @@ public class AvanguardStarter {
 	private static void transfer(InputStream in, Path mustdiedll) throws IOException {
 		IOHelper.createParentDirs(mustdiedll);
 		mustdiedll.toFile().createNewFile();
-		IOHelper.transfer(in, mustdiedll);
+		IOHelper.transfer(in, mustdiedll, false);
 	}
     
     static class SecurityThread implements Runnable
