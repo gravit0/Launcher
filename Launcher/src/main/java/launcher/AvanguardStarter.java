@@ -18,7 +18,8 @@ public class AvanguardStarter {
     	if (init) GuardBind.init();
     	GuardBind.avnRegisterThreatNotifier((int threatType) -> {
             System.err.println("Threat " + GuardBind.ThreatType.getThreat(threatType).name());
-			      // Вот блок обработки чита... тут решать оставлять ли процесс в живых true да, false краш.
+			LogHelper.error("Cheating == crash!");
+            System.exit(12);
             return false;
         });
     	// нужно делать до пуска таймера!
