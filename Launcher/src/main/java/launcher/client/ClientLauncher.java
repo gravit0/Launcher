@@ -41,7 +41,6 @@ import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
-import ru.zaxar163.GuardBind;
 import launcher.AvanguardStarter;
 
 public final class ClientLauncher {
@@ -141,8 +140,8 @@ public final class ClientLauncher {
             	args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
             	args.add(JVMHelper.jvmProperty("os.version", "10.0"));
         	}
-        	args.add(JVMHelper.jvmProperty("avn32", System.getProperty("avn32")));
-        	args.add(JVMHelper.jvmProperty("avn64", System.getProperty("avn64")));
+        	args.add(JVMHelper.systemToJvmProperty("avn32"));
+        	args.add(JVMHelper.systemToJvmProperty("avn64"));
         }
         // Add classpath and main class
         StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
@@ -163,7 +162,7 @@ public final class ClientLauncher {
         // Build client process
         LogHelper.debug("Launching client instance");
         ProcessBuilder builder = new ProcessBuilder(args);
-        builder.environment().put("CLASSPATH",classPathString.toString());
+        builder.environment().put("CLASSPATH", classPathString.toString());
         EnvHelper.addEnv(builder);
         builder.directory(params.clientDir.toFile());
         builder.inheritIO();
