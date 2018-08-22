@@ -15,6 +15,7 @@ public class SimpleModule implements Module {
     public void init() {
         //init code
     }
+    
     public static void main(String[] args)
     {
         System.err.println("Модуль нельзя запускать как программу");

@@ -1,7 +1,7 @@
 package launchserver;
 
 public interface Module {
-    String getName();
-    String getVersion();
-    void init();
+    public String getName();
+    public String getVersion();
+    public void init();
 }

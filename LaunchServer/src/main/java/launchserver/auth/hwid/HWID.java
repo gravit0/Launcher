@@ -1,4 +1,4 @@
-package launchserver.auth;
+package launchserver.auth.hwid;
 
 import java.io.IOException;
 

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.swing.JOptionPane;
+
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.WriterConfig;
@@ -40,8 +42,6 @@ import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
 import launcher.AvanguardStarter;
-
-import javax.swing.*;
 
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
@@ -134,12 +134,15 @@ public final class ClientLauncher {
         if (LauncherConfig.ADDRESS_OVERRIDE != null) {
             args.add(JVMHelper.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
         }
-        if (JVMHelper.OS_TYPE == OS.MUSTDIE && JVMHelper.OS_VERSION.startsWith("10.")) {
-            LogHelper.debug("MustDie 10 fix is applied");
-            args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
-            args.add(JVMHelper.jvmProperty("os.version", "10.0"));
+        if (JVMHelper.OS_TYPE == OS.MUSTDIE) { 
+        	if ( JVMHelper.OS_VERSION.startsWith("10.")) {
+            	LogHelper.debug("MustDie 10 fix is applied");
+            	args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
+            	args.add(JVMHelper.jvmProperty("os.version", "10.0"));
+        	}
+        	args.add(JVMHelper.systemToJvmProperty("avn32"));
+        	args.add(JVMHelper.systemToJvmProperty("avn64"));
         }
-
         // Add classpath and main class
         StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
         LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
@@ -147,7 +150,7 @@ public final class ClientLauncher {
             classPathString.append(File.pathSeparatorChar).append(path.toString());
         }
         Collections.addAll(args, profile.object.getJvmArgs());
-        Collections.addAll(args,"-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
+        Collections.addAll(args, "-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
         Collections.addAll(args, ClientLauncher.class.getName());
@@ -159,7 +162,7 @@ public final class ClientLauncher {
         // Build client process
         LogHelper.debug("Launching client instance");
         ProcessBuilder builder = new ProcessBuilder(args);
-        builder.environment().put("CLASSPATH",classPathString.toString());
+        builder.environment().put("CLASSPATH", classPathString.toString());
         EnvHelper.addEnv(builder);
         builder.directory(params.clientDir.toFile());
         builder.inheritIO();
@@ -175,7 +178,8 @@ public final class ClientLauncher {
     public static void main(String... args) throws Throwable {
         if(JVMHelper.OS_TYPE == OS.MUSTDIE)
         {
-            AvanguardStarter.main(args);
+        	AvanguardStarter.loadVared();
+            AvanguardStarter.main(false);
         }
         checkJVMBitsAndVersion();
         JVMHelper.verifySystemProperties(ClientLauncher.class, true);
