@@ -101,7 +101,6 @@ public class LauncherEngine {
         if (JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {
         	AvanguardStarter.start((Path) invoker.invokeFunction("getPathDirHelper"));
         	AvanguardStarter.loadVared();
-        	AvanguardStarter.main(false);
         }
         invoker.invokeFunction("start", (Object) args);
     }
