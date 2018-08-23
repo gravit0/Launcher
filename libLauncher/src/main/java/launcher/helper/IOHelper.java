@@ -722,4 +722,18 @@ public final class IOHelper {
             out.close();
         } catch (Exception ign) { }
     }
+
+    @LauncherAPI
+	public static byte[] toByteArray(InputStream in) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
+		IOHelper.transfer(in, out);
+		return out.toByteArray();
+	}
+
+    @LauncherAPI
+	public static void transfer(byte[] write, Path file, boolean append) throws IOException {
+    	try (OutputStream out = newOutput(file, append)) {
+            out.write(write);
+        }
+	}
 }
