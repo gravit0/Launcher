@@ -18,6 +18,8 @@ gradle.properties text eol=crlf
 *.lzma binary
 *.zip binary
 *.gzip binary
+*.dll binary
+*.so binary
 
 *.gitattributes text eol=crlf
 *.gitignore text eol=crlf

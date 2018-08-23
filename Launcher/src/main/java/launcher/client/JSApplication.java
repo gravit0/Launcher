@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javafx.application.Application;
 
 import launcher.LauncherAPI;
+
 @LauncherAPI
 @SuppressWarnings("AbstractClassNeverImplemented")
 public abstract class JSApplication extends Application {

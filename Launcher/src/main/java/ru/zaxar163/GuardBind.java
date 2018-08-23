@@ -1,5 +1,7 @@
 package ru.zaxar163;
 
+import java.nio.file.Path;
+
 import launcher.LauncherAPI;
 import launcher.helper.JVMHelper;
 import launcher.helper.LogHelper;
@@ -33,7 +35,19 @@ public final class GuardBind {
     	boolean call(int threatType);
     }
 
-    static {
+    public static void start (Path path) {
+    	LogHelper.debug("Anti-Cheat loading");
+    	System.load(path.normalize().toAbsolutePath().toFile().getAbsolutePath());
+    	LogHelper.debug("Anti-Cheat loaded");
+    }
+    
+    public static void startAbs(String path) {
+    	LogHelper.debug("Anti-Cheat loading");
+    	System.load(path);
+    	LogHelper.debug("Anti-Cheat loaded");
+    }
+    
+	public static void init() {
         LogHelper.debug("Anti-Cheat loading");
         if(JVMHelper.OS_TYPE == JVMHelper.OS.MUSTDIE) {
             if(JVMHelper.JVM_BITS == 32) {

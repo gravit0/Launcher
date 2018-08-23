@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import launcher.helper.IOHelper;
+
 public class HTTPRequest {
     public static int sendCrashreport(String strurl,byte[] data) throws IOException {
         URL url = new URL(strurl);
@@ -21,6 +23,6 @@ public class HTTPRequest {
         return connection.getResponseCode();
     }
     public static int sendCrashreport(String strurl,String data) throws IOException {
-        return sendCrashreport(strurl,data.getBytes());
+        return sendCrashreport(strurl,data.getBytes(IOHelper.UNICODE_CHARSET));
     }
 }

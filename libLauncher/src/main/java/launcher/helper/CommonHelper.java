@@ -13,25 +13,18 @@ import launcher.LauncherAPI;
 
 public final class CommonHelper {
 	@LauncherAPI
-    public static final String VERSIONREPLACE;
+    public static final String VERSIONREPLACE = "$VERSION$";
     @LauncherAPI
-    public static final String BUILDREPLACE;
+    public static final String BUILDREPLACE = "$BUILDNUMBER$";
     @LauncherAPI
-    public static final String[] repArray;
+    public static final String[] repArray = genReps();
     @LauncherAPI
-    public static final ScriptEngineManager scriptManager;
+    public static final ScriptEngineManager scriptManager = new ScriptEngineManager();
     @LauncherAPI
-    public static final ScriptEngineFactory nashornFactory;
-
-    static {
-    	VERSIONREPLACE = "$VERSION$";
-    	BUILDREPLACE = "$BUILDNUMBER$";
-    	repArray = genReps();
-    	scriptManager = new ScriptEngineManager();
-    	nashornFactory = getEngineFactories(scriptManager);
-    }
+    public static final ScriptEngineFactory nashornFactory = getEngineFactories(scriptManager);
 
 	private static ScriptEngineFactory getEngineFactories(ScriptEngineManager manager) {
+		// Метод похож на костыль но таковым не является, ибо единоразовое получение фактории быстрее, чем её переполучение на ходу.
     	for (ScriptEngineFactory fact :  manager.getEngineFactories()) {
 			if (fact.getNames().contains("nashorn") || fact.getNames().contains("Nashorn")) return fact;
 		}

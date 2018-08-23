@@ -45,6 +45,9 @@ public class EnvHelper {
 		}
 	}
 	
+	/**
+	 * Вынужденное решение ибо тест на наличие -Xm* этакой нужен.
+	 */
 	private static boolean check1() {
 		if (hasOptsVar()) {
 			for (String testStr : toTest) 
