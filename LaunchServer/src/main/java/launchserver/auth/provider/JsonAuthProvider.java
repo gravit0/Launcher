@@ -45,7 +45,7 @@ public final class JsonAuthProvider extends AuthProvider {
 
     @Override
     public AuthProviderResult auth(String login, String password, String ip) throws IOException {
-        JsonObject request = Json.object().add(userKeyName, login).add(passKeyName, password);
+        JsonObject request = Json.object().add(userKeyName, login).add(passKeyName, password).add(ipKeyName, ip);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoInput(true);
         connection.setDoOutput(true);

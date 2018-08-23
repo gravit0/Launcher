@@ -50,7 +50,7 @@ public final class FileAuthProvider extends DigestAuthProvider {
 
         // Verify digest and return true username
         verifyDigest(entry == null ? null : entry.password, password);
-        if (entry == null || entry.ip != null) {
+        if (entry == null || entry.ip != null && !entry.ip.equals(ip)) {
             authError("Authentication from this IP is not allowed");
         }
 

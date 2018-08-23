@@ -104,7 +104,7 @@ public final class ResponseThread implements Runnable {
 
     private void respond(Integer type, HInput input, HOutput output,long session,String ip) throws Exception {
         if (server.serverSocketHandler.logConnections) {
-            LogHelper.info("Connection #%d from %s", session, IOHelper.getIP(socket.getRemoteSocketAddress()));
+            LogHelper.info("Connection #%d from %s", session, ip);
         }
 
         // Choose response based on type
