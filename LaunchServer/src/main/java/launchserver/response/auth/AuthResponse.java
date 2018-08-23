@@ -57,7 +57,7 @@ public final class AuthResponse extends Response {
             AuthProvider.authError(server.config.authRejectString);
                 return;
             }
-            server.HWhandler.handle(HWID.gen(hwid_hdd, hwid_bios, hwid_cpu), result.username);
+            server.config.hwidHandler.check(HWID.gen(hwid_hdd, hwid_bios, hwid_cpu), result.username);
         } catch (AuthException e) {
             requestError(e.getMessage());
             return;
