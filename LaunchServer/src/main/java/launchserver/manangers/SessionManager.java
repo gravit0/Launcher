@@ -22,6 +22,16 @@ public class SessionManager implements NeedGarbageCollection {
         }
         return null;
     }
+    @LauncherAPI public Client getOrNewClient(long session)
+    {
+        for(Client c : clientSet)
+        {
+            if(c.session == session) return c;
+        }
+        Client newClient = new Client(session);
+        clientSet.add(newClient);
+        return newClient;
+    }
     @LauncherAPI public void updateClient(long session)
     {
         for(Client c : clientSet)

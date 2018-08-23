@@ -23,6 +23,10 @@ public class GarbageManager {
         timer.schedule(task,time);
         NEED_GARBARE_COLLECTION.add(new Entry(gc,time));
     }
+    public static void unregisterNeedGC(NeedGarbageCollection gc)
+    {
+        NEED_GARBARE_COLLECTION.removeIf(e -> e.invoke == gc);
+    }
     public static void gc()
     {
         for(Entry gc : NEED_GARBARE_COLLECTION)
