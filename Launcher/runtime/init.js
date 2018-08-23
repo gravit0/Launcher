@@ -7,6 +7,11 @@ launcher.loadScript(Launcher.getResourceURL("config.js"));
 // Dialog scripts
 launcher.loadScript(Launcher.getResourceURL("dialog/dialog.js"));
 
+// internal
+function getPathDirHelper() {
+	return dir;
+}
+
 // Override application class
 var LauncherApp = Java.extend(JSApplication, {
     init: function() {

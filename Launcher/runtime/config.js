@@ -25,7 +25,3 @@ var defaultUpdatesDir = dir.resolve("updates");
 if (!IOHelper.isDir(defaultUpdatesDir)) {
     java.nio.file.Files.createDirectory(defaultUpdatesDir);
 }
-
-function getPathDirHelper() {
-	return dir;
-}
