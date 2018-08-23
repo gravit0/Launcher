@@ -35,7 +35,7 @@ public final class JsonAuthProvider extends AuthProvider {
         passKeyName = VerifyHelper.verify(block.getEntryValue("passKeyName", StringConfigEntry.class),
                 VerifyHelper.NOT_EMPTY, "Password key name can't be empty");
         ipKeyName = VerifyHelper.verify(block.getEntryValue("ipKeyName", StringConfigEntry.class),
-                VerifyHelper.NOT_EMPTY, "IP key name can't be empty");
+                VerifyHelper.NOT_EMPTY, "IP key can't be empty");
         responseUserKeyName = VerifyHelper.verify(block.getEntryValue("responseUserKeyName", StringConfigEntry.class),
                 VerifyHelper.NOT_EMPTY, "Response username key can't be empty");
         responseErrorKeyName = VerifyHelper.verify(block.getEntryValue("responseErrorKeyName", StringConfigEntry.class),
@@ -45,7 +45,7 @@ public final class JsonAuthProvider extends AuthProvider {
 
     @Override
     public AuthProviderResult auth(String login, String password, String ip) throws IOException {
-        JsonObject request = Json.object().add(userKeyName, login).add(passKeyName, password).add(ipKeyName, ip);
+        JsonObject request = Json.object().add(userKeyName, login).add(passKeyName, password);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoInput(true);
         connection.setDoOutput(true);

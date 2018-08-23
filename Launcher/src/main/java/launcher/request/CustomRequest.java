@@ -18,8 +18,8 @@ public abstract class CustomRequest<T> extends Request<T> {
     }
 
     @Override
-    public final Type getType() {
-        return Type.CUSTOM;
+    public final Integer getType() {
+        return 255;
     }
 
     @Override

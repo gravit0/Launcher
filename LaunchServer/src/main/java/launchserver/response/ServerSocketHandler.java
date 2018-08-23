@@ -17,7 +17,6 @@ import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;
-import launcher.request.Request.Type;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
@@ -32,8 +31,6 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
     private final AtomicReference<ServerSocket> serverSocket = new AtomicReference<>();
     private final ExecutorService threadPool = Executors.newCachedThreadPool(THREAD_FACTORY);
 
-    // API
-    private final Map<String, Factory> customResponses = new ConcurrentHashMap<>(2);
     private final AtomicLong idCounter = new AtomicLong(0L);
     private volatile Listener listener;
 
@@ -91,20 +88,6 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
     }
 
     @LauncherAPI
-    public Response newCustomResponse(String name, long id, HInput input, HOutput output) {
-        Factory factory = VerifyHelper.getMapValue(customResponses, name,
-            String.format("Unknown custom response: '%s'", name));
-        return factory.newResponse(server, id, input, output);
-    }
-
-    @LauncherAPI
-    public void registerCustomResponse(String name, Factory factory) {
-        VerifyHelper.verifyIDName(name);
-        VerifyHelper.putIfAbsent(customResponses, name, Objects.requireNonNull(factory, "factory"),
-            String.format("Custom response has been already registered: '%s'", name));
-    }
-
-    @LauncherAPI
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -115,7 +98,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         }
     }
 
-    /*package*/ boolean onHandshake(long session, Type type) {
+    /*package*/ boolean onHandshake(long session, Integer type) {
         return listener == null || listener.onHandshake(session, type);
     }
 
@@ -127,6 +110,6 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         void onDisconnect(Exception e);
 
         @LauncherAPI
-        boolean onHandshake(long session, Type type);
+        boolean onHandshake(long session, Integer type);
     }
 }

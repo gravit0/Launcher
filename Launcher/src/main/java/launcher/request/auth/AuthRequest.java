@@ -33,8 +33,8 @@ public final class AuthRequest extends Request<Result> {
     }
 
     @Override
-    public Type getType() {
-        return Type.AUTH;
+    public Integer getType() {
+        return Type.AUTH.getNumber();
     }
 
     @Override

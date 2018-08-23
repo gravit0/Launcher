@@ -21,8 +21,8 @@ public final class PingRequest extends Request<Void> {
     }
 
     @Override
-    public Type getType() {
-        return Type.PING;
+    public Integer getType() {
+        return Type.PING.getNumber();
     }
 
     @Override

@@ -28,8 +28,8 @@ public final class ProfileByUUIDRequest extends Request<PlayerProfile> {
     }
 
     @Override
-    public Type getType() {
-        return Type.PROFILE_BY_UUID;
+    public Integer getType() {
+        return Type.PROFILE_BY_UUID.getNumber();
     }
 
     @Override

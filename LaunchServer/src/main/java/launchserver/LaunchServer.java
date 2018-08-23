@@ -57,6 +57,7 @@ import launchserver.command.handler.CommandHandler;
 import launchserver.command.handler.JLineCommandHandler;
 import launchserver.command.handler.StdCommandHandler;
 import launchserver.manangers.ModulesManager;
+import launchserver.response.Response;
 import launchserver.response.ServerSocketHandler;
 import launchserver.texture.TextureProvider;
 
@@ -107,6 +108,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         AuthHandler.registerHandlers();
         AuthProvider.registerProviders();
         TextureProvider.registerProviders();
+        Response.registerResponses();
         
         // Set command handler
         CommandHandler localCommandHandler;

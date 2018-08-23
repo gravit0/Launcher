@@ -29,7 +29,7 @@ public abstract class Request<R> {
     }
 
     @LauncherAPI
-    public abstract Type getType();
+    public abstract Integer getType();
 
     @LauncherAPI
     protected abstract R requestDo(HInput input, HOutput output) throws Exception;
@@ -65,7 +65,7 @@ public abstract class Request<R> {
         output.writeInt(Launcher.PROTOCOL_MAGIC);
         output.writeBigInteger(config.publicKey.getModulus(), SecurityHelper.RSA_KEY_LENGTH + 1);
         output.writeLong(session);
-        EnumSerializer.write(output, getType());
+        output.writeVarInt(getType());
         output.flush();
 
         // Verify is accepted
@@ -78,8 +78,6 @@ public abstract class Request<R> {
     public static void requestError(String message) throws RequestException {
         throw new RequestException(message);
     }
-
-    @LauncherAPI
     public enum Type implements Itf {
         PING(0), // Ping request
         LAUNCHER(1), UPDATE(2), UPDATE_LIST(3), // Update requests

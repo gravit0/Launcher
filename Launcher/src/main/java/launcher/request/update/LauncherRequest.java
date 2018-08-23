@@ -37,8 +37,8 @@ public final class LauncherRequest extends Request<Result> {
     }
 
     @Override
-    public Type getType() {
-        return Type.LAUNCHER;
+    public Integer getType() {
+        return Type.LAUNCHER.getNumber();
     }
 
     @Override

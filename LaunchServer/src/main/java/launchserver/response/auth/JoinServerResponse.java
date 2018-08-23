@@ -14,8 +14,9 @@ import launchserver.auth.AuthException;
 import launchserver.response.Response;
 
 public final class JoinServerResponse extends Response {
-    public JoinServerResponse(LaunchServer server, long id, HInput input, HOutput output) {
-        super(server, id, input, output);
+
+    public JoinServerResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
+        super(server, session, input, output, ip);
     }
 
     @Override
