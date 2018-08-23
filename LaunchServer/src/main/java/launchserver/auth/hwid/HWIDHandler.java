@@ -20,9 +20,12 @@ public abstract class HWIDHandler extends ConfigObject implements AutoCloseable 
         super(block);
     }
 
-    public abstract void check0(HWID hwid, String username) throws AuthException;
+    public abstract void check0(HWID hwid, String username) throws HWIDException;
+    public abstract void ban(HWID hwid) throws HWIDException;
+    public abstract void unban(HWID hwid) throws HWIDException;
+    public abstract HWID getHwid(String username) throws HWIDException;
 
-    public void check(HWID hwid, String username) throws AuthException {
+    public void check(HWID hwid, String username) throws HWIDException {
         if (nullHWID.equals(hwid)) return;
         check0(hwid, username);
     }
