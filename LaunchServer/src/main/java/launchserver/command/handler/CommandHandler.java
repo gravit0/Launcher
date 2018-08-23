@@ -17,9 +17,7 @@ import launcher.helper.VerifyHelper;
 import launchserver.LaunchServer;
 import launchserver.command.Command;
 import launchserver.command.CommandException;
-import launchserver.command.auth.AuthCommand;
-import launchserver.command.auth.UUIDToUsernameCommand;
-import launchserver.command.auth.UsernameToUUIDCommand;
+import launchserver.command.auth.*;
 import launchserver.command.basic.BuildCommand;
 import launchserver.command.basic.ClearCommand;
 import launchserver.command.basic.DebugCommand;
@@ -69,6 +67,8 @@ public abstract class CommandHandler implements Runnable {
         registerCommand("auth", new AuthCommand(server));
         registerCommand("usernameToUUID", new UsernameToUUIDCommand(server));
         registerCommand("uuidToUsername", new UUIDToUsernameCommand(server));
+        registerCommand("ban", new BanCommand(server));
+        registerCommand("unban", new UnbanCommand(server));
     }
 
     @Override
