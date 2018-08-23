@@ -4,12 +4,13 @@ import launcher.LauncherAPI;
 import launchserver.NeedGarbageCollection;
 import launchserver.response.Client;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class SessionManager implements NeedGarbageCollection {
     @LauncherAPI
     public static final long SESSION_TIMEOUT = 10 * 60 * 1000; // 10 минут
-    private Set<Client> clientSet;
+    private Set<Client> clientSet = new HashSet<>(128);
 
     @LauncherAPI
     public boolean addClient(Client client) {

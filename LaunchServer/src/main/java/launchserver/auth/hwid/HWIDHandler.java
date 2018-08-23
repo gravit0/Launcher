@@ -9,7 +9,6 @@ import launcher.LauncherAPI;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.config.ConfigObject;
 import launcher.serialize.config.entry.BlockConfigEntry;
-import launchserver.auth.AuthException;
 
 public abstract class HWIDHandler extends ConfigObject implements AutoCloseable {
     private static final Map<String, Adapter<HWIDHandler>> HW_HANDLERS = new ConcurrentHashMap<>(4);

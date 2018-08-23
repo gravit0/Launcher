@@ -1,11 +1,11 @@
 package launchserver;
 
-public interface Module {
+public interface Module extends AutoCloseable {
     String getName();
 
     String getVersion();
 
-    void init();
+    void init(LaunchServer lsrv);
   
-    void preInit();
+    void preInit(LaunchServer lsrv);
 }

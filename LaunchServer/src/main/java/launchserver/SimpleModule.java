@@ -12,12 +12,12 @@ public class SimpleModule implements Module {
     }
 
 	@Override
-	public void preInit() {
+	public void preInit(LaunchServer lsrv) {
 		// pre-init code
 	}
     
     @Override
-    public void init() {
+    public void init(LaunchServer lsrv) {
         // init code
     }
 
@@ -25,4 +25,9 @@ public class SimpleModule implements Module {
         System.err.println("Модуль нельзя запускать как программу");
         System.exit(0);
     }
+
+	@Override
+	public void close() {
+		// on stop
+	}
 }

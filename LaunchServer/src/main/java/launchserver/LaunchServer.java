@@ -101,6 +101,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     public final SessionManager sessionManager;
     // Server
     @LauncherAPI
+    public final ModulesManager modulesManager;
+    @LauncherAPI
     public final CommandHandler commandHandler;
     @LauncherAPI
     public final ServerSocketHandler serverSocketHandler;
@@ -173,8 +175,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         LogHelper.subInfo("Modulus CRC32: 0x%08x", crc.getValue());
         
         // pre init modules
-        ModulesManager.setLaunchServer(this);
-        ModulesManager.autoload();
+        modulesManager = new ModulesManager(this);
+        modulesManager.autoload();
+        modulesManager.preInitModules();
         
         // Read LaunchServer config
         generateConfigIfNotExists();
@@ -192,7 +195,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         GarbageManager.registerNeedGC(limiter);
         
         // init modules
-        ModulesManager.initModules();
+        modulesManager.initModules();
 
         // Set launcher EXE binary
         launcherBinary = new JARLauncherBinary(this);
@@ -241,7 +244,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         } catch (IOException e) {
             LogHelper.error(e);
         }
-
+        modulesManager.close();
         // Print last message before death :(
         LogHelper.info("LaunchServer stopped");
     }
