@@ -40,14 +40,14 @@ public abstract class CachedAuthHandler extends AuthHandler {
     public synchronized UUID checkServer(String username, String serverID) throws IOException {
         Entry entry = getEntry(username);
         return entry != null && username.equals(entry.username) &&
-            serverID.equals(entry.serverID) ? entry.uuid : null;
+                serverID.equals(entry.serverID) ? entry.uuid : null;
     }
 
     @Override
     public synchronized boolean joinServer(String username, String accessToken, String serverID) throws IOException {
         Entry entry = getEntry(username);
         if (entry == null || !username.equals(entry.username) || !accessToken.equals(entry.accessToken) ||
-            !updateServerID(entry.uuid, serverID)) {
+                !updateServerID(entry.uuid, serverID)) {
             return false; // Account doesn't exist or invalid access token
         }
 
@@ -117,7 +117,8 @@ public abstract class CachedAuthHandler extends AuthHandler {
     }
 
     public static final class Entry {
-        @LauncherAPI public final UUID uuid;
+        @LauncherAPI
+        public final UUID uuid;
         private String username;
         private String accessToken;
         private String serverID;

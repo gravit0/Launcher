@@ -186,7 +186,7 @@ public final class HashedDir extends HashedEntry {
             this.dir = dir;
             this.matcher = matcher;
             this.allowSymlinks = allowSymlinks;
-            this.digest =  digest;
+            this.digest = digest;
         }
 
         @Override
@@ -243,8 +243,10 @@ public final class HashedDir extends HashedEntry {
     }
 
     public static final class Diff {
-        @LauncherAPI public final HashedDir mismatch;
-        @LauncherAPI public final HashedDir extra;
+        @LauncherAPI
+        public final HashedDir mismatch;
+        @LauncherAPI
+        public final HashedDir extra;
 
         private Diff(HashedDir mismatch, HashedDir extra) {
             this.mismatch = mismatch;

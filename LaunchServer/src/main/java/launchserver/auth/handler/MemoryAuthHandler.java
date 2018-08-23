@@ -47,8 +47,8 @@ public final class MemoryAuthHandler extends CachedAuthHandler {
 
     private static String toUsername(UUID uuid) {
         byte[] bytes = ByteBuffer.allocate(16).
-            putLong(uuid.getMostSignificantBits()).
-            putLong(uuid.getLeastSignificantBits()).array();
+                putLong(uuid.getMostSignificantBits()).
+                putLong(uuid.getLeastSignificantBits()).array();
 
         // Find username end
         int length = 0;

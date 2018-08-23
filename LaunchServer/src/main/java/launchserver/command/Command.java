@@ -7,7 +7,8 @@ import launcher.helper.VerifyHelper;
 import launchserver.LaunchServer;
 
 public abstract class Command {
-    @LauncherAPI protected final LaunchServer server;
+    @LauncherAPI
+    protected final LaunchServer server;
 
     @LauncherAPI
     protected Command(LaunchServer server) {

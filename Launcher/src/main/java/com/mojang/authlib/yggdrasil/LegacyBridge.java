@@ -24,14 +24,14 @@ public final class LegacyBridge {
     public static String getCloakURL(String username) {
         LogHelper.debug("LegacyBridge.getCloakURL: '%s'", username);
         return CommonHelper.replace(System.getProperty("launcher.legacy.cloaksURL",
-            "http://skins.minecraft.net/MinecraftCloaks/%username%.png"), "username", IOHelper.urlEncode(username));
+                "http://skins.minecraft.net/MinecraftCloaks/%username%.png"), "username", IOHelper.urlEncode(username));
     }
 
     @SuppressWarnings("unused")
     public static String getSkinURL(String username) {
         LogHelper.debug("LegacyBridge.getSkinURL: '%s'", username);
         return CommonHelper.replace(System.getProperty("launcher.legacy.skinsURL",
-            "http://skins.minecraft.net/MinecraftSkins/%username%.png"), "username", IOHelper.urlEncode(username));
+                "http://skins.minecraft.net/MinecraftSkins/%username%.png"), "username", IOHelper.urlEncode(username));
     }
 
     @SuppressWarnings("unused")

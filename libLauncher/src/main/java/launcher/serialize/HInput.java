@@ -12,7 +12,8 @@ import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 
 public final class HInput implements AutoCloseable {
-    @LauncherAPI public final InputStream stream;
+    @LauncherAPI
+    public final InputStream stream;
 
     @LauncherAPI
     public HInput(InputStream stream) {

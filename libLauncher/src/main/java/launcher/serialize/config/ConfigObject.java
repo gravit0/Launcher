@@ -9,7 +9,8 @@ import launcher.serialize.config.entry.BlockConfigEntry;
 import launcher.serialize.stream.StreamObject;
 
 public abstract class ConfigObject extends StreamObject {
-    @LauncherAPI public final BlockConfigEntry block;
+    @LauncherAPI
+    public final BlockConfigEntry block;
 
     @LauncherAPI
     protected ConfigObject(BlockConfigEntry block) {

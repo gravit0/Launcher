@@ -18,6 +18,7 @@ public final class LaunchServerPluginBridge implements Runnable, AutoCloseable {
      * Err text.
      */
     public static final String nonInitText = "Лаунчсервер не был полностью загружен";
+
     public LaunchServerPluginBridge(Path dir) throws Throwable {
         LogHelper.addOutput(dir.resolve("LaunchServer.log"));
         LogHelper.printVersion("LaunchServer");

@@ -14,13 +14,18 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 public final class LauncherConfig extends StreamObject {
-    @LauncherAPI public static final String ADDRESS_OVERRIDE_PROPERTY = "launcher.addressOverride";
-    @LauncherAPI public static final String ADDRESS_OVERRIDE = System.getProperty(ADDRESS_OVERRIDE_PROPERTY, null);
+    @LauncherAPI
+    public static final String ADDRESS_OVERRIDE_PROPERTY = "launcher.addressOverride";
+    @LauncherAPI
+    public static final String ADDRESS_OVERRIDE = System.getProperty(ADDRESS_OVERRIDE_PROPERTY, null);
 
     // Instance
-    @LauncherAPI public final InetSocketAddress address;
-    @LauncherAPI public final RSAPublicKey publicKey;
-    @LauncherAPI public final Map<String, byte[]> runtime;
+    @LauncherAPI
+    public final InetSocketAddress address;
+    @LauncherAPI
+    public final RSAPublicKey publicKey;
+    @LauncherAPI
+    public final Map<String, byte[]> runtime;
 
     @LauncherAPI
     @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter")
@@ -34,7 +39,7 @@ public final class LauncherConfig extends StreamObject {
     public LauncherConfig(HInput input) throws IOException, InvalidKeySpecException {
         String localAddress = input.readASCII(255);
         address = InetSocketAddress.createUnresolved(
-            ADDRESS_OVERRIDE == null ? localAddress : ADDRESS_OVERRIDE, input.readLength(65535));
+                ADDRESS_OVERRIDE == null ? localAddress : ADDRESS_OVERRIDE, input.readLength(65535));
         publicKey = SecurityHelper.toPublicRSAKey(input.readByteArray(SecurityHelper.CRYPTO_MAX_LENGTH));
 
         // Read signed runtime
@@ -43,8 +48,8 @@ public final class LauncherConfig extends StreamObject {
         for (int i = 0; i < count; i++) {
             String name = input.readString(255);
             VerifyHelper.putIfAbsent(localResources, name,
-                input.readByteArray(SecurityHelper.CRYPTO_MAX_LENGTH),
-                String.format("Duplicate runtime resource: '%s'", name));
+                    input.readByteArray(SecurityHelper.CRYPTO_MAX_LENGTH),
+                    String.format("Duplicate runtime resource: '%s'", name));
         }
         runtime = Collections.unmodifiableMap(localResources);
 

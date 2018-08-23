@@ -21,18 +21,18 @@ public final class RequestAuthProvider extends AuthProvider {
         response = Pattern.compile(block.getEntryValue("response", StringConfigEntry.class));
 
         // Verify is valid URL
-        IOHelper.verifyURL(getFormattedURL("urlAuthLogin", "urlAuthPassword","127.0.0.1"));
+        IOHelper.verifyURL(getFormattedURL("urlAuthLogin", "urlAuthPassword", "127.0.0.1"));
     }
 
     @Override
     public AuthProviderResult auth(String login, String password, String ip) throws IOException {
-        String currentResponse = IOHelper.request(new URL(getFormattedURL(login, password,ip)));
+        String currentResponse = IOHelper.request(new URL(getFormattedURL(login, password, ip)));
 
         // Match username
         Matcher matcher = response.matcher(currentResponse);
         return matcher.matches() && matcher.groupCount() >= 1 ?
-            new AuthProviderResult(matcher.group("username"), SecurityHelper.randomStringToken()) :
-            authError(currentResponse);
+                new AuthProviderResult(matcher.group("username"), SecurityHelper.randomStringToken()) :
+                authError(currentResponse);
     }
 
     @Override
@@ -40,7 +40,7 @@ public final class RequestAuthProvider extends AuthProvider {
         // Do nothing
     }
 
-    private String getFormattedURL(String login, String password,String ip) {
+    private String getFormattedURL(String login, String password, String ip) {
         return CommonHelper.replace(url, "login", IOHelper.urlEncode(login), "password", IOHelper.urlEncode(password), "ip", IOHelper.urlEncode(ip));
     }
 }

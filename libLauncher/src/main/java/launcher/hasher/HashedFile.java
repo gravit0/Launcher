@@ -16,7 +16,8 @@ public final class HashedFile extends HashedEntry {
     public static final DigestAlgorithm DIGEST_ALGO = DigestAlgorithm.MD5;
 
     // Instance
-    @LauncherAPI public final long size;
+    @LauncherAPI
+    public final long size;
     private final byte[] digest;
 
     @LauncherAPI

@@ -22,9 +22,10 @@ import launcher.serialize.stream.StreamObject;
 @SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 public final class
 ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
-    @LauncherAPI public static final StreamObject.Adapter<ClientProfile> RO_ADAPTER = input -> new ClientProfile(input, true);
+    @LauncherAPI
+    public static final StreamObject.Adapter<ClientProfile> RO_ADAPTER = input -> new ClientProfile(input, true);
     private static final FileNameMatcher ASSET_MATCHER = new FileNameMatcher(
-        new String[0], new String[] { "indexes", "objects" }, new String[0]);
+            new String[0], new String[]{"indexes", "objects"}, new String[0]);
 
     // Version
     private final StringConfigEntry version;

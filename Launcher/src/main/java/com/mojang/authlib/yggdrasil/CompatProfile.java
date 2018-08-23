@@ -51,10 +51,10 @@ public final class CompatProfile {
 
     public static CompatProfile fromPlayerProfile(PlayerProfile profile) {
         return profile == null ? null : new CompatProfile(profile.uuid, profile.username,
-            profile.skin == null ? null : profile.skin.url,
-            profile.skin == null ? null : SecurityHelper.toHex(profile.skin.digest),
-            profile.cloak == null ? null : profile.cloak.url,
-            profile.cloak == null ? null : SecurityHelper.toHex(profile.cloak.digest)
+                profile.skin == null ? null : profile.skin.url,
+                profile.skin == null ? null : SecurityHelper.toHex(profile.skin.digest),
+                profile.cloak == null ? null : profile.cloak.url,
+                profile.cloak == null ? null : SecurityHelper.toHex(profile.cloak.digest)
         );
     }
 }

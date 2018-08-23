@@ -149,7 +149,7 @@ public abstract class CommandHandler implements Runnable {
     public final void registerCommand(String name, Command command) {
         VerifyHelper.verifyIDName(name);
         VerifyHelper.putIfAbsent(commands, name, Objects.requireNonNull(command, "command"),
-            String.format("Command has been already registered: '%s'", name));
+                String.format("Command has been already registered: '%s'", name));
     }
 
     private void readLoop() throws IOException {

@@ -24,7 +24,7 @@ public class JsonAuthHandler extends CachedAuthHandler {
     private final URL url;
     private final URL urlCheckServer;
     private final URL urlJoinServer;
-	private final URL urlUsernameToUUID;
+    private final URL urlUsernameToUUID;
     private final URL urlUUIDToUsername;
     private final String userKeyName;
     private final String serverIDKeyName;
@@ -58,12 +58,13 @@ public class JsonAuthHandler extends CachedAuthHandler {
         urlUsernameToUUID = IOHelper.convertToURL(configUrlUsernameUUID);
         urlUUIDToUsername = IOHelper.convertToURL(configUrlUUIDUsername);
     }
+
     @Override
     public void close() {
 
     }
 
-    public JsonObject jsonRequest(JsonObject request,URL url) throws IOException {
+    public JsonObject jsonRequest(JsonObject request, URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -104,45 +105,44 @@ public class JsonAuthHandler extends CachedAuthHandler {
     @Override
     public UUID checkServer(String username, String serverID) throws IOException {
         JsonObject request = Json.object().add(userKeyName, username).add(serverIDKeyName, serverID);
-        JsonObject result = jsonRequest(request,urlCheckServer);
+        JsonObject result = jsonRequest(request, urlCheckServer);
         String value;
-        if((value = result.getString(uuidKeyName, null)) != null) {
+        if ((value = result.getString(uuidKeyName, null)) != null) {
             return UUID.fromString(value);
-        }
-        else {
-            return super.checkServer(username,serverID);
+        } else {
+            return super.checkServer(username, serverID);
         }
     }
 
     @Override
     public boolean joinServer(String username, String accessToken, String serverID) throws IOException {
         JsonObject request = Json.object().add(userKeyName, username).add(serverIDKeyName, serverID).add(accessTokenKeyName, accessToken);
-        jsonRequest(request,urlJoinServer);
+        jsonRequest(request, urlJoinServer);
         return super.joinServer(username, accessToken, serverID);
     }
 
     @Override
     protected Entry fetchEntry(UUID uuid) throws IOException {
         JsonObject request = Json.object().add(uuidKeyName, uuid.toString());
-        JsonObject result = jsonRequest(request,urlCheckServer);
+        JsonObject result = jsonRequest(request, urlCheckServer);
         String username = result.getString(userKeyName, null);
         String accessToken = result.getString(accessTokenKeyName, null);
         String serverID = result.getString(serverIDKeyName, null);
-        if(username == null || accessToken == null || serverID == null) return null;
+        if (username == null || accessToken == null || serverID == null) return null;
 
-        return new Entry(uuid,username,accessToken,serverID);
+        return new Entry(uuid, username, accessToken, serverID);
     }
 
     @Override
     protected Entry fetchEntry(String username) throws IOException {
         JsonObject request = Json.object().add(userKeyName, username);
-        JsonObject result = jsonRequest(request,urlCheckServer);
+        JsonObject result = jsonRequest(request, urlCheckServer);
         UUID uuid = UUID.fromString(result.getString(uuidKeyName, null));
         String accessToken = result.getString(accessTokenKeyName, null);
         String serverID = result.getString(serverIDKeyName, null);
-        if(accessToken == null || serverID == null) return null;
+        if (accessToken == null || serverID == null) return null;
 
-        return new Entry(uuid,username,accessToken,serverID);
+        return new Entry(uuid, username, accessToken, serverID);
     }
 
     @Override

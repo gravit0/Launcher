@@ -22,27 +22,33 @@ import launchserver.response.update.UpdateListResponse;
 import launchserver.response.update.UpdateResponse;
 
 public abstract class Response {
-    @LauncherAPI protected final LaunchServer server;
-    @LauncherAPI protected final HInput input;
-    @LauncherAPI protected final HOutput output;
-    @LauncherAPI protected final String ip;
-    @LauncherAPI protected final long session;
+    @LauncherAPI
+    protected final LaunchServer server;
+    @LauncherAPI
+    protected final HInput input;
+    @LauncherAPI
+    protected final HOutput output;
+    @LauncherAPI
+    protected final String ip;
+    @LauncherAPI
+    protected final long session;
     private static final Map<Integer, Factory> RESPONSES = new ConcurrentHashMap<>(8);
-    protected Response(LaunchServer server,long session, HInput input, HOutput output,String ip) {
+
+    protected Response(LaunchServer server, long session, HInput input, HOutput output, String ip) {
         this.server = server;
         this.input = input;
         this.output = output;
         this.ip = ip;
         this.session = session;
     }
-    public static void registerResponse(int type, Factory factory)
-    {
-        RESPONSES.put(type,factory);
+
+    public static void registerResponse(int type, Factory factory) {
+        RESPONSES.put(type, factory);
     }
-    public static void registerResponses()
-    {
-        registerResponse(Request.Type.PING.getNumber(),PingResponse::new);
-        registerResponse(Request.Type.AUTH.getNumber(),AuthResponse::new);
+
+    public static void registerResponses() {
+        registerResponse(Request.Type.PING.getNumber(), PingResponse::new);
+        registerResponse(Request.Type.AUTH.getNumber(), AuthResponse::new);
         registerResponse(Request.Type.CHECK_SERVER.getNumber(), CheckServerResponse::new);
         registerResponse(Request.Type.JOIN_SERVER.getNumber(), JoinServerResponse::new);
 
@@ -54,9 +60,9 @@ public abstract class Response {
         registerResponse(Request.Type.UPDATE_LIST.getNumber(), UpdateListResponse::new);
         registerResponse(Request.Type.UPDATE.getNumber(), UpdateResponse::new);
     }
-    public static Response getResponse(int type, LaunchServer server,long session,HInput input,HOutput output,String ip)
-    {
-        return RESPONSES.get(type).newResponse(server,session,input,output,ip);
+
+    public static Response getResponse(int type, LaunchServer server, long session, HInput input, HOutput output, String ip) {
+        return RESPONSES.get(type).newResponse(server, session, input, output, ip);
     }
 
     @LauncherAPI
@@ -86,6 +92,6 @@ public abstract class Response {
     @FunctionalInterface
     public interface Factory<R> {
         @LauncherAPI
-        Response newResponse(LaunchServer server, long id, HInput input, HOutput output,String ip);
+        Response newResponse(LaunchServer server, long id, HInput input, HOutput output, String ip);
     }
 }

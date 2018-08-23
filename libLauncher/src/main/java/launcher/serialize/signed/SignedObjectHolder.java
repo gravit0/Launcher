@@ -10,7 +10,8 @@ import launcher.serialize.HInput;
 import launcher.serialize.stream.StreamObject;
 
 public final class SignedObjectHolder<O extends StreamObject> extends SignedBytesHolder {
-    @LauncherAPI public final O object;
+    @LauncherAPI
+    public final O object;
 
     @LauncherAPI
     public SignedObjectHolder(HInput input, RSAPublicKey publicKey, Adapter<O> adapter) throws IOException, SignatureException {

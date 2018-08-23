@@ -15,9 +15,11 @@ import launcher.serialize.stream.EnumSerializer;
 import launcher.serialize.stream.EnumSerializer.Itf;
 
 public abstract class Request<R> {
-    @LauncherAPI protected final LauncherConfig config;
+    @LauncherAPI
+    protected final LauncherConfig config;
     private final AtomicBoolean started = new AtomicBoolean(false);
     private static final long session = SecurityHelper.secureRandom.nextLong();
+
     @LauncherAPI
     protected Request(LauncherConfig config) {
         this.config = config == null ? Launcher.getConfig() : config;
@@ -45,7 +47,7 @@ public abstract class Request<R> {
         try (Socket socket = IOHelper.newSocket()) {
             socket.connect(IOHelper.resolve(config.address));
             try (HInput input = new HInput(socket.getInputStream());
-                HOutput output = new HOutput(socket.getOutputStream())) {
+                 HOutput output = new HOutput(socket.getOutputStream())) {
                 writeHandshake(input, output);
                 return requestDo(input, output);
             }
@@ -78,6 +80,7 @@ public abstract class Request<R> {
     public static void requestError(String message) throws RequestException {
         throw new RequestException(message);
     }
+
     public enum Type implements Itf {
         PING(0), // Ping request
         LAUNCHER(1), UPDATE(2), UPDATE_LIST(3), // Update requests

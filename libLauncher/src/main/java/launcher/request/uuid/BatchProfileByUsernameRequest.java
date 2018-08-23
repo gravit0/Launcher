@@ -13,7 +13,8 @@ import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 
 public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]> {
-    @LauncherAPI public static final int MAX_BATCH_SIZE = 128;
+    @LauncherAPI
+    public static final int MAX_BATCH_SIZE = 128;
     private final String[] usernames;
 
     @LauncherAPI

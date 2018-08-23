@@ -9,7 +9,8 @@ import launcher.serialize.stream.EnumSerializer.Itf;
 import launcher.serialize.stream.StreamObject;
 
 public abstract class HashedEntry extends StreamObject {
-    @LauncherAPI public boolean flag; // For external usage
+    @LauncherAPI
+    public boolean flag; // For external usage
 
     @LauncherAPI
     public abstract Type getType();

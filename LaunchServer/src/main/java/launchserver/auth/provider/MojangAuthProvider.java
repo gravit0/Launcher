@@ -29,8 +29,8 @@ public final class MojangAuthProvider extends AuthProvider {
     @Override
     public AuthProviderResult auth(String login, String password, String ip) throws Exception {
         JsonObject request = Json.object().
-            add("agent", Json.object().add("name", "Minecraft").add("version", 1)).
-            add("username", login).add("password", password);
+                add("agent", Json.object().add("name", "Minecraft").add("version", 1)).
+                add("username", login).add("password", password);
 
         // Verify there's no error
         JsonObject response = makeJSONRequest(URL, request);
@@ -72,7 +72,7 @@ public final class MojangAuthProvider extends AuthProvider {
         try (InputStream input = errorInput == null ? connection.getInputStream() : errorInput) {
             String charset = connection.getContentEncoding();
             Charset charsetObject = charset == null ?
-                IOHelper.UNICODE_CHARSET : Charset.forName(charset);
+                    IOHelper.UNICODE_CHARSET : Charset.forName(charset);
 
             // Parse response
             String json = new String(IOHelper.read(input), charsetObject);

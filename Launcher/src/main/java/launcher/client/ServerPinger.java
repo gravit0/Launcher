@@ -80,7 +80,7 @@ public final class ServerPinger {
         try (Socket socket = IOHelper.newSocket()) {
             socket.connect(IOHelper.resolve(address), IOHelper.SOCKET_TIMEOUT);
             try (HInput input = new HInput(socket.getInputStream());
-                HOutput output = new HOutput(socket.getOutputStream())) {
+                 HOutput output = new HOutput(socket.getOutputStream())) {
                 return version.compareTo(Version.MC172) >= 0 ? modernPing(input, output) : legacyPing(input, output, version.compareTo(Version.MC164) >= 0);
             }
         }
@@ -138,9 +138,9 @@ public final class ServerPinger {
             throw new IOException(String.format("Version mismatch: '%s'", clientVersion));
         }
         int onlinePlayers = VerifyHelper.verifyInt(Integer.parseInt(splitted[4]),
-            VerifyHelper.NOT_NEGATIVE, "onlinePlayers can't be < 0");
+                VerifyHelper.NOT_NEGATIVE, "onlinePlayers can't be < 0");
         int maxPlayers = VerifyHelper.verifyInt(Integer.parseInt(splitted[5]),
-            VerifyHelper.NOT_NEGATIVE, "maxPlayers can't be < 0");
+                VerifyHelper.NOT_NEGATIVE, "maxPlayers can't be < 0");
 
         // Return ping status
         return new Result(onlinePlayers, maxPlayers, response);
@@ -208,15 +208,18 @@ public final class ServerPinger {
     }
 
     public static final class Result {
-        @LauncherAPI public final int onlinePlayers;
-        @LauncherAPI public final int maxPlayers;
-        @LauncherAPI public final String raw;
+        @LauncherAPI
+        public final int onlinePlayers;
+        @LauncherAPI
+        public final int maxPlayers;
+        @LauncherAPI
+        public final String raw;
 
         public Result(int onlinePlayers, int maxPlayers, String raw) {
             this.onlinePlayers = VerifyHelper.verifyInt(onlinePlayers,
-                VerifyHelper.NOT_NEGATIVE, "onlinePlayers can't be < 0");
+                    VerifyHelper.NOT_NEGATIVE, "onlinePlayers can't be < 0");
             this.maxPlayers = VerifyHelper.verifyInt(maxPlayers,
-                VerifyHelper.NOT_NEGATIVE, "maxPlayers can't be < 0");
+                    VerifyHelper.NOT_NEGATIVE, "maxPlayers can't be < 0");
             this.raw = raw;
         }
 

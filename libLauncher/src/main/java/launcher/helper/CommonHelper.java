@@ -12,7 +12,7 @@ import launcher.Launcher;
 import launcher.LauncherAPI;
 
 public final class CommonHelper {
-	@LauncherAPI
+    @LauncherAPI
     public static final String VERSIONREPLACE = "$VERSION$";
     @LauncherAPI
     public static final String BUILDREPLACE = "$BUILDNUMBER$";
@@ -23,25 +23,25 @@ public final class CommonHelper {
     @LauncherAPI
     public static final ScriptEngineFactory nashornFactory = getEngineFactories(scriptManager);
 
-	private static ScriptEngineFactory getEngineFactories(ScriptEngineManager manager) {
-		// Метод похож на костыль но таковым не является, ибо единоразовое получение фактории быстрее, чем её переполучение на ходу.
-    	for (ScriptEngineFactory fact :  manager.getEngineFactories()) {
-			if (fact.getNames().contains("nashorn") || fact.getNames().contains("Nashorn")) return fact;
-		}
-    	return null;
-	}
-    
+    private static ScriptEngineFactory getEngineFactories(ScriptEngineManager manager) {
+        // Метод похож на костыль но таковым не является, ибо единоразовое получение фактории быстрее, чем её переполучение на ходу.
+        for (ScriptEngineFactory fact : manager.getEngineFactories()) {
+            if (fact.getNames().contains("nashorn") || fact.getNames().contains("Nashorn")) return fact;
+        }
+        return null;
+    }
+
     private CommonHelper() {
     }
-    
-	@LauncherAPI
+
+    @LauncherAPI
     public static String low(String s) {
         return s.toLowerCase(Locale.US);
     }
-    
+
     @LauncherAPI
     public static ScriptEngine newScriptEngine() {
-    	return nashornFactory.getScriptEngine();
+        return nashornFactory.getScriptEngine();
     }
 
     @LauncherAPI
@@ -63,8 +63,8 @@ public final class CommonHelper {
     }
 
     private static String[] genReps() {
-        Replace[] replace = new Replace[] { new Replace(VERSIONREPLACE, Launcher.VERSION),
-                new Replace(BUILDREPLACE, Launcher.BUILD), };
+        Replace[] replace = new Replace[]{new Replace(VERSIONREPLACE, Launcher.VERSION),
+                new Replace(BUILDREPLACE, Launcher.BUILD),};
         String[] repArray = new String[replace.length * 2];
         int i = 0;
         for (Replace r : replace) {
@@ -77,23 +77,23 @@ public final class CommonHelper {
 
     @LauncherAPI
     public static String multiReplace(Pattern[] pattern, String from, String replace) {
-    	Matcher m;
-    	String tmp = null;
-    	for (Pattern p : pattern) {
-    		m = p.matcher(from);
-    		if (m.matches()) tmp = m.replaceAll(replace);
-    	}
-    	return tmp != null ? tmp : from;
+        Matcher m;
+        String tmp = null;
+        for (Pattern p : pattern) {
+            m = p.matcher(from);
+            if (m.matches()) tmp = m.replaceAll(replace);
+        }
+        return tmp != null ? tmp : from;
     }
-    
+
     @LauncherAPI
     public static boolean multiMatches(Pattern[] pattern, String from) {
-    	for (Pattern p : pattern) {
-    		if (p.matcher(from).matches()) return true;
-    	}
-    	return false;
+        for (Pattern p : pattern) {
+            if (p.matcher(from).matches()) return true;
+        }
+        return false;
     }
-    
+
     @LauncherAPI
     public static String formatVars(String in) {
         return replace(in, repArray);

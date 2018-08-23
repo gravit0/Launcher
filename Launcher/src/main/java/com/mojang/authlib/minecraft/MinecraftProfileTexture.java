@@ -31,7 +31,7 @@ public final class MinecraftProfileTexture {
         return hash;
     }
 
-    @SuppressWarnings({ "unused", "SameReturnValue" })
+    @SuppressWarnings({"unused", "SameReturnValue"})
     public String getMetadata(String key) {
         return null;
     }

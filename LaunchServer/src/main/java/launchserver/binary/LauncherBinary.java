@@ -9,8 +9,10 @@ import launcher.serialize.signed.SignedBytesHolder;
 import launchserver.LaunchServer;
 
 public abstract class LauncherBinary {
-    @LauncherAPI protected final LaunchServer server;
-    @LauncherAPI protected final Path binaryFile;
+    @LauncherAPI
+    protected final LaunchServer server;
+    @LauncherAPI
+    protected final Path binaryFile;
     private volatile SignedBytesHolder binary;
 
     @LauncherAPI

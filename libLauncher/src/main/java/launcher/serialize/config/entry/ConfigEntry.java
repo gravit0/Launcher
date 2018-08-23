@@ -11,7 +11,8 @@ import launcher.serialize.stream.EnumSerializer.Itf;
 import launcher.serialize.stream.StreamObject;
 
 public abstract class ConfigEntry<V> extends StreamObject {
-    @LauncherAPI public final boolean ro;
+    @LauncherAPI
+    public final boolean ro;
     private final String[] comments;
     private V value;
 

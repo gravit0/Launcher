@@ -27,9 +27,12 @@ import launcher.serialize.stream.StreamObject;
 import launchserver.auth.provider.AuthProviderResult;
 
 public abstract class FileAuthHandler extends AuthHandler {
-    @LauncherAPI public final Path file;
-    @LauncherAPI public final Path fileTmp;
-    @LauncherAPI public final boolean offlineUUIDs;
+    @LauncherAPI
+    public final Path file;
+    @LauncherAPI
+    public final Path fileTmp;
+    @LauncherAPI
+    public final boolean offlineUUIDs;
 
     // Instance
     private final SecureRandom random = SecurityHelper.newRandom();
