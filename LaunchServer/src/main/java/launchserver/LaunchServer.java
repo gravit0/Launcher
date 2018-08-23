@@ -48,7 +48,7 @@ import launcher.serialize.config.entry.StringConfigEntry;
 import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.auth.AuthLimiter;
 import launchserver.auth.handler.AuthHandler;
-import launchserver.auth.hwid.HWIDCoreHandler;
+import launchserver.auth.hwid.HWIDHandler;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.binary.EXEL4JLauncherBinary;
 import launchserver.binary.JARLauncherBinary;
@@ -81,7 +81,6 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
     // HWID ban + anti-brutforce
     @LauncherAPI public final AuthLimiter limiter;
-    @LauncherAPI public final HWIDCoreHandler HWhandler;
     // Server
     @LauncherAPI public final CommandHandler commandHandler;
     @LauncherAPI public final ServerSocketHandler serverSocketHandler;
@@ -107,6 +106,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         AuthHandler.registerHandlers();
         AuthProvider.registerProviders();
         TextureProvider.registerProviders();
+        HWIDHandler.registerHandlers();
         
         // Set command handler
         CommandHandler localCommandHandler;
@@ -159,9 +159,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         }
         config.verify();
         
-        // init hwid and anti-brutforce
+        // init anti-brutforce
         limiter = new AuthLimiter(this);
-        HWhandler = new HWIDCoreHandler(this);
         ModulesManager.setLaunchServer(this);
         ModulesManager.autoload();
 
@@ -208,7 +207,12 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         } catch (IOException e) {
             LogHelper.error(e);
         }
-
+        try {
+            config.hwidHandler.close();
+        } catch (IOException e) {
+            LogHelper.error(e);
+        }
+        
         // Print last message before death :(
         LogHelper.info("LaunchServer stopped");
     }
@@ -393,7 +397,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         @LauncherAPI public final AuthHandler authHandler;
         @LauncherAPI public final AuthProvider authProvider;
         @LauncherAPI public final TextureProvider textureProvider;
-
+        @LauncherAPI public final HWIDHandler hwidHandler;
+        
         // Misc options
         @LauncherAPI public final BlockConfigEntry launch4J;
         @LauncherAPI public final boolean compress;
@@ -426,7 +431,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                 block.getEntry("authProviderConfig", BlockConfigEntry.class));
             textureProvider = TextureProvider.newProvider(block.getEntryValue("textureProvider", StringConfigEntry.class),
                 block.getEntry("textureProviderConfig", BlockConfigEntry.class));
-
+            hwidHandler = HWIDHandler.newHandler(block.getEntryValue("hwidHandler", StringConfigEntry.class),
+            		 block.getEntry("hwidHandlerConfig", BlockConfigEntry.class));
+            
             // Set misc config
             launch4J = block.getEntry("launch4J", BlockConfigEntry.class);
             binaryName = block.getEntryValue("binaryName", StringConfigEntry.class);
