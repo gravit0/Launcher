@@ -12,8 +12,9 @@ import launchserver.LaunchServer;
 import launchserver.response.Response;
 
 public final class BatchProfileByUsernameResponse extends Response {
-    public BatchProfileByUsernameResponse(LaunchServer server, long id, HInput input, HOutput output) {
-        super(server, id, input, output);
+
+    public BatchProfileByUsernameResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
+        super(server, session, input, output, ip);
     }
 
     @Override

@@ -56,7 +56,10 @@ import launchserver.binary.LauncherBinary;
 import launchserver.command.handler.CommandHandler;
 import launchserver.command.handler.JLineCommandHandler;
 import launchserver.command.handler.StdCommandHandler;
+import launchserver.manangers.GarbageManager;
 import launchserver.manangers.ModulesManager;
+import launchserver.manangers.SessionManager;
+import launchserver.response.Response;
 import launchserver.response.ServerSocketHandler;
 import launchserver.texture.TextureProvider;
 
@@ -81,6 +84,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
     // HWID ban + anti-brutforce
     @LauncherAPI public final AuthLimiter limiter;
+    @LauncherAPI public final SessionManager sessionManager;
     // Server
     @LauncherAPI public final CommandHandler commandHandler;
     @LauncherAPI public final ServerSocketHandler serverSocketHandler;
@@ -107,6 +111,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         AuthProvider.registerProviders();
         TextureProvider.registerProviders();
         HWIDHandler.registerHandlers();
+        Response.registerResponses();
         
         // Set command handler
         CommandHandler localCommandHandler;
@@ -161,6 +166,10 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         
         // init anti-brutforce
         limiter = new AuthLimiter(this);
+
+        sessionManager = new SessionManager();
+        GarbageManager.registerNeedGC(sessionManager);
+        GarbageManager.registerNeedGC(limiter);
         ModulesManager.setLaunchServer(this);
         ModulesManager.autoload();
 
@@ -184,7 +193,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
 
         // Set server socket thread
-        serverSocketHandler = new ServerSocketHandler(this);
+        serverSocketHandler = new ServerSocketHandler(this,sessionManager);
     }
 
     @Override

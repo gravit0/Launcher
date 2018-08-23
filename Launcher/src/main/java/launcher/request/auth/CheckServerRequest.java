@@ -30,8 +30,8 @@ public final class CheckServerRequest extends Request<PlayerProfile> {
     }
 
     @Override
-    public Type getType() {
-        return Type.CHECK_SERVER;
+    public Integer getType() {
+        return Type.CHECK_SERVER.getNumber();
     }
 
     @Override

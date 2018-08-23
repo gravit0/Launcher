@@ -22,15 +22,8 @@ import launchserver.response.Response;
 import launchserver.response.profile.ProfileByUUIDResponse;
 
 public final class AuthResponse extends Response {
-    private final String ip;
-
-    public AuthResponse(LaunchServer server, long id, HInput input, HOutput output, String ip) {
-        super(server, id, input, output);
-        this.ip = ip;
-    }
-    public AuthResponse(LaunchServer server, long id, HInput input, HOutput output, Socket socket, String ip) {
-        super(server, id, input, output,socket);
-        this.ip = ip;
+    public AuthResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
+        super(server, session, input, output, ip);
     }
 
     @Override
@@ -55,13 +48,13 @@ public final class AuthResponse extends Response {
         debug("Login: '%s', Password: '%s'", login, echo(password.length()));
         AuthProviderResult result;
         try {
-            result = server.config.authProvider.auth(login, password, ip);
+            result = server.config.authProvider.auth(login, password,ip);
             if (!VerifyHelper.isValidUsername(result.username)) {
                 AuthProvider.authError(String.format("Illegal result: '%s'", result.username));
                 return;
             }
             if (server.limiter.isLimit(ip)) {
-                AuthProvider.authError(server.config.authRejectString);
+            AuthProvider.authError(server.config.authRejectString);
                 return;
             }
             server.config.hwidHandler.check(HWID.gen(hwid_hdd, hwid_bios, hwid_cpu), result.username);

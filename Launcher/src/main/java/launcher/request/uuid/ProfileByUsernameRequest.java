@@ -27,8 +27,8 @@ public final class ProfileByUsernameRequest extends Request<PlayerProfile> {
     }
 
     @Override
-    public Type getType() {
-        return Type.PROFILE_BY_USERNAME;
+    public Integer getType() {
+        return Type.PROFILE_BY_USERNAME.getNumber();
     }
 
     @Override

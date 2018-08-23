@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -16,12 +13,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
-import launcher.helper.VerifyHelper;
-import launcher.request.Request.Type;
-import launcher.serialize.HInput;
-import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
-import launchserver.response.Response.Factory;
+import launchserver.manangers.GarbageManager;
+import launchserver.manangers.SessionManager;
 
 public final class ServerSocketHandler implements Runnable, AutoCloseable {
     private static final ThreadFactory THREAD_FACTORY = r -> CommonHelper.newThread("Network Thread", true, r);
@@ -31,14 +25,19 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
     private final LaunchServer server;
     private final AtomicReference<ServerSocket> serverSocket = new AtomicReference<>();
     private final ExecutorService threadPool = Executors.newCachedThreadPool(THREAD_FACTORY);
+    public final SessionManager sessionManager;
 
-    // API
-    private final Map<String, Factory> customResponses = new ConcurrentHashMap<>(2);
     private final AtomicLong idCounter = new AtomicLong(0L);
     private volatile Listener listener;
 
     public ServerSocketHandler(LaunchServer server) {
         this.server = server;
+        sessionManager = new SessionManager();
+        GarbageManager.registerNeedGC(sessionManager);
+    }
+    public ServerSocketHandler(LaunchServer server,SessionManager sessionManager) {
+        this.server = server;
+        this.sessionManager = sessionManager;
     }
 
     @Override
@@ -80,7 +79,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
                 }
 
                 // Reply in separate thread
-                threadPool.execute(new ResponseThread(server, id, socket));
+                threadPool.execute(new ResponseThread(server, id, socket,sessionManager));
             }
         } catch (IOException e) {
             // Ignore error after close/rebind
@@ -88,20 +87,6 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
                 LogHelper.error(e);
             }
         }
-    }
-
-    @LauncherAPI
-    public Response newCustomResponse(String name, long id, HInput input, HOutput output) {
-        Factory factory = VerifyHelper.getMapValue(customResponses, name,
-            String.format("Unknown custom response: '%s'", name));
-        return factory.newResponse(server, id, input, output);
-    }
-
-    @LauncherAPI
-    public void registerCustomResponse(String name, Factory factory) {
-        VerifyHelper.verifyIDName(name);
-        VerifyHelper.putIfAbsent(customResponses, name, Objects.requireNonNull(factory, "factory"),
-            String.format("Custom response has been already registered: '%s'", name));
     }
 
     @LauncherAPI
@@ -115,7 +100,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         }
     }
 
-    /*package*/ boolean onHandshake(long session, Type type) {
+    /*package*/ boolean onHandshake(long session, Integer type) {
         return listener == null || listener.onHandshake(session, type);
     }
 
@@ -127,6 +112,6 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         void onDisconnect(Exception e);
 
         @LauncherAPI
-        boolean onHandshake(long session, Type type);
+        boolean onHandshake(long session, Integer type);
     }
 }

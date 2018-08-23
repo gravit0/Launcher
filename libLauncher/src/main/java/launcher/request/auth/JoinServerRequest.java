@@ -34,8 +34,8 @@ public final class JoinServerRequest extends Request<Boolean> {
     }
 
     @Override
-    public Type getType() {
-        return Type.JOIN_SERVER;
+    public Integer getType() {
+        return Type.JOIN_SERVER.getNumber();
     }
 
     @Override

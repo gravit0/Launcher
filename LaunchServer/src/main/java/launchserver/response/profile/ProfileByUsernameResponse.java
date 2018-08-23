@@ -11,8 +11,9 @@ import launchserver.LaunchServer;
 import launchserver.response.Response;
 
 public final class ProfileByUsernameResponse extends Response {
-    public ProfileByUsernameResponse(LaunchServer server, long id, HInput input, HOutput output) {
-        super(server, id, input, output);
+
+    public ProfileByUsernameResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
+        super(server, session, input, output, ip);
     }
 
     @Override
