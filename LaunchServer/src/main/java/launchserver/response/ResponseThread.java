@@ -13,6 +13,7 @@ import launcher.request.RequestException;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
+import launchserver.manangers.SessionManager;
 
 public final class ResponseThread implements Runnable {
     private final LaunchServer server;
@@ -78,6 +79,10 @@ public final class ResponseThread implements Runnable {
             }
             session = 0;
             legacy = true;
+        }
+        else
+        {
+            SessionManager.updateClient(session);
         }
         // Verify key modulus
         BigInteger keyModulus = input.readBigInteger(SecurityHelper.RSA_KEY_LENGTH + 1);

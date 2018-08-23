@@ -1,6 +1,7 @@
 package launchserver.manangers;
 
 import launcher.LauncherAPI;
+import launchserver.response.Client;
 
 import java.util.Set;
 
@@ -19,6 +20,13 @@ public class SessionManager {
             if(c.session == session) return c;
         }
         return null;
+    }
+    @LauncherAPI public static void updateClient(long session)
+    {
+        for(Client c : clientSet)
+        {
+            if(c.session == session) { c.up(); return; }
+        }
     }
     @LauncherAPI public static void garbareCollection()
     {
