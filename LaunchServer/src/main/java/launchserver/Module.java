@@ -6,4 +6,6 @@ public interface Module {
     String getVersion();
 
     void init();
+  
+    void preInit();
 }

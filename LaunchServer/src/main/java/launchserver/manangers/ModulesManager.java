@@ -4,6 +4,7 @@ import launcher.LauncherAPI;
 import launcher.LauncherClassLoader;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
+import launchserver.CoreModule;
 import launchserver.LaunchServer;
 import launchserver.Module;
 
@@ -36,15 +37,16 @@ public class ModulesManager {
         Class moduleclass = Class.forName(classname, true, classloader);
         Module module = (Module) moduleclass.newInstance();
         modules.add(module);
-        if (!preload) module.init();
-        LogHelper.info("Module %s version: %s loaded", module.getName(), module.getVersion());
+        module.preInit();
+        if(!preload) module.init();
+        LogHelper.info("Module %s version: %s loaded",module.getName(),module.getVersion());
     }
 
     @LauncherAPI
-    public static void registerModule(Module module, boolean preload) {
-        modules.add(module);
-        if (!preload) module.init();
-        LogHelper.info("Module %s version: %s registered", module.getName(), module.getVersion());
+    public static void registerModule(Module module,boolean preload)
+    {
+        load(module, preload);
+        LogHelper.info("Module %s version: %s registered",module.getName(),module.getVersion());
     }
 
     @LauncherAPI
@@ -70,12 +72,29 @@ public class ModulesManager {
     @LauncherAPI
     public static void autoload() throws IOException {
         LogHelper.info("Load modules");
+        registerCoreModule();
         Path modules = Paths.get("modules");
         if (Files.notExists(modules)) Files.createDirectory(modules);
         IOHelper.walk(modules, new ModulesVisitor(), true);
         LogHelper.info("Loaded %d modules", ModulesManager.modules.size());
         initModules();
     }
+    private static void registerCoreModule() {
+    	load(new CoreModule());
+	}
+    
+    @LauncherAPI
+	public static void load(Module module) {
+		modules.add(module);
+		module.preInit();
+	}
+    
+    
+    @LauncherAPI
+	public static void load(Module module, boolean preload) {
+		load(module);
+		if (!preload) module.init();
+	}
 
     private static final class ModulesVisitor extends SimpleFileVisitor<Path> {
         private ModulesVisitor() {

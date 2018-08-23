@@ -11,9 +11,14 @@ public class SimpleModule implements Module {
         return "1";
     }
 
+	@Override
+	public void preInit() {
+		// pre-init code
+	}
+    
     @Override
     public void init() {
-        //init code
+        // init code
     }
 
     public static void main(String[] args) {
