@@ -1,8 +1,11 @@
 package launchserver;
 
 public interface Module {
-    public String getName();
-    public String getVersion();
-    public void init();
-	public void preInit();
+    String getName();
+
+    String getVersion();
+
+    void init();
+  
+    void preInit();
 }

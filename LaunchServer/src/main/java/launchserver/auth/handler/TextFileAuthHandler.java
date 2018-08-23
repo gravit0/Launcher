@@ -34,15 +34,15 @@ public final class TextFileAuthHandler extends FileAuthHandler {
         for (Map.Entry<String, ConfigEntry<?>> entry : entrySet) {
             UUID uuid = UUID.fromString(entry.getKey());
             ConfigEntry<?> value = VerifyHelper.verify(entry.getValue(),
-                v -> v.getType() == Type.BLOCK, "Illegal config entry type: " + uuid);
+                    v -> v.getType() == Type.BLOCK, "Illegal config entry type: " + uuid);
 
             // Get auth entry data
             BlockConfigEntry authBlock = (BlockConfigEntry) value;
             String username = authBlock.getEntryValue("username", StringConfigEntry.class);
             String accessToken = authBlock.hasEntry("accessToken") ?
-                authBlock.getEntryValue("accessToken", StringConfigEntry.class) : null;
+                    authBlock.getEntryValue("accessToken", StringConfigEntry.class) : null;
             String serverID = authBlock.hasEntry("serverID") ?
-                authBlock.getEntryValue("serverID", StringConfigEntry.class) : null;
+                    authBlock.getEntryValue("serverID", StringConfigEntry.class) : null;
 
             // Add auth entry
             addAuth(uuid, new Entry(username, accessToken, serverID));

@@ -12,9 +12,12 @@ import launcher.serialize.HOutput;
 import launcher.serialize.stream.StreamObject;
 
 public final class PlayerProfile extends StreamObject {
-    @LauncherAPI public final UUID uuid;
-    @LauncherAPI public final String username;
-    @LauncherAPI public final Texture skin, cloak;
+    @LauncherAPI
+    public final UUID uuid;
+    @LauncherAPI
+    public final String username;
+    @LauncherAPI
+    public final Texture skin, cloak;
 
     @LauncherAPI
     public PlayerProfile(HInput input) throws IOException {

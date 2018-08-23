@@ -31,25 +31,25 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
 
         // Read query params
         String table = VerifyHelper.verifyIDName(
-            block.getEntryValue("table", StringConfigEntry.class));
+                block.getEntryValue("table", StringConfigEntry.class));
         uuidColumn = VerifyHelper.verifyIDName(
-            block.getEntryValue("uuidColumn", StringConfigEntry.class));
+                block.getEntryValue("uuidColumn", StringConfigEntry.class));
         usernameColumn = VerifyHelper.verifyIDName(
-            block.getEntryValue("usernameColumn", StringConfigEntry.class));
+                block.getEntryValue("usernameColumn", StringConfigEntry.class));
         accessTokenColumn = VerifyHelper.verifyIDName(
-            block.getEntryValue("accessTokenColumn", StringConfigEntry.class));
+                block.getEntryValue("accessTokenColumn", StringConfigEntry.class));
         serverIDColumn = VerifyHelper.verifyIDName(
-            block.getEntryValue("serverIDColumn", StringConfigEntry.class));
+                block.getEntryValue("serverIDColumn", StringConfigEntry.class));
 
         // Prepare SQL queries
         queryByUUIDSQL = String.format("SELECT %s, %s, %s, %s FROM %s WHERE %s=? LIMIT 1",
-            uuidColumn, usernameColumn, accessTokenColumn, serverIDColumn, table, uuidColumn);
+                uuidColumn, usernameColumn, accessTokenColumn, serverIDColumn, table, uuidColumn);
         queryByUsernameSQL = String.format("SELECT %s, %s, %s, %s FROM %s WHERE %s=? LIMIT 1",
-            uuidColumn, usernameColumn, accessTokenColumn, serverIDColumn, table, usernameColumn);
+                uuidColumn, usernameColumn, accessTokenColumn, serverIDColumn, table, usernameColumn);
         updateAuthSQL = String.format("UPDATE %s SET %s=?, %s=?, %s=NULL WHERE %s=? LIMIT 1",
-            table, usernameColumn, accessTokenColumn, serverIDColumn, uuidColumn);
+                table, usernameColumn, accessTokenColumn, serverIDColumn, uuidColumn);
         updateServerIDSQL = String.format("UPDATE %s SET %s=? WHERE %s=? LIMIT 1",
-            table, serverIDColumn, uuidColumn);
+                table, serverIDColumn, uuidColumn);
     }
 
     @Override
@@ -87,7 +87,8 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
     @Override
     protected boolean updateServerID(UUID uuid, String serverID) throws IOException {
         try {
-            Connection c = mySQLHolder.getConnection(); PreparedStatement s = c.prepareStatement(updateServerIDSQL);
+            Connection c = mySQLHolder.getConnection();
+            PreparedStatement s = c.prepareStatement(updateServerIDSQL);
             s.setString(1, serverID);
             s.setString(2, uuid.toString());
 
@@ -101,7 +102,7 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
 
     private Entry constructEntry(ResultSet set) throws SQLException {
         return set.next() ? new Entry(UUID.fromString(set.getString(uuidColumn)), set.getString(usernameColumn),
-            set.getString(accessTokenColumn), set.getString(serverIDColumn)) : null;
+                set.getString(accessTokenColumn), set.getString(serverIDColumn)) : null;
     }
 
     private Entry query(String sql, String value) throws IOException {

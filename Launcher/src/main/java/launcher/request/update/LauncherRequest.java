@@ -23,8 +23,10 @@ import launcher.serialize.HOutput;
 import launcher.serialize.signed.SignedObjectHolder;
 
 public final class LauncherRequest extends Request<Result> {
-    @LauncherAPI public static final Path BINARY_PATH = IOHelper.getCodeSource(Launcher.class);
-    @LauncherAPI public static final boolean EXE_BINARY = IOHelper.hasExtension(BINARY_PATH, "exe");
+    @LauncherAPI
+    public static final Path BINARY_PATH = IOHelper.getCodeSource(Launcher.class);
+    @LauncherAPI
+    public static final boolean EXE_BINARY = IOHelper.hasExtension(BINARY_PATH, "exe");
 
     @LauncherAPI
     public LauncherRequest(LauncherConfig config) {
@@ -101,7 +103,8 @@ public final class LauncherRequest extends Request<Result> {
     }
 
     public static final class Result {
-        @LauncherAPI public final List<SignedObjectHolder<ClientProfile>> profiles;
+        @LauncherAPI
+        public final List<SignedObjectHolder<ClientProfile>> profiles;
         private final byte[] binary;
         private final byte[] sign;
 

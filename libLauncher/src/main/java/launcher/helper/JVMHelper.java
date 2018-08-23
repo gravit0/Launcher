@@ -17,29 +17,41 @@ import launcher.LauncherAPI;
 
 public final class JVMHelper {
     // MXBeans exports
-    @LauncherAPI public static final RuntimeMXBean RUNTIME_MXBEAN = ManagementFactory.getRuntimeMXBean();
-    @LauncherAPI public static final OperatingSystemMXBean OPERATING_SYSTEM_MXBEAN =
-        ManagementFactory.getOperatingSystemMXBean();
+    @LauncherAPI
+    public static final RuntimeMXBean RUNTIME_MXBEAN = ManagementFactory.getRuntimeMXBean();
+    @LauncherAPI
+    public static final OperatingSystemMXBean OPERATING_SYSTEM_MXBEAN =
+            ManagementFactory.getOperatingSystemMXBean();
 
     // System properties
-    @LauncherAPI public static final OS OS_TYPE = OS.byName(OPERATING_SYSTEM_MXBEAN.getName());
-    @LauncherAPI public static final String OS_VERSION = OPERATING_SYSTEM_MXBEAN.getVersion();
-    @LauncherAPI public static final int OS_BITS = getCorrectOSArch();
-    @LauncherAPI public static final int JVM_BITS = Integer.parseInt(System.getProperty("sun.arch.data.model"));
-    @LauncherAPI public static final int RAM = getRAMAmount();
-    @LauncherAPI public static final SecurityManager SECURITY_MANAGER = System.getSecurityManager();
+    @LauncherAPI
+    public static final OS OS_TYPE = OS.byName(OPERATING_SYSTEM_MXBEAN.getName());
+    @LauncherAPI
+    public static final String OS_VERSION = OPERATING_SYSTEM_MXBEAN.getVersion();
+    @LauncherAPI
+    public static final int OS_BITS = getCorrectOSArch();
+    @LauncherAPI
+    public static final int JVM_BITS = Integer.parseInt(System.getProperty("sun.arch.data.model"));
+    @LauncherAPI
+    public static final int RAM = getRAMAmount();
+    @LauncherAPI
+    public static final SecurityManager SECURITY_MANAGER = System.getSecurityManager();
 
     // Public static fields
-    @LauncherAPI public static final Runtime RUNTIME = Runtime.getRuntime();
-    @LauncherAPI public static final ClassLoader LOADER = ClassLoader.getSystemClassLoader();
+    @LauncherAPI
+    public static final Runtime RUNTIME = Runtime.getRuntime();
+    @LauncherAPI
+    public static final ClassLoader LOADER = ClassLoader.getSystemClassLoader();
 
     private JVMHelper() {
     }
+
     @Deprecated
     @LauncherAPI
     public static void addClassPath(URL url) {
         throw new IllegalArgumentException("Method Deprecated");
     }
+
     @Deprecated
     @LauncherAPI
     public static void addNativePath(Path path) {
@@ -64,9 +76,10 @@ public final class JVMHelper {
     public static String[] getClassPath() {
         return System.getProperty("java.class.path").split(File.pathSeparator);
     }
+
     @LauncherAPI
     public static URL[] getClassPathURL() {
-        String[] cp =System.getProperty("java.class.path").split(File.pathSeparator);
+        String[] cp = System.getProperty("java.class.path").split(File.pathSeparator);
         URL[] list = new URL[cp.length];
         int it = 0;
         for (String s : cp) {
@@ -116,8 +129,8 @@ public final class JVMHelper {
     }
 
     private static int getRAMAmount() {
-    	// TODO Normal fix.
-        int physicalRam = (int) (((com.sun.management.OperatingSystemMXBean)OPERATING_SYSTEM_MXBEAN).getTotalPhysicalMemorySize() >> 20);
+        // TODO Normal fix.
+        int physicalRam = (int) (((com.sun.management.OperatingSystemMXBean) OPERATING_SYSTEM_MXBEAN).getTotalPhysicalMemorySize() >> 20);
         return Math.min(physicalRam, OS_BITS == 32 ? 1536 : 32768); // Limit 32-bit OS to 1536 MiB, and 64-bit OS to 32768 MiB (because it's enough)
     }
 
@@ -150,17 +163,17 @@ public final class JVMHelper {
     public static String systemToJvmProperty(String name) {
         return String.format("-D%s=%s", name, System.getProperties().getProperty(name));
     }
-    
+
     @LauncherAPI
     public static void appendVars(ProcessBuilder builder, Map<String, String> vars) {
-    	builder.environment().putAll(vars);
+        builder.environment().putAll(vars);
     }
-    
+
     @LauncherAPI
     public static String getEnvPropertyCaseSensitive(String name) {
         return System.getenv().get(name);
     }
-    
+
     @SuppressWarnings("unused")
     @LauncherAPI
     public enum OS {

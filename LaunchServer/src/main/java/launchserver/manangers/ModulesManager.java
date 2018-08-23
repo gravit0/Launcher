@@ -19,62 +19,64 @@ import java.util.jar.Manifest;
 
 public class ModulesManager {
     public static ArrayList<Module> modules = new ArrayList<>();
-    public static LauncherClassLoader classloader = new LauncherClassLoader(new URL[0],ClassLoader.getSystemClassLoader());
+    public static LauncherClassLoader classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
     public static LaunchServer launchserver;
-    
+
     @LauncherAPI
-    public static void loadModule(URL jarpath,boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, IOException {
+    public static void loadModule(URL jarpath, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, IOException {
         JarFile f = new JarFile(Paths.get(jarpath.toURI()).toString());
         Manifest m = f.getManifest();
         String mainclass = m.getMainAttributes().getValue("Main-Class");
-        loadModule(jarpath,mainclass,preload);
+        loadModule(jarpath, mainclass, preload);
         f.close();
     }
+
     @LauncherAPI
-    public static void loadModule(URL jarpath, String classname,boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static void loadModule(URL jarpath, String classname, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         classloader.addURL(jarpath);
-        Class moduleclass = Class.forName(classname,true,classloader);
+        Class moduleclass = Class.forName(classname, true, classloader);
         Module module = (Module) moduleclass.newInstance();
         modules.add(module);
         module.preInit();
         if(!preload) module.init();
         LogHelper.info("Module %s version: %s loaded",module.getName(),module.getVersion());
     }
+
     @LauncherAPI
     public static void registerModule(Module module,boolean preload)
     {
         load(module, preload);
         LogHelper.info("Module %s version: %s registered",module.getName(),module.getVersion());
     }
+
     @LauncherAPI
-    public static void initModules()
-    {
-        for(Module m : modules)
-        {
+    public static void initModules() {
+        for (Module m : modules) {
             m.init();
-            LogHelper.info("Module %s version: %s init",m.getName(),m.getVersion());
+            LogHelper.info("Module %s version: %s init", m.getName(), m.getVersion());
         }
     }
+
     @LauncherAPI
     public static void printModules() {
-        for(Module m : modules)
-        {
-            LogHelper.info("Module %s version: %s",m.getName(),m.getVersion());
+        for (Module m : modules) {
+            LogHelper.info("Module %s version: %s", m.getName(), m.getVersion());
         }
-        LogHelper.info("Loaded %d modules",modules.size());
+        LogHelper.info("Loaded %d modules", modules.size());
     }
-    public static void setLaunchServer(LaunchServer server)
-    {
+
+    public static void setLaunchServer(LaunchServer server) {
         launchserver = server;
     }
+
     @LauncherAPI
     public static void autoload() throws IOException {
         LogHelper.info("Load modules");
         registerCoreModule();
         Path modules = Paths.get("modules");
-        if(Files.notExists(modules)) Files.createDirectory(modules);
-        IOHelper.walk(modules,new ModulesVisitor(),true);
-        LogHelper.info("Loaded %d modules",ModulesManager.modules.size());
+        if (Files.notExists(modules)) Files.createDirectory(modules);
+        IOHelper.walk(modules, new ModulesVisitor(), true);
+        LogHelper.info("Loaded %d modules", ModulesManager.modules.size());
         initModules();
     }
     private static void registerCoreModule() {
@@ -93,8 +95,8 @@ public class ModulesManager {
 		load(module);
 		if (!preload) module.init();
 	}
-    
-	private static final class ModulesVisitor extends SimpleFileVisitor<Path> {
+
+    private static final class ModulesVisitor extends SimpleFileVisitor<Path> {
         private ModulesVisitor() {
         }
 
@@ -104,13 +106,9 @@ public class ModulesManager {
                 JarFile f = new JarFile(file.toString());
                 Manifest m = f.getManifest();
                 String mainclass = m.getMainAttributes().getValue("Main-Class");
-                loadModule(file.toUri().toURL(),mainclass,true);
+                loadModule(file.toUri().toURL(), mainclass, true);
                 f.close();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 

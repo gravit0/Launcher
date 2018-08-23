@@ -19,11 +19,11 @@ import launcher.serialize.config.entry.StringConfigEntry;
 public final class MySQLSourceConfig extends ConfigObject implements AutoCloseable {
     @LauncherAPI
     public static final int TIMEOUT = VerifyHelper.verifyInt(
-        Integer.parseUnsignedInt(System.getProperty("launcher.mysql.idleTimeout", Integer.toString(5000))),
-        VerifyHelper.POSITIVE, "launcher.mysql.idleTimeout can't be <= 5000");
+            Integer.parseUnsignedInt(System.getProperty("launcher.mysql.idleTimeout", Integer.toString(5000))),
+            VerifyHelper.POSITIVE, "launcher.mysql.idleTimeout can't be <= 5000");
     private static final int MAX_POOL_SIZE = VerifyHelper.verifyInt(
-        Integer.parseUnsignedInt(System.getProperty("launcher.mysql.maxPoolSize", Integer.toString(3))),
-        VerifyHelper.POSITIVE, "launcher.mysql.maxPoolSize can't be <= 0");
+            Integer.parseUnsignedInt(System.getProperty("launcher.mysql.maxPoolSize", Integer.toString(3))),
+            VerifyHelper.POSITIVE, "launcher.mysql.maxPoolSize can't be <= 0");
 
     // Instance
     private final String poolName;
@@ -37,7 +37,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
     private final String password;
     private final String database;
     private String timeZone;
-    
+
     // Cache
     private DataSource source;
     private boolean hikari;
@@ -47,19 +47,19 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
         super(block);
         this.poolName = poolName;
         address = VerifyHelper.verify(block.getEntryValue("address", StringConfigEntry.class),
-            VerifyHelper.NOT_EMPTY, "MySQL address can't be empty");
+                VerifyHelper.NOT_EMPTY, "MySQL address can't be empty");
         port = VerifyHelper.verifyInt(block.getEntryValue("port", IntegerConfigEntry.class),
-            VerifyHelper.range(0, 65535), "Illegal MySQL port");
+                VerifyHelper.range(0, 65535), "Illegal MySQL port");
         username = VerifyHelper.verify(block.getEntryValue("username", StringConfigEntry.class),
-            VerifyHelper.NOT_EMPTY, "MySQL username can't be empty");
+                VerifyHelper.NOT_EMPTY, "MySQL username can't be empty");
         password = block.getEntryValue("password", StringConfigEntry.class);
         database = VerifyHelper.verify(block.getEntryValue("database", StringConfigEntry.class),
-            VerifyHelper.NOT_EMPTY, "MySQL database can't be empty");
-        timeZone = block.hasEntry("timezone") ?  VerifyHelper.verify(block.getEntryValue("timezone", StringConfigEntry.class),
+                VerifyHelper.NOT_EMPTY, "MySQL database can't be empty");
+        timeZone = block.hasEntry("timezone") ? VerifyHelper.verify(block.getEntryValue("timezone", StringConfigEntry.class),
                 VerifyHelper.NOT_EMPTY, "MySQL time zone can't be empty") : null;
         // Password shouldn't be verified
-        useSSL = block.hasEntry("useSSL") ?  block.getEntryValue("useSSL", BooleanConfigEntry.class) : true;
-        verifyCertificates = block.hasEntry("verifyCertificates") ?  block.getEntryValue("verifyCertificates", BooleanConfigEntry.class) : false;
+        useSSL = block.hasEntry("useSSL") ? block.getEntryValue("useSSL", BooleanConfigEntry.class) : true;
+        verifyCertificates = block.hasEntry("verifyCertificates") ? block.getEntryValue("verifyCertificates", BooleanConfigEntry.class) : false;
     }
 
     @Override
@@ -96,8 +96,8 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
             mysqlSource.setUser(username);
             mysqlSource.setPassword(password);
             mysqlSource.setDatabaseName(database);
-			if (timeZone != null) mysqlSource.setServerTimezone(timeZone);
-	        hikari = false;
+            if (timeZone != null) mysqlSource.setServerTimezone(timeZone);
+            hikari = false;
             // Try using HikariCP
             source = mysqlSource;
             try {

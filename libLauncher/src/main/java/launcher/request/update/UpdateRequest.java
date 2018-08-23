@@ -36,7 +36,8 @@ import launcher.serialize.stream.EnumSerializer.Itf;
 import launcher.serialize.stream.StreamObject;
 
 public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> {
-    @LauncherAPI public static final int MAX_QUEUE_SIZE = 128;
+    @LauncherAPI
+    public static final int MAX_QUEUE_SIZE = 128;
 
     // Instance
     private final String dirName;
@@ -244,7 +245,7 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
     private void updateState(String filePath, long fileDownloaded, long fileSize) {
         if (stateCallback != null) {
             stateCallback.call(new State(filePath, fileDownloaded, fileSize,
-                totalDownloaded, totalSize, Duration.between(startTime, Instant.now())));
+                    totalDownloaded, totalSize, Duration.between(startTime, Instant.now())));
         }
     }
 
@@ -298,12 +299,18 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
     }
 
     public static final class State {
-        @LauncherAPI public final long fileDownloaded;
-        @LauncherAPI public final long fileSize;
-        @LauncherAPI public final long totalDownloaded;
-        @LauncherAPI public final long totalSize;
-        @LauncherAPI public final String filePath;
-        @LauncherAPI public final Duration duration;
+        @LauncherAPI
+        public final long fileDownloaded;
+        @LauncherAPI
+        public final long fileSize;
+        @LauncherAPI
+        public final long totalDownloaded;
+        @LauncherAPI
+        public final long totalSize;
+        @LauncherAPI
+        public final String filePath;
+        @LauncherAPI
+        public final Duration duration;
 
         public State(String filePath, long fileDownloaded, long fileSize, long totalDownloaded, long totalSize, Duration duration) {
             this.filePath = filePath;

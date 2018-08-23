@@ -24,9 +24,12 @@ import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.AnsiOutputStream;
 
 public final class LogHelper {
-    @LauncherAPI public static final String DEBUG_PROPERTY = "launcher.debug";
-    @LauncherAPI public static final String NO_JANSI_PROPERTY = "launcher.noJAnsi";
-    @LauncherAPI public static final boolean JANSI;
+    @LauncherAPI
+    public static final String DEBUG_PROPERTY = "launcher.debug";
+    @LauncherAPI
+    public static final String NO_JANSI_PROPERTY = "launcher.noJAnsi";
+    @LauncherAPI
+    public static final boolean JANSI;
 
     // Output settings
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss", Locale.US);
@@ -107,7 +110,7 @@ public final class LogHelper {
     public static void log(Level level, String message, boolean sub) {
         String dateTime = DATE_TIME_FORMATTER.format(LocalDateTime.now());
         println(JANSI ? ansiFormatLog(level, dateTime, message, sub) :
-            formatLog(level, message, dateTime, sub));
+                formatLog(level, message, dateTime, sub));
     }
 
     @LauncherAPI
@@ -231,12 +234,12 @@ public final class LogHelper {
 
     private static String ansiFormatVersion(String product) {
         return new Ansi().bold(). // Setup
-            fgBright(Color.MAGENTA).a("sashok724's "). // sashok724's
-            fgBright(Color.CYAN).a(product). // Product
-            fgBright(Color.WHITE).a(" v").fgBright(Color.BLUE).a(Launcher.VERSION). // Version
-            fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(Launcher.BUILD).fgBright(Color.WHITE).a(')'). // Build#
-            fgBright(Color.WHITE).a(" mod by ").fgBright(Color.RED).a("Gravit").
-            reset().toString(); // To string
+                fgBright(Color.MAGENTA).a("sashok724's "). // sashok724's
+                fgBright(Color.CYAN).a(product). // Product
+                fgBright(Color.WHITE).a(" v").fgBright(Color.BLUE).a(Launcher.VERSION). // Version
+                fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(Launcher.BUILD).fgBright(Color.WHITE).a(')'). // Build#
+                fgBright(Color.WHITE).a(" mod by ").fgBright(Color.RED).a("Gravit").
+                reset().toString(); // To string
     }
 
     private static String formatLog(Level level, String message, String dateTime, boolean sub) {

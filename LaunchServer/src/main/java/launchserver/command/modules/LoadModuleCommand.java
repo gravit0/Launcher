@@ -26,6 +26,6 @@ public class LoadModuleCommand extends Command {
     public void invoke(String... args) throws Exception {
         verifyArgs(args, 1);
         URI uri = Paths.get(args[0]).toUri();
-        ModulesManager.loadModule(uri.toURL(),false);
+        ModulesManager.loadModule(uri.toURL(), false);
     }
 }

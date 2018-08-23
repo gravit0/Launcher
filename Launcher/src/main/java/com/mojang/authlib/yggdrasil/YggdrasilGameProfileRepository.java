@@ -14,11 +14,11 @@ import launcher.request.uuid.BatchProfileByUsernameRequest;
 
 public final class YggdrasilGameProfileRepository implements GameProfileRepository {
     private static final long BUSY_WAIT_MS = VerifyHelper.verifyLong(
-        Long.parseLong(System.getProperty("launcher.authlib.busyWait", Long.toString(100L))),
-        VerifyHelper.L_NOT_NEGATIVE, "launcher.authlib.busyWait can't be < 0");
+            Long.parseLong(System.getProperty("launcher.authlib.busyWait", Long.toString(100L))),
+            VerifyHelper.L_NOT_NEGATIVE, "launcher.authlib.busyWait can't be < 0");
     private static final long ERROR_BUSY_WAIT_MS = VerifyHelper.verifyLong(
-        Long.parseLong(System.getProperty("launcher.authlib.errorBusyWait", Long.toString(500L))),
-        VerifyHelper.L_NOT_NEGATIVE, "launcher.authlib.errorBusyWait can't be < 0");
+            Long.parseLong(System.getProperty("launcher.authlib.errorBusyWait", Long.toString(500L))),
+            VerifyHelper.L_NOT_NEGATIVE, "launcher.authlib.errorBusyWait can't be < 0");
 
     public YggdrasilGameProfileRepository() {
         LogHelper.debug("Patched GameProfileRepository created");

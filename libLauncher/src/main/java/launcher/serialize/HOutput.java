@@ -11,7 +11,8 @@ import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 
 public final class HOutput implements AutoCloseable, Flushable {
-    @LauncherAPI public final OutputStream stream;
+    @LauncherAPI
+    public final OutputStream stream;
 
     @LauncherAPI
     public HOutput(OutputStream stream) {

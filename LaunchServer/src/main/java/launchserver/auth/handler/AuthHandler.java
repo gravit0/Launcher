@@ -16,7 +16,7 @@ import launchserver.auth.provider.AuthProviderResult;
 public abstract class AuthHandler extends ConfigObject implements AutoCloseable {
     private static final Map<String, Adapter<AuthHandler>> AUTH_HANDLERS = new ConcurrentHashMap<>(4);
     private static boolean registredHandl = false;
-    
+
     @LauncherAPI
     protected AuthHandler(BlockConfigEntry block) {
         super(block);
@@ -48,7 +48,7 @@ public abstract class AuthHandler extends ConfigObject implements AutoCloseable 
     @LauncherAPI
     public static AuthHandler newHandler(String name, BlockConfigEntry block) {
         Adapter<AuthHandler> authHandlerAdapter = VerifyHelper.getMapValue(AUTH_HANDLERS, name,
-            String.format("Unknown auth handler: '%s'", name));
+                String.format("Unknown auth handler: '%s'", name));
         return authHandlerAdapter.convert(block);
     }
 
@@ -56,19 +56,19 @@ public abstract class AuthHandler extends ConfigObject implements AutoCloseable 
     public static void registerHandler(String name, Adapter<AuthHandler> adapter) {
         VerifyHelper.verifyIDName(name);
         VerifyHelper.putIfAbsent(AUTH_HANDLERS, name, Objects.requireNonNull(adapter, "adapter"),
-            String.format("Auth handler has been already registered: '%s'", name));
+                String.format("Auth handler has been already registered: '%s'", name));
     }
 
     public static void registerHandlers() {
-    	if (!registredHandl) {
-    		registerHandler("null", NullAuthHandler::new);
-    		registerHandler("memory", MemoryAuthHandler::new);
+        if (!registredHandl) {
+            registerHandler("null", NullAuthHandler::new);
+            registerHandler("memory", MemoryAuthHandler::new);
 
-    		// Auth handler that doesn't do nothing :D
-    		registerHandler("binaryFile", BinaryFileAuthHandler::new);
-    		registerHandler("textFile", TextFileAuthHandler::new);
-    		registerHandler("mysql", MySQLAuthHandler::new);
-    		registredHandl = true;
-    	}
+            // Auth handler that doesn't do nothing :D
+            registerHandler("binaryFile", BinaryFileAuthHandler::new);
+            registerHandler("textFile", TextFileAuthHandler::new);
+            registerHandler("mysql", MySQLAuthHandler::new);
+            registredHandl = true;
+        }
     }
 }

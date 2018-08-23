@@ -22,10 +22,10 @@ public final class ProfileByUsernameResponse extends Response {
         debug("Username: " + username);
         String client = input.readString(SerializeLimits.MAX_CLIENT);
         // Write response
-        writeProfile(server, output, username,client);
+        writeProfile(server, output, username, client);
     }
 
-    public static void writeProfile(LaunchServer server, HOutput output, String username,String client) throws IOException {
+    public static void writeProfile(LaunchServer server, HOutput output, String username, String client) throws IOException {
         UUID uuid = server.config.authHandler.usernameToUUID(username);
         if (uuid == null) {
             output.writeBoolean(false);

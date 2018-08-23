@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 import launcher.Launcher;
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
@@ -22,8 +23,10 @@ import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 
 public final class JARLauncherBinary extends LauncherBinary {
-    @LauncherAPI public final Path runtimeDir;
-    @LauncherAPI public final Path initScriptFile;
+    @LauncherAPI
+    public final Path runtimeDir;
+    @LauncherAPI
+    public final Path initScriptFile;
 
     @LauncherAPI
     public JARLauncherBinary(LaunchServer server) throws IOException {
@@ -39,7 +42,7 @@ public final class JARLauncherBinary extends LauncherBinary {
 
         // Build launcher binary
         LogHelper.info("Building launcher binary file");
-        try (ZipOutputStream output =new ZipOutputStream(IOHelper.newOutput(binaryFile))) {
+        try (ZipOutputStream output = new ZipOutputStream(IOHelper.newOutput(binaryFile))) {
             //ClassPool pool = ClassPool.getDefault();
             //CtClass ctClass = pool.get(JAConfig.class.getCanonicalName());
             //CtConstructor ctConstructor = ctClass.getDeclaredConstructor(null);
@@ -58,8 +61,8 @@ public final class JARLauncherBinary extends LauncherBinary {
                     //    output.write(ctClass.toBytecode());
                     //}
                     //else {
-                        output.putNextEntry(e);
-                        IOHelper.transfer(input, output);
+                    output.putNextEntry(e);
+                    IOHelper.transfer(input, output);
                     //}
                     e = input.getNextEntry();
                 }

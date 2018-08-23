@@ -55,8 +55,10 @@ public final class AuthRequest extends Request<Result> {
     }
 
     public static final class Result {
-        @LauncherAPI public final PlayerProfile pp;
-        @LauncherAPI public final String accessToken;
+        @LauncherAPI
+        public final PlayerProfile pp;
+        @LauncherAPI
+        public final String accessToken;
 
         private Result(PlayerProfile pp, String accessToken) {
             this.pp = pp;

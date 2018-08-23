@@ -82,12 +82,12 @@ public final class FileAuthProvider extends DigestAuthProvider {
         for (Map.Entry<String, ConfigEntry<?>> entry : entrySet) {
             String login = entry.getKey();
             ConfigEntry<?> value = VerifyHelper.verify(entry.getValue(), v -> v.getType() == Type.BLOCK,
-                String.format("Illegal config entry type: '%s'", login));
+                    String.format("Illegal config entry type: '%s'", login));
 
             // Add auth entry
             Entry auth = new Entry((BlockConfigEntry) value);
             VerifyHelper.putIfAbsent(entries, CommonHelper.low(login), auth,
-                String.format("Duplicate login: '%s'", login));
+                    String.format("Duplicate login: '%s'", login));
         }
 
         // Update last modified time
@@ -103,9 +103,9 @@ public final class FileAuthProvider extends DigestAuthProvider {
             super(block);
             username = VerifyHelper.verifyUsername(block.getEntryValue("username", StringConfigEntry.class));
             password = VerifyHelper.verify(block.getEntryValue("password", StringConfigEntry.class),
-                VerifyHelper.NOT_EMPTY, String.format("Password can't be empty: '%s'", username));
+                    VerifyHelper.NOT_EMPTY, String.format("Password can't be empty: '%s'", username));
             ip = block.hasEntry("ip") ? VerifyHelper.verify(block.getEntryValue("ip", StringConfigEntry.class),
-                VerifyHelper.NOT_EMPTY, String.format("IP can't be empty: '%s'", username)) : null;
+                    VerifyHelper.NOT_EMPTY, String.format("IP can't be empty: '%s'", username)) : null;
         }
     }
 }

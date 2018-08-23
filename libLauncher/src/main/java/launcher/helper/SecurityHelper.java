@@ -32,25 +32,36 @@ import launcher.LauncherAPI;
 
 public final class SecurityHelper {
     // Algorithm constants
-    @LauncherAPI public static final String RSA_ALGO = "RSA";
-    @LauncherAPI public static final String RSA_SIGN_ALGO = "SHA256withRSA";
-    @LauncherAPI public static final String RSA_CIPHER_ALGO = "RSA/ECB/PKCS1Padding";
+    @LauncherAPI
+    public static final String RSA_ALGO = "RSA";
+    @LauncherAPI
+    public static final String RSA_SIGN_ALGO = "SHA256withRSA";
+    @LauncherAPI
+    public static final String RSA_CIPHER_ALGO = "RSA/ECB/PKCS1Padding";
 
     // Algorithm size constants
-    @LauncherAPI public static final int TOKEN_LENGTH = 16;
-    @LauncherAPI public static final int TOKEN_STRING_LENGTH = TOKEN_LENGTH << 1;
-    @LauncherAPI public static final int RSA_KEY_LENGTH_BITS = 2048;
-    @LauncherAPI public static final int RSA_KEY_LENGTH = RSA_KEY_LENGTH_BITS / Byte.SIZE;
-    @LauncherAPI public static final int CRYPTO_MAX_LENGTH = 2048;
+    @LauncherAPI
+    public static final int TOKEN_LENGTH = 16;
+    @LauncherAPI
+    public static final int TOKEN_STRING_LENGTH = TOKEN_LENGTH << 1;
+    @LauncherAPI
+    public static final int RSA_KEY_LENGTH_BITS = 2048;
+    @LauncherAPI
+    public static final int RSA_KEY_LENGTH = RSA_KEY_LENGTH_BITS / Byte.SIZE;
+    @LauncherAPI
+    public static final int CRYPTO_MAX_LENGTH = 2048;
 
     // Certificate constants
-    @LauncherAPI public static final String CERTIFICATE_DIGEST = "229f90000b89d5a542aaef77b4c1e405e83f3a02682968e1327f1811effcbe6d";
-    @LauncherAPI public static final String HEX = "0123456789abcdef";
-    @LauncherAPI public static final SecureRandom  secureRandom = new SecureRandom();
+    @LauncherAPI
+    public static final String CERTIFICATE_DIGEST = "229f90000b89d5a542aaef77b4c1e405e83f3a02682968e1327f1811effcbe6d";
+    @LauncherAPI
+    public static final String HEX = "0123456789abcdef";
+    @LauncherAPI
+    public static final SecureRandom secureRandom = new SecureRandom();
 
     // Random generator constants
-    private static final char[] VOWELS = { 'e', 'u', 'i', 'o', 'a' };
-    private static final char[] CONS = { 'r', 't', 'p', 's', 'd', 'f', 'g', 'h', 'k', 'l', 'c', 'v', 'b', 'n', 'm' };
+    private static final char[] VOWELS = {'e', 'u', 'i', 'o', 'a'};
+    private static final char[] CONS = {'r', 't', 'p', 's', 'd', 'f', 'g', 'h', 'k', 'l', 'c', 'v', 'b', 'n', 'm'};
 
     private SecurityHelper() {
     }
@@ -354,6 +365,7 @@ public final class SecurityHelper {
     public static RSAPublicKey toPublicRSAKey(byte[] bytes) throws InvalidKeySpecException {
         return (RSAPublicKey) newRSAKeyFactory().generatePublic(new X509EncodedKeySpec(bytes));
     }
+
     @Deprecated
     @LauncherAPI
     public static void verifyCertificates(Class<?> clazz) {

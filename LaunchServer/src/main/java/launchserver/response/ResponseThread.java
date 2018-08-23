@@ -19,7 +19,8 @@ public final class ResponseThread implements Runnable {
     private final LaunchServer server;
     private final Socket socket;
     private final SessionManager sessions;
-    public ResponseThread(LaunchServer server, long id, Socket socket,SessionManager sessionManager) throws SocketException {
+
+    public ResponseThread(LaunchServer server, long id, Socket socket, SessionManager sessionManager) throws SocketException {
         this.server = server;
         this.socket = socket;
         this.sessions = sessionManager;
@@ -37,7 +38,7 @@ public final class ResponseThread implements Runnable {
         boolean cancelled = false;
         Exception savedError = null;
         try (HInput input = new HInput(socket.getInputStream());
-            HOutput output = new HOutput(socket.getOutputStream())) {
+             HOutput output = new HOutput(socket.getOutputStream())) {
             Handshake handshake = readHandshake(input, output);
             if (handshake == null) { // Not accepted
                 cancelled = true;
@@ -46,7 +47,7 @@ public final class ResponseThread implements Runnable {
 
             // Start response
             try {
-                respond(handshake.type, input, output,handshake.session,IOHelper.getIP(socket.getRemoteSocketAddress()));
+                respond(handshake.type, input, output, handshake.session, IOHelper.getIP(socket.getRemoteSocketAddress()));
             } catch (RequestException e) {
                 LogHelper.subDebug(String.format("#%d Request error: %s", handshake.session, e.getMessage()));
                 output.writeString(e.getMessage(), 0);
@@ -61,8 +62,8 @@ public final class ResponseThread implements Runnable {
             }
         }
     }
-    class Handshake
-    {
+
+    class Handshake {
         int type;
         long session;
 
@@ -71,6 +72,7 @@ public final class ResponseThread implements Runnable {
             this.session = session;
         }
     }
+
     private Handshake readHandshake(HInput input, HOutput output) throws IOException {
         boolean legacy = false;
         long session = 0;
@@ -81,15 +83,12 @@ public final class ResponseThread implements Runnable {
             }
             session = 0;
             legacy = true;
-        }
-        else
-        {
+        } else {
             sessions.updateClient(session);
         }
         // Verify key modulus
         BigInteger keyModulus = input.readBigInteger(SecurityHelper.RSA_KEY_LENGTH + 1);
-        if(!legacy)
-        {
+        if (!legacy) {
             session = input.readLong();
         }
         if (!keyModulus.equals(server.privateKey.getModulus())) {
@@ -98,7 +97,7 @@ public final class ResponseThread implements Runnable {
         }
         // Read request type
         Integer type = input.readVarInt();
-        if (!server.serverSocketHandler.onHandshake(session,type)) {
+        if (!server.serverSocketHandler.onHandshake(session, type)) {
             output.writeBoolean(false);
             return null;
         }
@@ -106,16 +105,16 @@ public final class ResponseThread implements Runnable {
         // Protocol successfully verified
         output.writeBoolean(true);
         output.flush();
-        return new Handshake(type,session);
+        return new Handshake(type, session);
     }
 
-    private void respond(Integer type, HInput input, HOutput output,long session,String ip) throws Exception {
+    private void respond(Integer type, HInput input, HOutput output, long session, String ip) throws Exception {
         if (server.serverSocketHandler.logConnections) {
             LogHelper.info("Connection #%d from %s", session, ip);
         }
 
         // Choose response based on type
-        Response  response = Response.getResponse(type,server,session,input,output,ip);
+        Response response = Response.getResponse(type, server, session, input, output, ip);
 
         // Reply
         response.reply();

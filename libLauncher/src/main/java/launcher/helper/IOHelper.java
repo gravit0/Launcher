@@ -61,40 +61,52 @@ import launcher.LauncherAPI;
 
 public final class IOHelper {
     // Charset
-    @LauncherAPI public static final Charset UNICODE_CHARSET = StandardCharsets.UTF_8;
-    @LauncherAPI public static final Charset ASCII_CHARSET = StandardCharsets.US_ASCII;
+    @LauncherAPI
+    public static final Charset UNICODE_CHARSET = StandardCharsets.UTF_8;
+    @LauncherAPI
+    public static final Charset ASCII_CHARSET = StandardCharsets.US_ASCII;
 
     // Constants
-    @LauncherAPI public static final int SOCKET_TIMEOUT = VerifyHelper.verifyInt(
-        Integer.parseUnsignedInt(System.getProperty("launcher.socketTimeout", Integer.toString(30000))),
-        VerifyHelper.POSITIVE, "launcher.socketTimeout can't be <= 0");
-    @LauncherAPI public static final int HTTP_TIMEOUT = VerifyHelper.verifyInt(
-        Integer.parseUnsignedInt(System.getProperty("launcher.httpTimeout", Integer.toString(5000))),
-        VerifyHelper.POSITIVE, "launcher.httpTimeout can't be <= 0");
-    @LauncherAPI public static final int BUFFER_SIZE = VerifyHelper.verifyInt(
-        Integer.parseUnsignedInt(System.getProperty("launcher.bufferSize", Integer.toString(4096))),
-        VerifyHelper.POSITIVE, "launcher.bufferSize can't be <= 0");
+    @LauncherAPI
+    public static final int SOCKET_TIMEOUT = VerifyHelper.verifyInt(
+            Integer.parseUnsignedInt(System.getProperty("launcher.socketTimeout", Integer.toString(30000))),
+            VerifyHelper.POSITIVE, "launcher.socketTimeout can't be <= 0");
+    @LauncherAPI
+    public static final int HTTP_TIMEOUT = VerifyHelper.verifyInt(
+            Integer.parseUnsignedInt(System.getProperty("launcher.httpTimeout", Integer.toString(5000))),
+            VerifyHelper.POSITIVE, "launcher.httpTimeout can't be <= 0");
+    @LauncherAPI
+    public static final int BUFFER_SIZE = VerifyHelper.verifyInt(
+            Integer.parseUnsignedInt(System.getProperty("launcher.bufferSize", Integer.toString(4096))),
+            VerifyHelper.POSITIVE, "launcher.bufferSize can't be <= 0");
 
     // Platform-dependent
-    @LauncherAPI public static final String CROSS_SEPARATOR = "/";
-    @LauncherAPI public static final FileSystem FS = FileSystems.getDefault();
-    @LauncherAPI public static final String PLATFORM_SEPARATOR = FS.getSeparator();
+    @LauncherAPI
+    public static final String CROSS_SEPARATOR = "/";
+    @LauncherAPI
+    public static final FileSystem FS = FileSystems.getDefault();
+    @LauncherAPI
+    public static final String PLATFORM_SEPARATOR = FS.getSeparator();
     // Увидел исключение на NetBSD beta добавил
-    @LauncherAPI public static final boolean POSIX = FS.supportedFileAttributeViews().contains("posix") || FS.supportedFileAttributeViews().contains("Posix");
+    @LauncherAPI
+    public static final boolean POSIX = FS.supportedFileAttributeViews().contains("posix") || FS.supportedFileAttributeViews().contains("Posix");
 
     // Paths
-    @LauncherAPI public static final Path JVM_DIR = Paths.get(System.getProperty("java.home"));
-    @LauncherAPI public static final Path HOME_DIR = Paths.get(System.getProperty("user.home"));
-    @LauncherAPI public static final Path WORKING_DIR = Paths.get(System.getProperty("user.dir"));
+    @LauncherAPI
+    public static final Path JVM_DIR = Paths.get(System.getProperty("java.home"));
+    @LauncherAPI
+    public static final Path HOME_DIR = Paths.get(System.getProperty("user.home"));
+    @LauncherAPI
+    public static final Path WORKING_DIR = Paths.get(System.getProperty("user.dir"));
 
     // Open options - as arrays
-    private static final OpenOption[] READ_OPTIONS = { StandardOpenOption.READ };
-    private static final OpenOption[] WRITE_OPTIONS = { StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING };
-    private static final OpenOption[] APPEND_OPTIONS = { StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND };
+    private static final OpenOption[] READ_OPTIONS = {StandardOpenOption.READ};
+    private static final OpenOption[] WRITE_OPTIONS = {StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING};
+    private static final OpenOption[] APPEND_OPTIONS = {StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND};
 
     // Other options
     private static final LinkOption[] LINK_OPTIONS = {};
-    private static final CopyOption[] COPY_OPTIONS = { StandardCopyOption.REPLACE_EXISTING };
+    private static final CopyOption[] COPY_OPTIONS = {StandardCopyOption.REPLACE_EXISTING};
     private static final Set<FileVisitOption> WALK_OPTIONS = Collections.singleton(FileVisitOption.FOLLOW_LINKS);
 
     // Other constants
@@ -211,7 +223,7 @@ public final class IOHelper {
     @LauncherAPI
     public static boolean isValidFileName(String fileName) {
         return !fileName.equals(".") && !fileName.equals("..") &&
-            fileName.chars().noneMatch(ch -> ch == '/' || ch == '\\') && isValidPath(fileName);
+                fileName.chars().noneMatch(ch -> ch == '/' || ch == '\\') && isValidPath(fileName);
     }
 
     @LauncherAPI
@@ -227,7 +239,7 @@ public final class IOHelper {
     @LauncherAPI
     public static boolean isValidTextureBounds(int width, int height, boolean cloak) {
         return width % 64 == 0 && (height << 1 == width || !cloak && height == width) && width <= 1024 ||
-            cloak && width % 22 == 0 && height % 17 == 0 && width / 22 == height / 17;
+                cloak && width % 22 == 0 && height % 17 == 0 && width / 22 == height / 17;
     }
 
     @LauncherAPI
@@ -622,7 +634,7 @@ public final class IOHelper {
     @LauncherAPI
     public static BufferedImage verifyTexture(BufferedImage skin, boolean cloak) {
         return VerifyHelper.verify(skin, i -> isValidTextureBounds(i.getWidth(), i.getHeight(), cloak),
-            String.format("Invalid texture bounds: %dx%d", skin.getWidth(), skin.getHeight()));
+                String.format("Invalid texture bounds: %dx%d", skin.getWidth(), skin.getHeight()));
     }
 
     @LauncherAPI
@@ -707,33 +719,35 @@ public final class IOHelper {
             throw new IllegalArgumentException("Invalid URL", e);
         }
     }
-    
+
     @LauncherAPI
     public static void close(InputStream in) {
         try {
             in.close();
-        } catch (Exception ign) { }
+        } catch (Exception ignored) {
+        }
     }
-    
+
     @LauncherAPI
     public static void close(OutputStream out) {
         try {
             out.flush();
             out.close();
-        } catch (Exception ign) { }
+        } catch (Exception ignored) {
+        }
     }
 
     @LauncherAPI
-	public static byte[] toByteArray(InputStream in) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
-		IOHelper.transfer(in, out);
-		return out.toByteArray();
-	}
+    public static byte[] toByteArray(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
+        IOHelper.transfer(in, out);
+        return out.toByteArray();
+    }
 
     @LauncherAPI
-	public static void transfer(byte[] write, Path file, boolean append) throws IOException {
-    	try (OutputStream out = newOutput(file, append)) {
+    public static void transfer(byte[] write, Path file, boolean append) throws IOException {
+        try (OutputStream out = newOutput(file, append)) {
             out.write(write);
         }
-	}
+    }
 }

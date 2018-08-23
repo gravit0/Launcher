@@ -1,6 +1,7 @@
 package launcher.client;
 
 import java.util.concurrent.atomic.AtomicReference;
+
 import javafx.application.Application;
 
 import launcher.LauncherAPI;

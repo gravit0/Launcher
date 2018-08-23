@@ -19,7 +19,8 @@ public final class Texture extends StreamObject {
     // Instance
     @LauncherAPI
     public final String url;
-    @LauncherAPI public final byte[] digest;
+    @LauncherAPI
+    public final byte[] digest;
 
     @LauncherAPI
     public Texture(String url, byte[] digest) {

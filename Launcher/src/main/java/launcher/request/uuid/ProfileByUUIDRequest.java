@@ -35,7 +35,7 @@ public final class ProfileByUUIDRequest extends Request<PlayerProfile> {
     @Override
     protected PlayerProfile requestDo(HInput input, HOutput output) throws IOException {
         output.writeUUID(uuid);
-        output.writeString(ClientLauncher.title,SerializeLimits.MAX_CLIENT);
+        output.writeString(ClientLauncher.title, SerializeLimits.MAX_CLIENT);
         output.flush();
 
         // Return profile

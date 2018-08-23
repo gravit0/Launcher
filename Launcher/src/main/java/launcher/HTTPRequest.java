@@ -8,7 +8,7 @@ import java.net.URL;
 import launcher.helper.IOHelper;
 
 public class HTTPRequest {
-    public static int sendCrashreport(String strurl,byte[] data) throws IOException {
+    public static int sendCrashreport(String strurl, byte[] data) throws IOException {
         URL url = new URL(strurl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
@@ -22,7 +22,8 @@ public class HTTPRequest {
         outputStream.close();
         return connection.getResponseCode();
     }
-    public static int sendCrashreport(String strurl,String data) throws IOException {
-        return sendCrashreport(strurl,data.getBytes(IOHelper.UNICODE_CHARSET));
+
+    public static int sendCrashreport(String strurl, String data) throws IOException {
+        return sendCrashreport(strurl, data.getBytes(IOHelper.UNICODE_CHARSET));
     }
 }

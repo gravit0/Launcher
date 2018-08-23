@@ -19,7 +19,8 @@ import launchserver.manangers.SessionManager;
 
 public final class ServerSocketHandler implements Runnable, AutoCloseable {
     private static final ThreadFactory THREAD_FACTORY = r -> CommonHelper.newThread("Network Thread", true, r);
-    @LauncherAPI public volatile boolean logConnections = Boolean.getBoolean("launcher.logConnections");
+    @LauncherAPI
+    public volatile boolean logConnections = Boolean.getBoolean("launcher.logConnections");
 
     // Instance
     private final LaunchServer server;
@@ -35,7 +36,8 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         sessionManager = new SessionManager();
         GarbageManager.registerNeedGC(sessionManager);
     }
-    public ServerSocketHandler(LaunchServer server,SessionManager sessionManager) {
+
+    public ServerSocketHandler(LaunchServer server, SessionManager sessionManager) {
         this.server = server;
         this.sessionManager = sessionManager;
     }
@@ -79,7 +81,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
                 }
 
                 // Reply in separate thread
-                threadPool.execute(new ResponseThread(server, id, socket,sessionManager));
+                threadPool.execute(new ResponseThread(server, id, socket, sessionManager));
             }
         } catch (IOException e) {
             // Ignore error after close/rebind

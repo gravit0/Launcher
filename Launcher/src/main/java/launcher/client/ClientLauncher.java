@@ -46,12 +46,13 @@ import launcher.AvanguardStarter;
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
     private static final String MAGICAL_INTEL_OPTION = "-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
-    @LauncherAPI public static final String TITLE_PROPERTY = "launcher.title";
+    @LauncherAPI
+    public static final String TITLE_PROPERTY = "launcher.title";
     @SuppressWarnings("unused")
-	private static final Set<PosixFilePermission> BIN_POSIX_PERMISSIONS = Collections.unmodifiableSet(EnumSet.of(
-        PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE, // Owner
-        PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_EXECUTE, // Group
-        PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_EXECUTE // Others
+    private static final Set<PosixFilePermission> BIN_POSIX_PERMISSIONS = Collections.unmodifiableSet(EnumSet.of(
+            PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE, // Owner
+            PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_EXECUTE, // Group
+            PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_EXECUTE // Others
     ));
 
     // Constants
@@ -59,50 +60,56 @@ public final class ClientLauncher {
     private static final Path RESOURCEPACKS_DIR = IOHelper.toPath("resourcepacks");
     private static LauncherClassLoader classLoader;
     // Authlib constants
-    @LauncherAPI public static final String SKIN_URL_PROPERTY = "skinURL";
-    @LauncherAPI public static String title = null;
-    @LauncherAPI public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
-    @LauncherAPI public static final String CLOAK_URL_PROPERTY = "cloakURL";
-    @LauncherAPI public static final String CLOAK_DIGEST_PROPERTY = "cloakDigest";
+    @LauncherAPI
+    public static final String SKIN_URL_PROPERTY = "skinURL";
+    @LauncherAPI
+    public static String title;
+    @LauncherAPI
+    public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
+    @LauncherAPI
+    public static final String CLOAK_URL_PROPERTY = "cloakURL";
+    @LauncherAPI
+    public static final String CLOAK_DIGEST_PROPERTY = "cloakDigest";
 
     // Used to determine from clientside is launched from launcher
     private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
 
     private ClientLauncher() {
     }
+
     static {
         String title_property = System.getProperty(TITLE_PROPERTY);
-        if(title_property != null) title = title_property;
+        if (title_property != null) title = title_property;
         else title = "";
     }
+
     @LauncherAPI
     public static boolean isLaunched() {
         return LAUNCHED.get();
     }
+
     @LauncherAPI
-    public static void checkJVMBitsAndVersion()
-    {
-        if(JVMHelper.JVM_BITS != JVMHelper.OS_BITS)
-        {
-            String error = String.format("У Вас установлена Java %d, но Ваша система определена как %d. Установите Java правильной разрядности",JVMHelper.JVM_BITS,JVMHelper.OS_BITS);
+    public static void checkJVMBitsAndVersion() {
+        if (JVMHelper.JVM_BITS != JVMHelper.OS_BITS) {
+            String error = String.format("У Вас установлена Java %d, но Ваша система определена как %d. Установите Java правильной разрядности", JVMHelper.JVM_BITS, JVMHelper.OS_BITS);
             LogHelper.error(error);
             JOptionPane.showMessageDialog(null, error);
         }
         String jvmVersion = JVMHelper.RUNTIME_MXBEAN.getVmVersion();
         LogHelper.info(jvmVersion);
-        if(jvmVersion.startsWith("10.") || jvmVersion.startsWith("9."))
-        {
-            String error = String.format("У Вас установлена Java %s. Для правильной работы необходима Java 8",JVMHelper.RUNTIME_MXBEAN.getVmVersion());
+        if (jvmVersion.startsWith("10.") || jvmVersion.startsWith("9.")) {
+            String error = String.format("У Вас установлена Java %s. Для правильной работы необходима Java 8", JVMHelper.RUNTIME_MXBEAN.getVmVersion());
             LogHelper.error(error);
             JOptionPane.showMessageDialog(null, error);
         }
     }
+
     @LauncherAPI
-    public static void setProfile(ClientProfile profile)
-    {
+    public static void setProfile(ClientProfile profile) {
         ClientLauncher.title = profile.getTitle();
-        LogHelper.debug("New Profile name: %s",profile.getTitle());
+        LogHelper.debug("New Profile name: %s", profile.getTitle());
     }
+
     @LauncherAPI
     public static Process launch(
 
@@ -123,7 +130,7 @@ public final class ClientLauncher {
 
         // Fill CLI arguments
         List<String> args = new LinkedList<>();
-        Path javaBin = Paths.get(System.getProperty("java.home")+IOHelper.PLATFORM_SEPARATOR+"bin"+IOHelper.PLATFORM_SEPARATOR+"java");
+        Path javaBin = Paths.get(System.getProperty("java.home") + IOHelper.PLATFORM_SEPARATOR + "bin" + IOHelper.PLATFORM_SEPARATOR + "java");
         args.add(javaBin.toString());
         args.add(MAGICAL_INTEL_OPTION);
         if (params.ram > 0 && params.ram <= JVMHelper.RAM) {
@@ -134,14 +141,14 @@ public final class ClientLauncher {
         if (LauncherConfig.ADDRESS_OVERRIDE != null) {
             args.add(JVMHelper.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
         }
-        if (JVMHelper.OS_TYPE == OS.MUSTDIE) { 
-        	if ( JVMHelper.OS_VERSION.startsWith("10.")) {
-            	LogHelper.debug("MustDie 10 fix is applied");
-            	args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
-            	args.add(JVMHelper.jvmProperty("os.version", "10.0"));
-        	}
-        	args.add(JVMHelper.systemToJvmProperty("avn32"));
-        	args.add(JVMHelper.systemToJvmProperty("avn64"));
+        if (JVMHelper.OS_TYPE == OS.MUSTDIE) {
+            if (JVMHelper.OS_VERSION.startsWith("10.")) {
+                LogHelper.debug("MustDie 10 fix is applied");
+                args.add(JVMHelper.jvmProperty("os.name", "Windows 10"));
+                args.add(JVMHelper.jvmProperty("os.version", "10.0"));
+            }
+            args.add(JVMHelper.systemToJvmProperty("avn32"));
+            args.add(JVMHelper.systemToJvmProperty("avn64"));
         }
         // Add classpath and main class
         StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
@@ -176,9 +183,8 @@ public final class ClientLauncher {
 
     @LauncherAPI
     public static void main(String... args) throws Throwable {
-        if(JVMHelper.OS_TYPE == OS.MUSTDIE)
-        {
-        	AvanguardStarter.loadVared();
+        if (JVMHelper.OS_TYPE == OS.MUSTDIE) {
+            AvanguardStarter.loadVared();
             AvanguardStarter.main(false);
         }
         checkJVMBitsAndVersion();
@@ -213,21 +219,19 @@ public final class ClientLauncher {
         for (String classpathURL : classpath) {
             Path file = Paths.get(classpathURL);
             if (!file.startsWith(IOHelper.JVM_DIR)) {
-                for (Path classPathURL : classPath)
-                {
-                    if(classpathURL.equals(classPathURL.toString())) {
+                for (Path classPathURL : classPath) {
+                    if (classpathURL.equals(classPathURL.toString())) {
                         counter--;
                         break;
                     }
                 }
             }
         }
-        if(counter != 0)
-        {
-            throw new SecurityException(String.format("Forbidden classpath entry, %d != 0",counter));
+        if (counter != 0) {
+            throw new SecurityException(String.format("Forbidden classpath entry, %d != 0", counter));
         }
         URL[] classpathurls = resolveClassPath(params.clientDir, profile.object.getClassPath());
-        classLoader = new LauncherClassLoader(classpathurls,ClassLoader.getSystemClassLoader());
+        classLoader = new LauncherClassLoader(classpathurls, ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
         // Start client with WatchService monitoring
         boolean digest = !profile.object.isUpdateFastCheck();
@@ -235,7 +239,7 @@ public final class ClientLauncher {
         FileNameMatcher assetMatcher = profile.object.getAssetUpdateMatcher();
         FileNameMatcher clientMatcher = profile.object.getClientUpdateMatcher();
         try (DirWatcher assetWatcher = new DirWatcher(params.assetDir, assetHDir.object, assetMatcher, digest);
-            DirWatcher clientWatcher = new DirWatcher(params.clientDir, clientHDir.object, clientMatcher, digest)) {
+             DirWatcher clientWatcher = new DirWatcher(params.clientDir, clientHDir.object, clientMatcher, digest)) {
             // Verify current state of all dirs
             //verifyHDir(IOHelper.JVM_DIR, jvmHDir.object, null, digest);
             verifyHDir(params.assetDir, assetHDir.object, assetMatcher, digest);
@@ -363,6 +367,7 @@ public final class ClientLauncher {
         }
         return result.stream().map(IOHelper::toURL).toArray(URL[]::new);
     }
+
     private static LinkedList<Path> resolveClassPathList(Path clientDir, String... classPath) throws IOException {
         Collection<Path> result = new LinkedList<>();
         for (String classPathEntry : classPath) {
@@ -378,23 +383,33 @@ public final class ClientLauncher {
 
     public static final class Params extends StreamObject {
         // Client paths
-        @LauncherAPI public final Path assetDir;
-        @LauncherAPI public final Path clientDir;
+        @LauncherAPI
+        public final Path assetDir;
+        @LauncherAPI
+        public final Path clientDir;
 
         // Client params
-        @LauncherAPI public final PlayerProfile pp;
-        @LauncherAPI public final String accessToken;
-        @LauncherAPI public final String title;
-        @LauncherAPI public final boolean autoEnter;
-        @LauncherAPI public final boolean fullScreen;
-        @LauncherAPI public final int ram;
-        @LauncherAPI public final int width;
-        @LauncherAPI public final int height;
+        @LauncherAPI
+        public final PlayerProfile pp;
+        @LauncherAPI
+        public final String accessToken;
+        @LauncherAPI
+        public final String title;
+        @LauncherAPI
+        public final boolean autoEnter;
+        @LauncherAPI
+        public final boolean fullScreen;
+        @LauncherAPI
+        public final int ram;
+        @LauncherAPI
+        public final int width;
+        @LauncherAPI
+        public final int height;
         private final byte[] launcherSign;
 
         @LauncherAPI
         public Params(byte[] launcherSign, Path assetDir, Path clientDir, PlayerProfile pp, String accessToken,
-            boolean autoEnter, boolean fullScreen, int ram, int width, int height) {
+                      boolean autoEnter, boolean fullScreen, int ram, int width, int height) {
             this.launcherSign = launcherSign.clone();
 
             // Client paths
@@ -432,7 +447,7 @@ public final class ClientLauncher {
         @Override
         public void write(HOutput output) throws IOException {
             output.writeByteArray(launcherSign, -SecurityHelper.RSA_KEY_LENGTH);
-            output.writeString(title,SerializeLimits.MAX_CLIENT);
+            output.writeString(title, SerializeLimits.MAX_CLIENT);
             // Client paths
             output.writeString(assetDir.toString(), 0);
             output.writeString(clientDir.toString(), 0);
