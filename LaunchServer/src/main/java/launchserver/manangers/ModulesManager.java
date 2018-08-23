@@ -4,7 +4,6 @@ import launcher.LauncherAPI;
 import launcher.LauncherClassLoader;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
-import launcher.helper.SecurityHelper;
 import launchserver.LaunchServer;
 import launchserver.Module;
 

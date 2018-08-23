@@ -12,6 +12,8 @@ allprojects {
 
 subprojects {
 	apply plugin: 'java'
+	sourceCompatibility = '1.8'
+	targetCompatibility = '1.8'
 	tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 	def ini = new File('sign/info.ini')
 	Map<String, String> map = parseIni(ini)

@@ -147,6 +147,11 @@ public final class JVMHelper {
     }
 
     @LauncherAPI
+    public static String systemToJvmProperty(String name) {
+        return String.format("-D%s=%s", name, System.getProperties().getProperty(name));
+    }
+    
+    @LauncherAPI
     public static void appendVars(ProcessBuilder builder, Map<String, String> vars) {
     	builder.environment().putAll(vars);
     }

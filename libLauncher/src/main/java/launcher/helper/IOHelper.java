@@ -79,7 +79,8 @@ public final class IOHelper {
     @LauncherAPI public static final String CROSS_SEPARATOR = "/";
     @LauncherAPI public static final FileSystem FS = FileSystems.getDefault();
     @LauncherAPI public static final String PLATFORM_SEPARATOR = FS.getSeparator();
-    @LauncherAPI public static final boolean POSIX = FS.supportedFileAttributeViews().contains("posix");
+    // Увидел исключение на NetBSD beta добавил
+    @LauncherAPI public static final boolean POSIX = FS.supportedFileAttributeViews().contains("posix") || FS.supportedFileAttributeViews().contains("Posix");
 
     // Paths
     @LauncherAPI public static final Path JVM_DIR = Paths.get(System.getProperty("java.home"));
@@ -721,4 +722,18 @@ public final class IOHelper {
             out.close();
         } catch (Exception ign) { }
     }
+
+    @LauncherAPI
+	public static byte[] toByteArray(InputStream in) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
+		IOHelper.transfer(in, out);
+		return out.toByteArray();
+	}
+
+    @LauncherAPI
+	public static void transfer(byte[] write, Path file, boolean append) throws IOException {
+    	try (OutputStream out = newOutput(file, append)) {
+            out.write(write);
+        }
+	}
 }

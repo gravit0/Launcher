@@ -47,8 +47,8 @@ import launcher.serialize.config.entry.IntegerConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
 import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.auth.AuthLimiter;
-import launchserver.auth.HWIDHandler;
 import launchserver.auth.handler.AuthHandler;
+import launchserver.auth.hwid.HWIDCoreHandler;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.binary.EXEL4JLauncherBinary;
 import launchserver.binary.JARLauncherBinary;
@@ -85,7 +85,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     // HWID ban + anti-brutforce
     @LauncherAPI public final AuthLimiter limiter;
     @LauncherAPI public final SessionManager sessionManager;
-    @LauncherAPI public final HWIDHandler HWhandler;
+    @LauncherAPI public final HWIDCoreHandler HWhandler;
     // Server
     @LauncherAPI public final CommandHandler commandHandler;
     @LauncherAPI public final ServerSocketHandler serverSocketHandler;
@@ -169,7 +169,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         sessionManager = new SessionManager();
         GarbageManager.registerNeedGC(sessionManager);
         GarbageManager.registerNeedGC(limiter);
-        HWhandler = new HWIDHandler(this);
+        HWhandler = new HWIDCoreHandler(this);
         ModulesManager.setLaunchServer(this);
         ModulesManager.autoload();
 
