@@ -60,10 +60,7 @@ public class HWID {
 		if (hwid_cpu != other.hwid_cpu) {
 			return false;
 		}
-		if (hwid_hdd != other.hwid_hdd) {
-			return false;
-		}
-		return true;
+		return hwid_hdd == other.hwid_hdd;
 	}
 
 	@Override

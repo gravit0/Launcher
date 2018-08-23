@@ -65,29 +65,45 @@ import launchserver.texture.TextureProvider;
 
 public final class LaunchServer implements Runnable, AutoCloseable {
     // Constant paths
-    @LauncherAPI public final Path dir;
-    @LauncherAPI public final Path configFile;
-    @LauncherAPI public final Path publicKeyFile;
-    @LauncherAPI public final Path privateKeyFile;
-    @LauncherAPI public final Path updatesDir;
-    @LauncherAPI public final Path profilesDir;
+    @LauncherAPI
+    public final Path dir;
+    @LauncherAPI
+    public final Path configFile;
+    @LauncherAPI
+    public final Path publicKeyFile;
+    @LauncherAPI
+    public final Path privateKeyFile;
+    @LauncherAPI
+    public final Path updatesDir;
+    @LauncherAPI
+    public final Path profilesDir;
 
     // Server config
-    @LauncherAPI public final Config config;
-    @LauncherAPI public final RSAPublicKey publicKey;
-    @LauncherAPI public final RSAPrivateKey privateKey;
-    @LauncherAPI public final boolean portable;
+    @LauncherAPI
+    public final Config config;
+    @LauncherAPI
+    public final RSAPublicKey publicKey;
+    @LauncherAPI
+    public final RSAPrivateKey privateKey;
+    @LauncherAPI
+    public final boolean portable;
 
     // Launcher binary
-    @LauncherAPI public final LauncherBinary launcherBinary;
-    @LauncherAPI public final EXEL4JLauncherBinary launcherEXEBinary;
+    @LauncherAPI
+    public final LauncherBinary launcherBinary;
+    @LauncherAPI
+    public final EXEL4JLauncherBinary launcherEXEBinary;
 
     // HWID ban + anti-brutforce
-    @LauncherAPI public final AuthLimiter limiter;
-    @LauncherAPI public final SessionManager sessionManager;
+    @LauncherAPI
+    public final AuthLimiter limiter;
+    @LauncherAPI
+    public final SessionManager sessionManager;
     // Server
-    @LauncherAPI public final CommandHandler commandHandler;
-    @LauncherAPI public final ServerSocketHandler serverSocketHandler;
+    @LauncherAPI
+    public final CommandHandler commandHandler;
+    @LauncherAPI
+    public final ServerSocketHandler serverSocketHandler;
     private final AtomicBoolean started = new AtomicBoolean(false);
 
     // Updates and profiles
@@ -97,7 +113,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     public LaunchServer(Path dir, boolean portable) throws IOException, InvalidKeySpecException {
         //setScriptBindings();
         this.portable = portable;
-        
+
         // Setup config locations
         this.dir = dir;
         configFile = dir.resolve("LaunchServer.cfg");
@@ -112,7 +128,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         TextureProvider.registerProviders();
         HWIDHandler.registerHandlers();
         Response.registerResponses();
-        
+
         // Set command handler
         CommandHandler localCommandHandler;
         if (portable) {
@@ -163,7 +179,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
             config = new Config(TextConfigReader.read(reader, true));
         }
         config.verify();
-        
+
         // init anti-brutforce
         limiter = new AuthLimiter(this);
 
@@ -191,9 +207,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         syncProfilesDir();
 
 
-
         // Set server socket thread
-        serverSocketHandler = new ServerSocketHandler(this,sessionManager);
+        serverSocketHandler = new ServerSocketHandler(this, sessionManager);
     }
 
     @Override
@@ -221,7 +236,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         } catch (IOException e) {
             LogHelper.error(e);
         }
-        
+
         // Print last message before death :(
         LogHelper.info("LaunchServer stopped");
     }
@@ -274,12 +289,13 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Syncing launcher binary
         LogHelper.subInfo("Syncing launcher binary file");
-        if (!launcherBinary.sync())  LogHelper.subWarning("Missing launcher binary file");
+        if (!launcherBinary.sync()) LogHelper.subWarning("Missing launcher binary file");
 
         // Syncing launcher EXE binary
         LogHelper.subInfo("Syncing launcher EXE binary file");
-        if (!launcherEXEBinary.sync() && launcherEXEBinary.config.enabled) LogHelper.subWarning("Missing launcher EXE binary file");
-        
+        if (!launcherEXEBinary.sync() && launcherEXEBinary.config.enabled)
+            LogHelper.subWarning("Missing launcher EXE binary file");
+
     }
 
     @LauncherAPI
@@ -364,9 +380,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         // Start LaunchServer
         Instant start = Instant.now();
         try {
-        	try (LaunchServer lsrv = new LaunchServer(IOHelper.WORKING_DIR, false)) {
-        		lsrv.run();
-        	}
+            try (LaunchServer lsrv = new LaunchServer(IOHelper.WORKING_DIR, false)) {
+                lsrv.run();
+            }
         } catch (Throwable exc) {
             LogHelper.error(exc);
             return;
@@ -400,21 +416,32 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     }
 
     public static final class Config extends ConfigObject {
-        @LauncherAPI public final int port;
+        @LauncherAPI
+        public final int port;
 
         // Handlers & Providers
-        @LauncherAPI public final AuthHandler authHandler;
-        @LauncherAPI public final AuthProvider authProvider;
-        @LauncherAPI public final TextureProvider textureProvider;
-        @LauncherAPI public final HWIDHandler hwidHandler;
-        
+        @LauncherAPI
+        public final AuthHandler authHandler;
+        @LauncherAPI
+        public final AuthProvider authProvider;
+        @LauncherAPI
+        public final TextureProvider textureProvider;
+        @LauncherAPI
+        public final HWIDHandler hwidHandler;
+
         // Misc options
-        @LauncherAPI public final BlockConfigEntry launch4J;
-        @LauncherAPI public final boolean compress;
-        @LauncherAPI public final int authRateLimit;
-        @LauncherAPI public final int authRateLimitMilis;
-        @LauncherAPI public final String authRejectString;
-        @LauncherAPI public final String binaryName;
+        @LauncherAPI
+        public final BlockConfigEntry launch4J;
+        @LauncherAPI
+        public final boolean compress;
+        @LauncherAPI
+        public final int authRateLimit;
+        @LauncherAPI
+        public final int authRateLimitMilis;
+        @LauncherAPI
+        public final String authRejectString;
+        @LauncherAPI
+        public final String binaryName;
         private final StringConfigEntry address;
         private final String bindAddress;
 
@@ -422,27 +449,27 @@ public final class LaunchServer implements Runnable, AutoCloseable {
             super(block);
             address = block.getEntry("address", StringConfigEntry.class);
             port = VerifyHelper.verifyInt(block.getEntryValue("port", IntegerConfigEntry.class),
-                VerifyHelper.range(0, 65535), "Illegal LaunchServer port");
+                    VerifyHelper.range(0, 65535), "Illegal LaunchServer port");
             authRateLimit = VerifyHelper.verifyInt(block.getEntryValue("authRateLimit", IntegerConfigEntry.class),
                     VerifyHelper.range(0, 1000000), "Illegal authRateLimit");
             authRateLimitMilis = VerifyHelper.verifyInt(block.getEntryValue("authRateLimitMilis", IntegerConfigEntry.class),
                     VerifyHelper.range(10, 10000000), "Illegal authRateLimitMillis");
             bindAddress = block.hasEntry("bindAddress") ?
-                block.getEntryValue("bindAddress", StringConfigEntry.class) : getAddress();
+                    block.getEntryValue("bindAddress", StringConfigEntry.class) : getAddress();
             authRejectString = block.hasEntry("authRejectString") ?
                     block.getEntryValue("authRejectString", StringConfigEntry.class) : "Вы превысили лимит авторизаций. Подождите некоторое время перед повторной попыткой";
 
 
             // Set handlers & providers
             authHandler = AuthHandler.newHandler(block.getEntryValue("authHandler", StringConfigEntry.class),
-                block.getEntry("authHandlerConfig", BlockConfigEntry.class));
+                    block.getEntry("authHandlerConfig", BlockConfigEntry.class));
             authProvider = AuthProvider.newProvider(block.getEntryValue("authProvider", StringConfigEntry.class),
-                block.getEntry("authProviderConfig", BlockConfigEntry.class));
+                    block.getEntry("authProviderConfig", BlockConfigEntry.class));
             textureProvider = TextureProvider.newProvider(block.getEntryValue("textureProvider", StringConfigEntry.class),
-                block.getEntry("textureProviderConfig", BlockConfigEntry.class));
+                    block.getEntry("textureProviderConfig", BlockConfigEntry.class));
             hwidHandler = HWIDHandler.newHandler(block.getEntryValue("hwidHandler", StringConfigEntry.class),
-            		 block.getEntry("hwidHandlerConfig", BlockConfigEntry.class));
-            
+                    block.getEntry("hwidHandlerConfig", BlockConfigEntry.class));
+
             // Set misc config
             launch4J = block.getEntry("launch4J", BlockConfigEntry.class);
             binaryName = block.getEntryValue("binaryName", StringConfigEntry.class);

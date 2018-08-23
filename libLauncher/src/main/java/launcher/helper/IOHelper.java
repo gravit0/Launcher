@@ -712,7 +712,7 @@ public final class IOHelper {
     public static void close(InputStream in) {
         try {
             in.close();
-        } catch (Exception ign) { }
+        } catch (Exception ignored) { }
     }
     
     @LauncherAPI
@@ -720,7 +720,7 @@ public final class IOHelper {
         try {
             out.flush();
             out.close();
-        } catch (Exception ign) { }
+        } catch (Exception ignored) { }
     }
 
     @LauncherAPI

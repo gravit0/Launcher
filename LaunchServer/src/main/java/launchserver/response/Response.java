@@ -1,11 +1,9 @@
 package launchserver.response;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import launcher.Launcher;
 import launcher.LauncherAPI;
 import launcher.helper.LogHelper;
 import launcher.request.Request;

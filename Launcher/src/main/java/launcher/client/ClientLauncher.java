@@ -60,7 +60,7 @@ public final class ClientLauncher {
     private static LauncherClassLoader classLoader;
     // Authlib constants
     @LauncherAPI public static final String SKIN_URL_PROPERTY = "skinURL";
-    @LauncherAPI public static String title = null;
+    @LauncherAPI public static String title;
     @LauncherAPI public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
     @LauncherAPI public static final String CLOAK_URL_PROPERTY = "cloakURL";
     @LauncherAPI public static final String CLOAK_DIGEST_PROPERTY = "cloakDigest";

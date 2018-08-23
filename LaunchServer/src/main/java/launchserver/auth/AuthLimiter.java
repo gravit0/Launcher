@@ -40,9 +40,7 @@ public class AuthLimiter implements NeedGarbageCollection {
     public void garbageCollection() {
         long time = System.currentTimeMillis();
         long max_timeout = Math.max(rateLimitMilis,TIMEOUT);
-        map.forEach((key,value) -> {
-            if(value.ts + max_timeout < time);
-        });
+        map.entrySet().removeIf(e -> e.getValue().ts + max_timeout < time);
     }
 
     static class AuthEntry
@@ -76,11 +74,8 @@ public class AuthLimiter implements NeedGarbageCollection {
 			if (ts != other.ts) {
 				return false;
 			}
-			if (value != other.value) {
-				return false;
-			}
-			return true;
-		}
+            return value == other.value;
+        }
 
 		public int value;
         public long ts;

@@ -1,6 +1,5 @@
 package launchserver.response.auth;
 
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.UUID;
 import javax.crypto.BadPaddingException;

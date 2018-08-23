@@ -86,11 +86,7 @@ public class ModulesManager {
                 String mainclass = m.getMainAttributes().getValue("Main-Class");
                 loadModule(file.toUri().toURL(),mainclass,true);
                 f.close();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 

@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
@@ -82,9 +83,9 @@ public class JsonAuthHandler extends CachedAuthHandler {
         int statusCode = connection.getResponseCode();
 
         if (200 <= statusCode && statusCode < 300) {
-            reader = new InputStreamReader(connection.getInputStream(), "UTF-8");
+            reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
         } else {
-            reader = new InputStreamReader(connection.getErrorStream(), "UTF-8");
+            reader = new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8);
         }
         JsonValue content = Json.parse(reader);
         if (!content.isObject()) {
