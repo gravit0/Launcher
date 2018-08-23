@@ -59,6 +59,7 @@ public class ModulesManager {
         {
             LogHelper.info("Module %s version: %s",m.getName(),m.getVersion());
         }
+        LogHelper.info("Loaded %d modules",modules.size());
     }
     public static void setLaunchServer(LaunchServer server)
     {
@@ -70,6 +71,7 @@ public class ModulesManager {
         Path modules = Paths.get("modules");
         if(Files.notExists(modules)) Files.createDirectory(modules);
         IOHelper.walk(modules,new ModulesVisitor(),true);
+        LogHelper.info("Loaded %d modules",ModulesManager.modules.size());
         initModules();
     }
     private static final class ModulesVisitor extends SimpleFileVisitor<Path> {

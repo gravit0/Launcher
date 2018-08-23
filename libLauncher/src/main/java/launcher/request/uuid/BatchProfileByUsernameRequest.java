@@ -32,8 +32,8 @@ public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]
     }
 
     @Override
-    public Type getType() {
-        return Type.BATCH_PROFILE_BY_USERNAME;
+    public Integer getType() {
+        return Type.BATCH_PROFILE_BY_USERNAME.getNumber();
     }
 
     @Override

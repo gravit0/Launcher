@@ -66,8 +66,8 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
     }
 
     @Override
-    public Type getType() {
-        return Type.UPDATE;
+    public Integer getType() {
+        return Type.UPDATE.getNumber();
     }
 
     @Override

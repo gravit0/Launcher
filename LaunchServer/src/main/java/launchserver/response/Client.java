@@ -1,4 +1,4 @@
-package launchserver.manangers;
+package launchserver.response;
 
 public class Client {
     public Client(long session)
@@ -6,8 +6,8 @@ public class Client {
         this.session = session;
         this.timestamp = System.currentTimeMillis();
     }
-    long session;
-    long timestamp;
+    public long session;
+    public long timestamp;
     public void up()
     {
         this.timestamp = System.currentTimeMillis();

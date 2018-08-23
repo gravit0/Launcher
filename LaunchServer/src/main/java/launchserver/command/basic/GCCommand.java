@@ -4,7 +4,7 @@ import launcher.helper.JVMHelper;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
 import launchserver.command.Command;
-import launchserver.manangers.SessionManager;
+import launchserver.manangers.GarbageManager;
 
 public final class GCCommand extends Command {
     public GCCommand(LaunchServer server) {
@@ -25,7 +25,7 @@ public final class GCCommand extends Command {
     public void invoke(String... args) {
         LogHelper.subInfo("Performing full GC");
         JVMHelper.fullGC();
-        SessionManager.garbareCollection();
+        GarbageManager.gc();
         // Print memory usage
         long max = JVMHelper.RUNTIME.maxMemory() >> 20;
         long free = JVMHelper.RUNTIME.freeMemory() >> 20;

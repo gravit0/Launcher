@@ -24,8 +24,8 @@ public final class UpdateListRequest extends Request<Set<String>> {
     }
 
     @Override
-    public Type getType() {
-        return Type.UPDATE_LIST;
+    public Integer getType() {
+        return Type.UPDATE_LIST.getNumber();
     }
 
     @Override

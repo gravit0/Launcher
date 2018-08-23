@@ -15,8 +15,9 @@ import launchserver.response.Response;
 import launchserver.response.profile.ProfileByUUIDResponse;
 
 public final class CheckServerResponse extends Response {
-    public CheckServerResponse(LaunchServer server, long id, HInput input, HOutput output) {
-        super(server, id, input, output);
+
+    public CheckServerResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
+        super(server, session, input, output, ip);
     }
 
     @Override

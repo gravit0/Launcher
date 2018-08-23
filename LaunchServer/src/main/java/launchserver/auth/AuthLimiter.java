@@ -2,12 +2,16 @@ package launchserver.auth;
 
 import java.util.HashMap;
 
+import launcher.LauncherAPI;
 import launchserver.LaunchServer;
+import launchserver.NeedGarbageCollection;
 
-public class AuthLimiter {
+public class AuthLimiter implements NeedGarbageCollection {
     public final int rateLimit;
     public final int rateLimitMilis;
     private HashMap<String,AuthEntry> map;
+    @LauncherAPI
+    public static final long TIMEOUT = 10*60*1000; //10 минут
     public AuthLimiter(LaunchServer srv) {
         map = new HashMap<>();
         rateLimit = srv.config.authRateLimit;
@@ -31,6 +35,16 @@ public class AuthLimiter {
         }
         else {map.put(ip,new AuthEntry(1,System.currentTimeMillis())); return false;}
     }
+
+    @Override
+    public void garbageCollection() {
+        long time = System.currentTimeMillis();
+        long max_timeout = Math.max(rateLimitMilis,TIMEOUT);
+        map.forEach((key,value) -> {
+            if(value.ts + max_timeout < time);
+        });
+    }
+
     static class AuthEntry
     {
         @Override
