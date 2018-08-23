@@ -3,7 +3,6 @@ package launchserver.auth.hwid;
 import java.io.IOException;
 
 import launcher.serialize.config.entry.BlockConfigEntry;
-import launchserver.auth.AuthException;
 
 public class AcceptHWIDHandler extends HWIDHandler {
 
@@ -12,13 +11,28 @@ public class AcceptHWIDHandler extends HWIDHandler {
     }
 
     @Override
-    public void check0(HWID hwid, String username) throws AuthException {
-
+    public void check0(HWID hwid, String username) {
+        //SKIP
     }
 
     @Override
-    public void close() throws IOException {
+    public void ban(HWID hwid) {
+        //SKIP
+    }
 
+    @Override
+    public void unban(HWID hwid) {
+        //SKIP
+    }
+
+    @Override
+    public HWID getHwid(String username) {
+        return nullHWID;
+    }
+
+    @Override
+    public void close() {
+        //SKIP
     }
 
 }
