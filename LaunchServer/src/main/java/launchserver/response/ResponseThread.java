@@ -18,9 +18,11 @@ import launchserver.manangers.SessionManager;
 public final class ResponseThread implements Runnable {
     private final LaunchServer server;
     private final Socket socket;
-    public ResponseThread(LaunchServer server, long id, Socket socket) throws SocketException {
+    private final SessionManager sessions;
+    public ResponseThread(LaunchServer server, long id, Socket socket,SessionManager sessionManager) throws SocketException {
         this.server = server;
         this.socket = socket;
+        this.sessions = sessionManager;
         // Fix socket flags
         IOHelper.setSocketFlags(socket);
     }
@@ -82,7 +84,7 @@ public final class ResponseThread implements Runnable {
         }
         else
         {
-            SessionManager.updateClient(session);
+            sessions.updateClient(session);
         }
         // Verify key modulus
         BigInteger keyModulus = input.readBigInteger(SecurityHelper.RSA_KEY_LENGTH + 1);

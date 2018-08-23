@@ -14,6 +14,7 @@ import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
+import launchserver.manangers.SessionManager;
 
 public final class ServerSocketHandler implements Runnable, AutoCloseable {
     private static final ThreadFactory THREAD_FACTORY = r -> CommonHelper.newThread("Network Thread", true, r);
@@ -23,12 +24,18 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
     private final LaunchServer server;
     private final AtomicReference<ServerSocket> serverSocket = new AtomicReference<>();
     private final ExecutorService threadPool = Executors.newCachedThreadPool(THREAD_FACTORY);
+    public final SessionManager sessionManager;
 
     private final AtomicLong idCounter = new AtomicLong(0L);
     private volatile Listener listener;
 
     public ServerSocketHandler(LaunchServer server) {
         this.server = server;
+        sessionManager = new SessionManager();
+    }
+    public ServerSocketHandler(LaunchServer server,SessionManager sessionManager) {
+        this.server = server;
+        this.sessionManager = sessionManager;
     }
 
     @Override
@@ -70,7 +77,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
                 }
 
                 // Reply in separate thread
-                threadPool.execute(new ResponseThread(server, id, socket));
+                threadPool.execute(new ResponseThread(server, id, socket,sessionManager));
             }
         } catch (IOException e) {
             // Ignore error after close/rebind
