@@ -171,7 +171,11 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         CRC32 crc = new CRC32();
         crc.update(publicKey.getModulus().toByteArray());
         LogHelper.subInfo("Modulus CRC32: 0x%08x", crc.getValue());
-
+        
+        // pre init modules
+        ModulesManager.setLaunchServer(this);
+        ModulesManager.autoload();
+        
         // Read LaunchServer config
         generateConfigIfNotExists();
         LogHelper.info("Reading LaunchServer config file");
@@ -186,8 +190,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         sessionManager = new SessionManager();
         GarbageManager.registerNeedGC(sessionManager);
         GarbageManager.registerNeedGC(limiter);
-        ModulesManager.setLaunchServer(this);
-        ModulesManager.autoload();
+        
+        // init modules
+        ModulesManager.initModules();
 
         // Set launcher EXE binary
         launcherBinary = new JARLauncherBinary(this);

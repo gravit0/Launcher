@@ -58,6 +58,15 @@ public class ModulesManager {
     }
 
     @LauncherAPI
+    public static void preInitModules() {
+        for (Module m : modules) {
+            m.preInit();
+            LogHelper.info("Module %s version: %s pre-init", m.getName(), m.getVersion());
+        }
+    }
+
+    
+    @LauncherAPI
     public static void printModules() {
         for (Module m : modules) {
             LogHelper.info("Module %s version: %s", m.getName(), m.getVersion());
@@ -77,7 +86,7 @@ public class ModulesManager {
         if (Files.notExists(modules)) Files.createDirectory(modules);
         IOHelper.walk(modules, new ModulesVisitor(), true);
         LogHelper.info("Loaded %d modules", ModulesManager.modules.size());
-        initModules();
+        preInitModules();
     }
     private static void registerCoreModule() {
     	load(new CoreModule());
@@ -86,7 +95,6 @@ public class ModulesManager {
     @LauncherAPI
 	public static void load(Module module) {
 		modules.add(module);
-		module.preInit();
 	}
     
     
