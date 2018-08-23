@@ -12,12 +12,12 @@ public class SimpleModule implements Module {
     }
 
 	@Override
-	public void preInit() {
+	public void preInit(LaunchServer lsrv) {
 		// pre-init code
 	}
     
     @Override
-    public void init() {
+    public void init(LaunchServer lsrv) {
         // init code
     }
 

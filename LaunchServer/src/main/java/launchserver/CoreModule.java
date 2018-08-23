@@ -15,12 +15,12 @@ public class CoreModule implements Module {
 	}
 
 	@Override
-	public void preInit() {
+	public void preInit(LaunchServer lsrv) {
 		// nothing to do
 	}
 	
 	@Override
-	public void init() {
+	public void init(LaunchServer lsrv) {
 		// nothing to do
 	}
 }

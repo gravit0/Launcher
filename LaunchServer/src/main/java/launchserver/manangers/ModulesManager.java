@@ -18,12 +18,18 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class ModulesManager {
-    public static ArrayList<Module> modules = new ArrayList<>();
-    public static LauncherClassLoader classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
-    public static LaunchServer launchserver;
+    public ArrayList<Module> modules;
+    public LauncherClassLoader classloader;
+	private LaunchServer lsrv;
 
+    public ModulesManager(LaunchServer lsrv) {
+    	this.lsrv = lsrv;
+    	modules = new ArrayList<Module>();
+    	classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
+    }
+    
     @LauncherAPI
-    public static void loadModule(URL jarpath, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, IOException {
+    public void loadModule(URL jarpath, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, IOException {
         JarFile f = new JarFile(Paths.get(jarpath.toURI()).toString());
         Manifest m = f.getManifest();
         String mainclass = m.getMainAttributes().getValue("Main-Class");
@@ -32,79 +38,74 @@ public class ModulesManager {
     }
 
     @LauncherAPI
-    public static void loadModule(URL jarpath, String classname, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public void loadModule(URL jarpath, String classname, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         classloader.addURL(jarpath);
         Class moduleclass = Class.forName(classname, true, classloader);
         Module module = (Module) moduleclass.newInstance();
         modules.add(module);
-        module.preInit();
-        if(!preload) module.init();
+        module.preInit(lsrv);
+        if(!preload) module.init(lsrv);
         LogHelper.info("Module %s version: %s loaded",module.getName(),module.getVersion());
     }
 
     @LauncherAPI
-    public static void registerModule(Module module,boolean preload)
+    public void registerModule(Module module,boolean preload)
     {
         load(module, preload);
         LogHelper.info("Module %s version: %s registered",module.getName(),module.getVersion());
     }
 
     @LauncherAPI
-    public static void initModules() {
+    public void initModules() {
         for (Module m : modules) {
-            m.init();
+            m.init(lsrv);
             LogHelper.info("Module %s version: %s init", m.getName(), m.getVersion());
         }
     }
 
     @LauncherAPI
-    public static void preInitModules() {
+    public void preInitModules() {
         for (Module m : modules) {
-            m.preInit();
+            m.preInit(lsrv);
             LogHelper.info("Module %s version: %s pre-init", m.getName(), m.getVersion());
         }
     }
 
     
     @LauncherAPI
-    public static void printModules() {
+    public void printModules() {
         for (Module m : modules) {
             LogHelper.info("Module %s version: %s", m.getName(), m.getVersion());
         }
         LogHelper.info("Loaded %d modules", modules.size());
     }
 
-    public static void setLaunchServer(LaunchServer server) {
-        launchserver = server;
-    }
-
     @LauncherAPI
-    public static void autoload() throws IOException {
+    public void autoload() throws IOException {
         LogHelper.info("Load modules");
         registerCoreModule();
-        Path modules = Paths.get("modules");
+        Path modules = lsrv.dir.resolve("modules");
         if (Files.notExists(modules)) Files.createDirectory(modules);
         IOHelper.walk(modules, new ModulesVisitor(), true);
-        LogHelper.info("Loaded %d modules", ModulesManager.modules.size());
-        preInitModules();
+        LogHelper.info("Loaded %d modules", this.modules.size());
     }
-    private static void registerCoreModule() {
+    private void registerCoreModule() {
     	load(new CoreModule());
 	}
     
     @LauncherAPI
-	public static void load(Module module) {
+	public void load(Module module) {
 		modules.add(module);
 	}
     
     
     @LauncherAPI
-	public static void load(Module module, boolean preload) {
+	public void load(Module module, boolean preload) {
 		load(module);
-		if (!preload) module.init();
+		if (!preload) module.init(lsrv);
 	}
 
-    private static final class ModulesVisitor extends SimpleFileVisitor<Path> {
+    private final class ModulesVisitor extends SimpleFileVisitor<Path> {
         private ModulesVisitor() {
         }
 

@@ -5,7 +5,7 @@ public interface Module {
 
     String getVersion();
 
-    void init();
+    void init(LaunchServer lsrv);
   
-    void preInit();
+    void preInit(LaunchServer lsrv);
 }

@@ -2,7 +2,6 @@ package launchserver.command.modules;
 
 import launchserver.LaunchServer;
 import launchserver.command.Command;
-import launchserver.manangers.ModulesManager;
 
 public class ModulesCommand extends Command {
     public ModulesCommand(LaunchServer server) {
@@ -21,6 +20,6 @@ public class ModulesCommand extends Command {
 
     @Override
     public void invoke(String... args) throws Exception {
-        ModulesManager.printModules();
+    	server.manager.printModules();
     }
 }
