@@ -20,6 +20,6 @@ public class ModulesCommand extends Command {
 
     @Override
     public void invoke(String... args) throws Exception {
-    	server.manager.printModules();
+    	server.modulesManager.printModules();
     }
 }

@@ -1,7 +1,5 @@
 package launchserver.auth.hwid;
 
-import java.io.IOException;
-
 import launcher.serialize.config.entry.BlockConfigEntry;
 
 public class AcceptHWIDHandler extends HWIDHandler {

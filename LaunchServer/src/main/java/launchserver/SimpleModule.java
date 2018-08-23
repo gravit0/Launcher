@@ -25,4 +25,9 @@ public class SimpleModule implements Module {
         System.err.println("Модуль нельзя запускать как программу");
         System.exit(0);
     }
+
+	@Override
+	public void close() {
+		// on stop
+	}
 }

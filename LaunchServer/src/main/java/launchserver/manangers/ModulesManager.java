@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-public class ModulesManager {
+public class ModulesManager implements AutoCloseable {
     public ArrayList<Module> modules;
     public LauncherClassLoader classloader;
 	private LaunchServer lsrv;
@@ -125,4 +125,17 @@ public class ModulesManager {
             return super.visitFile(file, attrs);
         }
     }
+
+	@Override
+	public void close() {
+		for (Module m : modules) {
+			try {
+				m.close();
+			} catch (Throwable t) {
+				if (m.getName() != null) LogHelper.error("Error in stopping module: %s", m.getName());
+				else LogHelper.error("Error in stopping one of modules");
+				LogHelper.error(t);
+			}
+		}
+	}
 }

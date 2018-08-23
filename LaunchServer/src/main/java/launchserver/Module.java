@@ -1,6 +1,6 @@
 package launchserver;
 
-public interface Module {
+public interface Module extends AutoCloseable {
     String getName();
 
     String getVersion();

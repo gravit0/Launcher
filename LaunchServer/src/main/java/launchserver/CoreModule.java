@@ -23,4 +23,9 @@ public class CoreModule implements Module {
 	public void init(LaunchServer lsrv) {
 		// nothing to do
 	}
+
+	@Override
+	public void close() {
+		// nothing to do
+	}
 }
