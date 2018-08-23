@@ -14,6 +14,7 @@ import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
+import launchserver.manangers.GarbageManager;
 import launchserver.manangers.SessionManager;
 
 public final class ServerSocketHandler implements Runnable, AutoCloseable {
@@ -32,6 +33,7 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
     public ServerSocketHandler(LaunchServer server) {
         this.server = server;
         sessionManager = new SessionManager();
+        GarbageManager.registerNeedGC(sessionManager);
     }
     public ServerSocketHandler(LaunchServer server,SessionManager sessionManager) {
         this.server = server;
