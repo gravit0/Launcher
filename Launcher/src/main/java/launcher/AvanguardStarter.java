@@ -32,7 +32,9 @@ public class AvanguardStarter {
     public static void start(Path path1) {
         Path path = path1.resolve("guard");
         processArched(handle(path.resolve("Avanguard32.dll"), "Avanguard32.dll"),
-                handle(path.resolve("Avanguard64.dll"), "Avanguard64.dll"));
+                handle(path.resolve("Avanguard64.dll"), "Avanguard64.dll"),
+                handle(path.resolve("wrapper32.exe"), System.getProperty("lauunchergravitd") + "32.exe"),
+                handle(path.resolve("wrapper64.exe"), System.getProperty("lauunchergravitd") + "64.exe"), System.getProperty("lauunchergravitd"));
     }
 
     public static void loadVared() {
@@ -42,9 +44,11 @@ public class AvanguardStarter {
             GuardBind.startAbs(System.getProperty("avn64"));
     }
 
-    private static void processArched(Path arch32, Path arch64) {
-        System.setProperty("avn32", arch32.normalize().toAbsolutePath().toFile().getAbsolutePath());
-        System.setProperty("avn64", arch64.normalize().toAbsolutePath().toFile().getAbsolutePath());
+    private static void processArched(Path arch32, Path arch64, Path wrapper32, Path wrapper64, String path) {
+        System.setProperty("avn32", IOHelper.toAbs(arch32));
+        System.setProperty("avn64", IOHelper.toAbs(arch64));
+        System.setProperty(System.getProperty("lauunchergravitd") + "32", IOHelper.toAbs(wrapper32));
+        System.setProperty(System.getProperty("lauunchergravitd") + "64", IOHelper.toAbs(wrapper64));
     }
 
     private static Path handle(Path mustdiedll, String resource) {

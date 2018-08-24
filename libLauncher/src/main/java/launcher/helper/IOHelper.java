@@ -750,4 +750,9 @@ public final class IOHelper {
             out.write(write);
         }
     }
+
+    @LauncherAPI
+	public static String toAbs(Path path) {
+		return path.normalize().toAbsolutePath().toFile().getAbsolutePath();
+	}
 }
