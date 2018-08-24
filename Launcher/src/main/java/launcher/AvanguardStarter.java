@@ -14,7 +14,8 @@ import launcher.helper.SecurityHelper.DigestAlgorithm;
 import ru.zaxar163.GuardBind;
 
 public class AvanguardStarter {
-	public static String avn32 = null, avn64 = null, wrap32 = null, wrap64 = null;
+	public static String avn32 = null, avn64 = null;
+	public static Path wrap32 = null, wrap64 = null;
     public static void main(boolean init) {
         if (init)
             GuardBind.init();
@@ -50,8 +51,8 @@ public class AvanguardStarter {
         System.setProperty("avn64", IOHelper.toAbs(arch64));
         avn32 = IOHelper.toAbs(arch32);
         avn64 = IOHelper.toAbs(arch64);
-        wrap32 = IOHelper.toAbs(wrapper32);
-        wrap64 = IOHelper.toAbs(wrapper64);
+        wrap32 = IOHelper.toAbsPath(wrapper32);
+        wrap64 = IOHelper.toAbsPath(wrapper64);
     }
 
     private static Path handle(Path mustdiedll, String resource) {

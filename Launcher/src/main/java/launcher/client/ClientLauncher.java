@@ -135,10 +135,9 @@ public final class ClientLauncher {
         // Fill CLI arguments
         List<String> args = new LinkedList<>();
         boolean wrapper = isUsingWrapper();
-        Path javaBin;
-        if(wrapper)javaBin = Paths.get(JVMHelper.OS_BITS == 64 ? AvanguardStarter.wrap64: AvanguardStarter.wrap32); //TODO: Path Replaced
-        else
-        javaBin = Paths.get(System.getProperty("java.home") + IOHelper.PLATFORM_SEPARATOR + "bin" + IOHelper.PLATFORM_SEPARATOR + "java");
+        Path javaBin = null;
+        if (wrapper) javaBin = JVMHelper.OS_BITS == 64 ? AvanguardStarter.wrap64: AvanguardStarter.wrap32;
+        else javaBin = Paths.get(System.getProperty("java.home") + IOHelper.PLATFORM_SEPARATOR + "bin" + IOHelper.PLATFORM_SEPARATOR + "java");
         args.add(javaBin.toString());
         args.add(MAGICAL_INTEL_OPTION);
         if (params.ram > 0 && params.ram <= JVMHelper.RAM) {

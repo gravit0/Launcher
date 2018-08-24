@@ -753,6 +753,11 @@ public final class IOHelper {
 
     @LauncherAPI
 	public static String toAbs(Path path) {
-		return path.normalize().toAbsolutePath().toFile().getAbsolutePath();
+		return toAbsPath(path).toFile().getAbsolutePath();
+	}
+
+    @LauncherAPI
+	public static Path toAbsPath(Path path) {
+		return path.normalize().toAbsolutePath();
 	}
 }
