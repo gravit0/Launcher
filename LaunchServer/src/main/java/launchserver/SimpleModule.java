@@ -21,6 +21,11 @@ public class SimpleModule implements Module {
         // init code
     }
 
+	@Override
+	public void postInit(LaunchServer lsrv) {
+		// post-init code
+	}
+    
     public static void main(String[] args) {
         System.err.println("Модуль нельзя запускать как программу");
         System.exit(0);

@@ -3,7 +3,6 @@ package launchserver;
 import launcher.helper.CommonHelper;
 
 public class CoreModule implements Module {
-
 	@Override
 	public String getName() {
 		return "LaunchServer";
@@ -11,7 +10,7 @@ public class CoreModule implements Module {
 
 	@Override
 	public String getVersion() {
-		return CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
+		return CommonHelper.formatVars("%VERSION%, build %BUILDNUMBER%");
 	}
 
 	@Override
@@ -24,6 +23,11 @@ public class CoreModule implements Module {
 		// nothing to do
 	}
 
+	@Override
+	public void postInit(LaunchServer lsrv) {
+		// nothing to do
+	}
+	
 	@Override
 	public void close() {
 		// nothing to do

@@ -55,6 +55,13 @@ public class ModulesManager implements AutoCloseable {
         LogHelper.info("Module %s version: %s registered",module.getName(),module.getVersion());
     }
 
+	public void postInitModules() {
+        for (Module m : modules) {
+            m.postInit(lsrv);
+            LogHelper.info("Module %s version: %s post-init", m.getName(), m.getVersion());
+        }
+	}
+    
     @LauncherAPI
     public void initModules() {
         for (Module m : modules) {
