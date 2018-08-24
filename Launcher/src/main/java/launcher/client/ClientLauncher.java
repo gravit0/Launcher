@@ -131,12 +131,12 @@ public final class ClientLauncher {
         // Resolve java bin and set permissions
         LogHelper.debug("Resolving JVM binary");
         //Path javaBin = IOHelper.resolveJavaBin(jvmDir);
-
+		checkJVMBitsAndVersion();
         // Fill CLI arguments
         List<String> args = new LinkedList<>();
         boolean wrapper = isUsingWrapper();
         Path javaBin = null;
-        if (wrapper) javaBin = JVMHelper.OS_BITS == 64 ? AvanguardStarter.wrap64: AvanguardStarter.wrap32;
+        if (wrapper) javaBin = JVMHelper.JVM_BITS == 64 ? AvanguardStarter.wrap64: AvanguardStarter.wrap32;
         else javaBin = Paths.get(System.getProperty("java.home") + IOHelper.PLATFORM_SEPARATOR + "bin" + IOHelper.PLATFORM_SEPARATOR + "java");
         args.add(javaBin.toString());
         args.add(MAGICAL_INTEL_OPTION);
