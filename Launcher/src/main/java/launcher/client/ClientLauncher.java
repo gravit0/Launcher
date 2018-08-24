@@ -136,7 +136,7 @@ public final class ClientLauncher {
         List<String> args = new LinkedList<>();
         boolean wrapper = isUsingWrapper();
         Path javaBin;
-        if(wrapper)javaBin = Paths.get(JVMHelper.OS_BITS == 64 ? AvanguardStarter.wrap64: AvanguardStarter.wrap32); //TODO: Path Replaced
+        if(wrapper)javaBin = Paths.get(JVMHelper.OS_BITS == 64 ? AvanguardStarter.wrap64: AvanguardStarter.wrap32);
         else
         javaBin = Paths.get(System.getProperty("java.home") + IOHelper.PLATFORM_SEPARATOR + "bin" + IOHelper.PLATFORM_SEPARATOR + "java");
         args.add(javaBin.toString());
@@ -169,8 +169,7 @@ public final class ClientLauncher {
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
         if(wrapper)
-            Collections.addAll(args, "-Djava.class.path=".concat(classPathString.toString())); // Add Class Path
-        Collections.addAll(args, profile.object.getJvmArgs());
+        Collections.addAll(args, "-Djava.class.path=".concat(classPathString.toString())); // Add Class Path
         Collections.addAll(args, ClientLauncher.class.getName());
         Collections.addAll(args, paramsFile.toString());
 

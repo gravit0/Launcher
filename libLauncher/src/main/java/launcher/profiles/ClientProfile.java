@@ -42,12 +42,14 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
     private final ListConfigEntry updateExclusions;
     private final ListConfigEntry updateVerify;
     private final BooleanConfigEntry updateFastCheck;
+    private final BooleanConfigEntry useWhitelist;
 
     // Client launcher
     private final StringConfigEntry mainClass;
     private final ListConfigEntry jvmArgs;
     private final ListConfigEntry classPath;
     private final ListConfigEntry clientArgs;
+    private final ListConfigEntry whitelist;
 
     @LauncherAPI
     public ClientProfile(BlockConfigEntry block) {
@@ -68,12 +70,14 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
         updateVerify = block.getEntry("updateVerify", ListConfigEntry.class);
         updateExclusions = block.getEntry("updateExclusions", ListConfigEntry.class);
         updateFastCheck = block.getEntry("updateFastCheck", BooleanConfigEntry.class);
+        useWhitelist = block.getEntry("useWhitelist", BooleanConfigEntry.class);
 
         // Client launcher
         mainClass = block.getEntry("mainClass", StringConfigEntry.class);
         classPath = block.getEntry("classPath", ListConfigEntry.class);
         jvmArgs = block.getEntry("jvmArgs", ListConfigEntry.class);
         clientArgs = block.getEntry("clientArgs", ListConfigEntry.class);
+        whitelist = block.getEntry("whitelist", ListConfigEntry.class);
     }
 
     @LauncherAPI
@@ -122,6 +126,14 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
     @LauncherAPI
     public String[] getJvmArgs() {
         return jvmArgs.stream(StringConfigEntry.class).toArray(String[]::new);
+    }
+    @LauncherAPI
+    public boolean isWhitelistContains(String username)
+    {
+        if(!useWhitelist.getValue()) return true;
+        else {
+            return whitelist.stream(StringConfigEntry.class).anyMatch(e -> e.equals(username));
+        }
     }
 
     @LauncherAPI

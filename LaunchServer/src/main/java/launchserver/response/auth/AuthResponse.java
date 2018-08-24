@@ -1,6 +1,7 @@
 package launchserver.response.auth;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -9,9 +10,12 @@ import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
+import launcher.profiles.ClientProfile;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
+import launcher.serialize.signed.SignedBytesHolder;
+import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.LaunchServer;
 import launchserver.auth.AuthException;
 import launchserver.auth.hwid.HWID;
@@ -55,6 +59,17 @@ public final class AuthResponse extends Response {
             if (server.limiter.isLimit(ip)) {
                 AuthProvider.authError(server.config.authRejectString);
                 return;
+            }
+            Collection<SignedObjectHolder<ClientProfile>> profiles = server.getProfiles();
+            for(SignedObjectHolder<ClientProfile> p : profiles)
+            {
+                if(p.object.getTitle() == client)
+                {
+                    if(!p.object.isWhitelistContains(login)){
+                        requestError("You are not in the whitelist");
+                        return;
+                    }
+                }
             }
             server.config.hwidHandler.check(HWID.gen(hwid_hdd, hwid_bios, hwid_cpu), result.username);
         } catch (AuthException e) {
