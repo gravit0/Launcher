@@ -1,5 +1,8 @@
 package launchserver.auth.hwid;
 
+import java.util.Arrays;
+import java.util.List;
+
 import launcher.serialize.config.entry.BlockConfigEntry;
 
 public class AcceptHWIDHandler extends HWIDHandler {
@@ -14,18 +17,18 @@ public class AcceptHWIDHandler extends HWIDHandler {
     }
 
     @Override
-    public void ban(HWID hwid) {
+    public void ban(List<HWID> hwid) {
         //SKIP
     }
 
     @Override
-    public void unban(HWID hwid) {
+    public void unban(List<HWID> hwid) {
         //SKIP
     }
 
     @Override
-    public HWID getHwid(String username) {
-        return nullHWID;
+    public List<HWID> getHwid(String username) {
+        return Arrays.asList(nullHWID);
     }
 
     @Override

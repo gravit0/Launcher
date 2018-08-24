@@ -8,4 +8,6 @@ public interface Module extends AutoCloseable {
     void init(LaunchServer lsrv);
   
     void preInit(LaunchServer lsrv);
+    
+    void postInit(LaunchServer lsrv);
 }
