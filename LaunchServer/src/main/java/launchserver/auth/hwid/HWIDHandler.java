@@ -1,6 +1,7 @@
 package launchserver.auth.hwid;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +13,7 @@ import launcher.serialize.config.entry.BlockConfigEntry;
 
 public abstract class HWIDHandler extends ConfigObject implements AutoCloseable {
     private static final Map<String, Adapter<HWIDHandler>> HW_HANDLERS = new ConcurrentHashMap<>(4);
-    public final HWID nullHWID = HWID.gen(0, 0, 0);
+    public static final HWID nullHWID = HWID.gen(0, 0, 0);
     private static boolean registredHandl = false;
 
     protected HWIDHandler(BlockConfigEntry block) {
@@ -20,9 +21,9 @@ public abstract class HWIDHandler extends ConfigObject implements AutoCloseable 
     }
 
     public abstract void check0(HWID hwid, String username) throws HWIDException;
-    public abstract void ban(HWID hwid) throws HWIDException;
-    public abstract void unban(HWID hwid) throws HWIDException;
-    public abstract HWID getHwid(String username) throws HWIDException;
+    public abstract void ban(List<HWID> hwid) throws HWIDException;
+    public abstract void unban(List<HWID> hwid) throws HWIDException;
+    public abstract List<HWID> getHwid(String username) throws HWIDException;
 
     public void check(HWID hwid, String username) throws HWIDException {
         if (nullHWID.equals(hwid)) return;
