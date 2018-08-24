@@ -1,8 +1,7 @@
 package launchserver.modules;
 
-import launcher.helper.CommonHelper;
+import launcher.LauncherVersion;
 import launchserver.LaunchServer;
-import launchserver.modules.Module;
 
 public class CoreModule implements Module {
 	@Override
@@ -11,8 +10,8 @@ public class CoreModule implements Module {
 	}
 
 	@Override
-	public String getVersion() {
-		return CommonHelper.formatVars("%VERSION%, build %BUILDNUMBER%");
+	public LauncherVersion getVersion() {
+		return LauncherVersion.getVersion();
 	}
 
 	@Override

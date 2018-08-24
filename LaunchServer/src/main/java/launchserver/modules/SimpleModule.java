@@ -1,7 +1,7 @@
 package launchserver.modules;
 
+import launcher.LauncherVersion;
 import launchserver.LaunchServer;
-import launchserver.modules.Module;
 
 public class SimpleModule implements Module {
     @Override
@@ -10,8 +10,8 @@ public class SimpleModule implements Module {
     }
 
     @Override
-    public String getVersion() {
-        return "1";
+    public LauncherVersion getVersion() {
+        return new LauncherVersion(1,0,0);
     }
 
 	@Override
