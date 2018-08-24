@@ -11,7 +11,7 @@ public class CoreModule implements Module {
 
 	@Override
 	public String getVersion() {
-		return CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
+		return CommonHelper.formatVars("%VERSION%, build %BUILDNUMBER%");
 	}
 
 	@Override
