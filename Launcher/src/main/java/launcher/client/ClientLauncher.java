@@ -46,6 +46,7 @@ import launcher.AvanguardStarter;
 public final class ClientLauncher {
     private static final String[] EMPTY_ARRAY = new String[0];
     private static final String MAGICAL_INTEL_OPTION = "-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
+    private static final boolean isUsingWrapper = true;
     @LauncherAPI
     public static final String TITLE_PROPERTY = "launcher.title";
     @SuppressWarnings("unused")
@@ -109,7 +110,10 @@ public final class ClientLauncher {
         ClientLauncher.title = profile.getTitle();
         LogHelper.debug("New Profile name: %s", profile.getTitle());
     }
-
+    @LauncherAPI
+    public static boolean isUsingWrapper() {
+        return JVMHelper.OS_TYPE == OS.MUSTDIE && isUsingWrapper;
+    }
     @LauncherAPI
     public static Process launch(
 
@@ -130,7 +134,11 @@ public final class ClientLauncher {
 
         // Fill CLI arguments
         List<String> args = new LinkedList<>();
-        Path javaBin = Paths.get(System.getProperty("java.home") + IOHelper.PLATFORM_SEPARATOR + "bin" + IOHelper.PLATFORM_SEPARATOR + "java");
+        boolean wrapper = isUsingWrapper();
+        Path javaBin;
+        if(wrapper)javaBin = Paths.get(JVMHelper.OS_BITS == 64 ? AvanguardStarter.wrap64: AvanguardStarter.wrap32); //TODO: Path Replaced
+        else
+        javaBin = Paths.get(System.getProperty("java.home") + IOHelper.PLATFORM_SEPARATOR + "bin" + IOHelper.PLATFORM_SEPARATOR + "java");
         args.add(javaBin.toString());
         args.add(MAGICAL_INTEL_OPTION);
         if (params.ram > 0 && params.ram <= JVMHelper.RAM) {
@@ -160,6 +168,9 @@ public final class ClientLauncher {
         Collections.addAll(args, "-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
         //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
         //Collections.addAll(args, "-classpath", classPathString.toString());
+        if(wrapper)
+            Collections.addAll(args, "-Djava.class.path=".concat(classPathString.toString())); // Add Class Path
+        Collections.addAll(args, profile.object.getJvmArgs());
         Collections.addAll(args, ClientLauncher.class.getName());
         Collections.addAll(args, paramsFile.toString());
 
@@ -169,6 +180,9 @@ public final class ClientLauncher {
         // Build client process
         LogHelper.debug("Launching client instance");
         ProcessBuilder builder = new ProcessBuilder(args);
+        if(wrapper)
+        builder.environment().put("JAVA_HOME", System.getProperty("java.home"));
+        else
         builder.environment().put("CLASSPATH", classPathString.toString());
         EnvHelper.addEnv(builder);
         builder.directory(params.clientDir.toFile());
