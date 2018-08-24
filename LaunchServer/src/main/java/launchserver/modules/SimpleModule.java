@@ -1,4 +1,7 @@
-package launchserver;
+package launchserver.modules;
+
+import launchserver.LaunchServer;
+import launchserver.modules.Module;
 
 public class SimpleModule implements Module {
     @Override

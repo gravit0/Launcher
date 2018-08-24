@@ -1,6 +1,6 @@
-package launchserver.plugin.bukkit;
+package launchserver.integration.plugin.bukkit;
 
-import launchserver.plugin.LaunchServerPluginBridge;
+import launchserver.integration.plugin.LaunchServerPluginBridge;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

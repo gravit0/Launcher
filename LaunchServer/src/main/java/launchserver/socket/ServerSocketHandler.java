@@ -1,4 +1,4 @@
-package launchserver.response;
+package launchserver.socket;
 
 import java.io.IOException;
 import java.net.InetAddress;

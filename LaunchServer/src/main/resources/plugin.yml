@@ -5,7 +5,7 @@ version: 1.0
 author: "sashok724 LLC"
 website: 'https://sashok724.net/'
 
-main: launchserver.plugin.bukkit.LaunchServerPluginBukkit
+main: launchserver.integration.plugin.bukkit.LaunchServerPluginBukkit
 
 commands:
   launchserver:

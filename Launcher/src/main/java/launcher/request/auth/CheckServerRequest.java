@@ -8,7 +8,7 @@ import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
-import launcher.request.auth.JoinServerRequest;
+import launcher.request.RequestType;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
@@ -21,7 +21,7 @@ public final class CheckServerRequest extends Request<PlayerProfile> {
     public CheckServerRequest(LauncherConfig config, String username, String serverID) {
         super(config);
         this.username = VerifyHelper.verifyUsername(username);
-        this.serverID = JoinServerRequest.verifyServerID(serverID);
+        this.serverID = VerifyHelper.verifyServerID(serverID);
     }
 
     @LauncherAPI
@@ -31,7 +31,7 @@ public final class CheckServerRequest extends Request<PlayerProfile> {
 
     @Override
     public Integer getType() {
-        return Type.CHECK_SERVER.getNumber();
+        return RequestType.CHECK_SERVER.getNumber();
     }
 
     @Override

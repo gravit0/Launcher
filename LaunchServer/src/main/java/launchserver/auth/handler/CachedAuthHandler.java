@@ -9,7 +9,7 @@ import java.util.UUID;
 import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.SecurityHelper;
-import launcher.request.auth.JoinServerRequest;
+import launcher.helper.VerifyHelper;
 import launcher.serialize.config.entry.BlockConfigEntry;
 import launchserver.auth.provider.AuthProviderResult;
 
@@ -128,7 +128,7 @@ public abstract class CachedAuthHandler extends AuthHandler {
             this.uuid = Objects.requireNonNull(uuid, "uuid");
             this.username = Objects.requireNonNull(username, "username");
             this.accessToken = accessToken == null ? null : SecurityHelper.verifyToken(accessToken);
-            this.serverID = serverID == null ? null : JoinServerRequest.verifyServerID(serverID);
+            this.serverID = serverID == null ? null : VerifyHelper.verifyServerID(serverID);
         }
     }
 }

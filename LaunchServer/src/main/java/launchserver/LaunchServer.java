@@ -60,7 +60,7 @@ import launchserver.manangers.GarbageManager;
 import launchserver.manangers.ModulesManager;
 import launchserver.manangers.SessionManager;
 import launchserver.response.Response;
-import launchserver.response.ServerSocketHandler;
+import launchserver.socket.ServerSocketHandler;
 import launchserver.texture.TextureProvider;
 
 public final class LaunchServer implements Runnable, AutoCloseable {

@@ -11,6 +11,7 @@ import launcher.profiles.PlayerProfile;
 import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.uuid.BatchProfileByUsernameRequest;
+import launcher.serialize.SerializeLimits;
 
 public final class YggdrasilGameProfileRepository implements GameProfileRepository {
     private static final long BUSY_WAIT_MS = VerifyHelper.verifyLong(
@@ -28,8 +29,8 @@ public final class YggdrasilGameProfileRepository implements GameProfileReposito
     public void findProfilesByNames(String[] usernames, Agent agent, ProfileLookupCallback callback) {
         int offset = 0;
         while (offset < usernames.length) {
-            String[] sliceUsernames = Arrays.copyOfRange(usernames, offset, Math.min(offset + BatchProfileByUsernameRequest.MAX_BATCH_SIZE, usernames.length));
-            offset += BatchProfileByUsernameRequest.MAX_BATCH_SIZE;
+            String[] sliceUsernames = Arrays.copyOfRange(usernames, offset, Math.min(offset + SerializeLimits.MAX_BATCH_SIZE, usernames.length));
+            offset += SerializeLimits.MAX_BATCH_SIZE;
 
             // Batch Username-To-UUID request
             PlayerProfile[] sliceProfiles;

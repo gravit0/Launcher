@@ -9,6 +9,7 @@ import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 import launcher.request.Request;
+import launcher.request.RequestType;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 
@@ -25,7 +26,7 @@ public final class UpdateListRequest extends Request<Set<String>> {
 
     @Override
     public Integer getType() {
-        return Type.UPDATE_LIST.getNumber();
+        return RequestType.UPDATE_LIST.getNumber();
     }
 
     @Override

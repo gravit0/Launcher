@@ -1,6 +1,6 @@
-package launchserver.plugin.bungee;
+package launchserver.integration.plugin.bungee;
 
-import launchserver.plugin.LaunchServerPluginBridge;
+import launchserver.integration.plugin.LaunchServerPluginBridge;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;

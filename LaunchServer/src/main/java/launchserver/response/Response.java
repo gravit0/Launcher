@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import launcher.LauncherAPI;
 import launcher.helper.LogHelper;
-import launcher.request.Request;
 import launcher.request.RequestException;
+import launcher.request.RequestType;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
@@ -47,18 +47,18 @@ public abstract class Response {
     }
 
     public static void registerResponses() {
-        registerResponse(Request.Type.PING.getNumber(), PingResponse::new);
-        registerResponse(Request.Type.AUTH.getNumber(), AuthResponse::new);
-        registerResponse(Request.Type.CHECK_SERVER.getNumber(), CheckServerResponse::new);
-        registerResponse(Request.Type.JOIN_SERVER.getNumber(), JoinServerResponse::new);
+        registerResponse(RequestType.PING.getNumber(), PingResponse::new);
+        registerResponse(RequestType.AUTH.getNumber(), AuthResponse::new);
+        registerResponse(RequestType.CHECK_SERVER.getNumber(), CheckServerResponse::new);
+        registerResponse(RequestType.JOIN_SERVER.getNumber(), JoinServerResponse::new);
 
-        registerResponse(Request.Type.BATCH_PROFILE_BY_USERNAME.getNumber(), BatchProfileByUsernameResponse::new);
-        registerResponse(Request.Type.PROFILE_BY_USERNAME.getNumber(), ProfileByUsernameResponse::new);
-        registerResponse(Request.Type.PROFILE_BY_UUID.getNumber(), ProfileByUUIDResponse::new);
+        registerResponse(RequestType.BATCH_PROFILE_BY_USERNAME.getNumber(), BatchProfileByUsernameResponse::new);
+        registerResponse(RequestType.PROFILE_BY_USERNAME.getNumber(), ProfileByUsernameResponse::new);
+        registerResponse(RequestType.PROFILE_BY_UUID.getNumber(), ProfileByUUIDResponse::new);
 
-        registerResponse(Request.Type.LAUNCHER.getNumber(), LauncherResponse::new);
-        registerResponse(Request.Type.UPDATE_LIST.getNumber(), UpdateListResponse::new);
-        registerResponse(Request.Type.UPDATE.getNumber(), UpdateResponse::new);
+        registerResponse(RequestType.LAUNCHER.getNumber(), LauncherResponse::new);
+        registerResponse(RequestType.UPDATE_LIST.getNumber(), UpdateListResponse::new);
+        registerResponse(RequestType.UPDATE.getNumber(), UpdateResponse::new);
     }
 
     public static Response getResponse(int type, LaunchServer server, long session, HInput input, HOutput output, String ip) {

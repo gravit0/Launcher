@@ -1,4 +1,4 @@
-package launchserver.plugin;
+package launchserver.integration.plugin;
 
 import java.nio.file.Path;
 import java.time.Duration;

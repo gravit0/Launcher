@@ -1,6 +1,8 @@
-package launchserver;
+package launchserver.modules;
 
 import launcher.helper.CommonHelper;
+import launchserver.LaunchServer;
+import launchserver.modules.Module;
 
 public class CoreModule implements Module {
 	@Override

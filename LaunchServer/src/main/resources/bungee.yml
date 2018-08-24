@@ -5,4 +5,4 @@ version: 1.0
 author: "sashok724 LLC"
 website: 'https://sashok724.net/'
 
-main: launchserver.plugin.bungee.LaunchServerPluginBungee
+main: launchserver.integration.plugin.bungee.LaunchServerPluginBungee

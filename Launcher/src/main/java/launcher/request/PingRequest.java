@@ -6,10 +6,9 @@ import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 
 public final class PingRequest extends Request<Void> {
-    @LauncherAPI
-    public static final byte EXPECTED_BYTE = 0b01010101;
 
     @LauncherAPI
     public PingRequest(LauncherConfig config) {
@@ -23,13 +22,13 @@ public final class PingRequest extends Request<Void> {
 
     @Override
     public Integer getType() {
-        return Type.PING.getNumber();
+        return RequestType.PING.getNumber();
     }
 
     @Override
     protected Void requestDo(HInput input, HOutput output) throws IOException {
         byte pong = (byte) input.readUnsignedByte();
-        if (pong != EXPECTED_BYTE) {
+        if (pong != SerializeLimits.EXPECTED_BYTE) {
             throw new IOException("Illegal ping response: " + pong);
         }
         return null;

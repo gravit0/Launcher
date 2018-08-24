@@ -1,4 +1,6 @@
-package launchserver;
+package launchserver.modules;
+
+import launchserver.LaunchServer;
 
 public interface Module extends AutoCloseable {
     String getName();

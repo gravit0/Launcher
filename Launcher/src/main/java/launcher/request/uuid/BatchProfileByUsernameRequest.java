@@ -8,20 +8,19 @@ import launcher.profiles.PlayerProfile;
 import launcher.helper.IOHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
+import launcher.request.RequestType;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 
 public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]> {
-    @LauncherAPI
-    public static final int MAX_BATCH_SIZE = 128;
     private final String[] usernames;
 
     @LauncherAPI
     public BatchProfileByUsernameRequest(LauncherConfig config, String... usernames) throws IOException {
         super(config);
         this.usernames = usernames.clone();
-        IOHelper.verifyLength(this.usernames.length, MAX_BATCH_SIZE);
+        IOHelper.verifyLength(this.usernames.length, SerializeLimits.MAX_BATCH_SIZE);
         for (String username : this.usernames) {
             VerifyHelper.verifyUsername(username);
         }
@@ -34,12 +33,12 @@ public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]
 
     @Override
     public Integer getType() {
-        return Type.BATCH_PROFILE_BY_USERNAME.getNumber();
+        return RequestType.BATCH_PROFILE_BY_USERNAME.getNumber();
     }
 
     @Override
     protected PlayerProfile[] requestDo(HInput input, HOutput output) throws IOException {
-        output.writeLength(usernames.length, MAX_BATCH_SIZE);
+        output.writeLength(usernames.length, SerializeLimits.MAX_BATCH_SIZE);
         for (String username : usernames) {
             output.writeString(username, SerializeLimits.MAX_LOGIN);
             output.writeString("", SerializeLimits.MAX_CLIENT); //TODO: Что это за запрос и для чего он нужен?

@@ -1,4 +1,4 @@
-package launchserver.response;
+package launchserver.socket;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -14,6 +14,7 @@ import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 import launchserver.manangers.SessionManager;
+import launchserver.response.Response;
 
 public final class ResponseThread implements Runnable {
     private final LaunchServer server;

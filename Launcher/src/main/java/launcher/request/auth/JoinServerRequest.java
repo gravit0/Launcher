@@ -1,19 +1,18 @@
 package launcher.request.auth;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
+import launcher.request.RequestType;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 
 public final class JoinServerRequest extends Request<Boolean> {
-    private static final Pattern SERVERID_PATTERN = Pattern.compile("-?[0-9a-f]{1,40}");
 
     // Instance
     private final String username;
@@ -25,7 +24,7 @@ public final class JoinServerRequest extends Request<Boolean> {
         super(config);
         this.username = VerifyHelper.verifyUsername(username);
         this.accessToken = SecurityHelper.verifyToken(accessToken);
-        this.serverID = verifyServerID(serverID);
+        this.serverID = VerifyHelper.verifyServerID(serverID);
     }
 
     @LauncherAPI
@@ -35,7 +34,7 @@ public final class JoinServerRequest extends Request<Boolean> {
 
     @Override
     public Integer getType() {
-        return Type.JOIN_SERVER.getNumber();
+        return RequestType.JOIN_SERVER.getNumber();
     }
 
     @Override
@@ -50,14 +49,4 @@ public final class JoinServerRequest extends Request<Boolean> {
         return input.readBoolean();
     }
 
-    @LauncherAPI
-    public static boolean isValidServerID(CharSequence serverID) {
-        return SERVERID_PATTERN.matcher(serverID).matches();
-    }
-
-    @LauncherAPI
-    public static String verifyServerID(String serverID) {
-        return VerifyHelper.verify(serverID, JoinServerRequest::isValidServerID,
-                String.format("Invalid server ID: '%s'", serverID));
-    }
 }

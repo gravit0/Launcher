@@ -4,9 +4,9 @@ import launcher.LauncherAPI;
 import launcher.LauncherClassLoader;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
-import launchserver.CoreModule;
+import launchserver.modules.CoreModule;
 import launchserver.LaunchServer;
-import launchserver.Module;
+import launchserver.modules.Module;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

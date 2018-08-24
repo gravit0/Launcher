@@ -26,18 +26,16 @@ import launcher.hasher.HashedFile;
 import launcher.helper.IOHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.SecurityHelper.DigestAlgorithm;
+import launcher.request.UpdateAction;
 import launcher.request.Request;
+import launcher.request.RequestType;
 import launcher.request.update.UpdateRequest.State.Callback;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
-import launcher.serialize.stream.EnumSerializer;
-import launcher.serialize.stream.EnumSerializer.Itf;
-import launcher.serialize.stream.StreamObject;
 
 public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> {
-    @LauncherAPI
-    public static final int MAX_QUEUE_SIZE = 128;
 
     // Instance
     private final String dirName;
@@ -68,7 +66,7 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
 
     @Override
     public Integer getType() {
-        return Type.UPDATE.getNumber();
+        return RequestType.UPDATE.getNumber();
     }
 
     @Override
@@ -94,9 +92,9 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
         boolean compress = input.readBoolean();
 
         // Build actions queue
-        Queue<Action> queue = new LinkedList<>();
+        Queue<UpdateAction> queue = new LinkedList<>();
         fillActionsQueue(queue, diff.mismatch);
-        queue.add(Action.FINISH);
+        queue.add(UpdateAction.FINISH);
 
         // noinspection IOResourceOpenedButNotSafelyClosed
         InputStream fileInput = compress ? new InflaterInputStream(input.stream, IOHelper.newInflater(), IOHelper.BUFFER_SIZE) : input.stream;
@@ -105,14 +103,14 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
         // (otherwise it will cause mustdie indexing bug)
         startTime = Instant.now();
         Path currentDir = dir;
-        Action[] actionsSlice = new Action[MAX_QUEUE_SIZE];
+        UpdateAction[] actionsSlice = new UpdateAction[SerializeLimits.MAX_QUEUE_SIZE];
         while (!queue.isEmpty()) {
-            int length = Math.min(queue.size(), MAX_QUEUE_SIZE);
+            int length = Math.min(queue.size(), SerializeLimits.MAX_QUEUE_SIZE);
 
             // Write actions slice
-            output.writeLength(length, MAX_QUEUE_SIZE);
+            output.writeLength(length, SerializeLimits.MAX_QUEUE_SIZE);
             for (int i = 0; i < length; i++) {
-                Action action = queue.remove();
+                UpdateAction action = queue.remove();
                 actionsSlice[i] = action;
                 action.write(output);
             }
@@ -120,7 +118,7 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
 
             // Perform actions
             for (int i = 0; i < length; i++) {
-                Action action = actionsSlice[i];
+                UpdateAction action = actionsSlice[i];
                 switch (action.type) {
                     case CD:
                         currentDir = currentDir.resolve(action.name);
@@ -222,19 +220,19 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
         }
     }
 
-    private static void fillActionsQueue(Queue<Action> queue, HashedDir mismatch) {
+    private static void fillActionsQueue(Queue<UpdateAction> queue, HashedDir mismatch) {
         for (Entry<String, HashedEntry> mapEntry : mismatch.map().entrySet()) {
             String name = mapEntry.getKey();
             HashedEntry entry = mapEntry.getValue();
             HashedEntry.Type entryType = entry.getType();
             switch (entryType) {
                 case DIR: // cd - get - cd ..
-                    queue.add(new Action(Action.Type.CD, name, entry));
+                    queue.add(new UpdateAction(UpdateAction.Type.CD, name, entry));
                     fillActionsQueue(queue, (HashedDir) entry);
-                    queue.add(Action.CD_BACK);
+                    queue.add(UpdateAction.CD_BACK);
                     break;
                 case FILE: // get
-                    queue.add(new Action(Action.Type.GET, name, entry));
+                    queue.add(new UpdateAction(UpdateAction.Type.GET, name, entry));
                     break;
                 default:
                     throw new AssertionError("Unsupported hashed entry type: " + entryType.name());
@@ -246,55 +244,6 @@ public final class UpdateRequest extends Request<SignedObjectHolder<HashedDir>> 
         if (stateCallback != null) {
             stateCallback.call(new State(filePath, fileDownloaded, fileSize,
                     totalDownloaded, totalSize, Duration.between(startTime, Instant.now())));
-        }
-    }
-
-    public static final class Action extends StreamObject {
-        public static final Action CD_BACK = new Action(Type.CD_BACK, null, null);
-        public static final Action FINISH = new Action(Type.FINISH, null, null);
-
-        // Instance
-        public final Type type;
-        public final String name;
-        public final HashedEntry entry;
-
-        public Action(Type type, String name, HashedEntry entry) {
-            this.type = type;
-            this.name = name;
-            this.entry = entry;
-        }
-
-        public Action(HInput input) throws IOException {
-            type = Type.read(input);
-            name = type == Type.CD || type == Type.GET ? IOHelper.verifyFileName(input.readString(255)) : null;
-            entry = null;
-        }
-
-        @Override
-        public void write(HOutput output) throws IOException {
-            EnumSerializer.write(output, type);
-            if (type == Type.CD || type == Type.GET) {
-                output.writeString(name, 255);
-            }
-        }
-
-        public enum Type implements Itf {
-            CD(1), CD_BACK(2), GET(3), FINISH(255);
-            private static final EnumSerializer<Type> SERIALIZER = new EnumSerializer<>(Type.class);
-            private final int n;
-
-            Type(int n) {
-                this.n = n;
-            }
-
-            @Override
-            public int getNumber() {
-                return n;
-            }
-
-            public static Type read(HInput input) throws IOException {
-                return SERIALIZER.read(input);
-            }
         }
     }
 
