@@ -19,6 +19,7 @@ import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.LaunchServer;
 import launchserver.auth.AuthException;
 import launchserver.auth.hwid.HWID;
+import launchserver.auth.hwid.HWIDException;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.auth.provider.AuthProviderResult;
 import launchserver.response.Response;
@@ -66,12 +67,15 @@ public final class AuthResponse extends Response {
                 if(p.object.getTitle().equals(client))
                 {
                     if(!p.object.isWhitelistContains(login)){
-                        throw new AuthException("You are not in the whitelist");
+                        throw new AuthException(server.config.whitelistRejectString);
                     }
                 }
             }
             server.config.hwidHandler.check(HWID.gen(hwid_hdd, hwid_bios, hwid_cpu), result.username);
         } catch (AuthException e) {
+            requestError(e.getMessage());
+            return;
+        } catch (HWIDException e) {
             requestError(e.getMessage());
             return;
         } catch (Exception e) {

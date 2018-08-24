@@ -452,6 +452,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         @LauncherAPI
         public final String authRejectString;
         @LauncherAPI
+        public final String whitelistRejectString;
+        @LauncherAPI
         public final String binaryName;
         private final StringConfigEntry address;
         private final String bindAddress;
@@ -469,6 +471,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                     block.getEntryValue("bindAddress", StringConfigEntry.class) : getAddress();
             authRejectString = block.hasEntry("authRejectString") ?
                     block.getEntryValue("authRejectString", StringConfigEntry.class) : "Вы превысили лимит авторизаций. Подождите некоторое время перед повторной попыткой";
+            whitelistRejectString = block.hasEntry("whitelistRejectString") ?
+                    block.getEntryValue("whitelistRejectString", StringConfigEntry.class) : "Вас нет в белом списке";
 
 
             // Set handlers & providers

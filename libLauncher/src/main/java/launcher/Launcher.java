@@ -15,10 +15,13 @@ public final class Launcher {
     private static final AtomicReference<LauncherConfig> CONFIG = new AtomicReference<>();
 
     // Version info
+    //Все версии оригинального Sashok Launcher v3 считаются как 3.xx.xx, например 3.15.3 3.15.4
+    //Все версии модификации считаются так: 3.16.xx Например 3.16.5 для коммита от 20 Августа
     @LauncherAPI
-    public static final String VERSION = "15.4";
+    public static final String VERSION = "3.17.0";
     @LauncherAPI
     public static final String BUILD = readBuildNumber();
+    //Начиная с 4.0.0 PROTOCOL_MAGIC изменит свою форму
     @LauncherAPI
     public static final int PROTOCOL_MAGIC = 0x724724_00 + 24;
 
