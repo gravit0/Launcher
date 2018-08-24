@@ -63,11 +63,10 @@ public final class AuthResponse extends Response {
             Collection<SignedObjectHolder<ClientProfile>> profiles = server.getProfiles();
             for(SignedObjectHolder<ClientProfile> p : profiles)
             {
-                if(p.object.getTitle() == client)
+                if(p.object.getTitle().equals(client))
                 {
                     if(!p.object.isWhitelistContains(login)){
-                        requestError("You are not in the whitelist");
-                        return;
+                        throw new AuthException("You are not in the whitelist");
                     }
                 }
             }
