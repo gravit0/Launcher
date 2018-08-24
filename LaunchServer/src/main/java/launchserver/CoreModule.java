@@ -3,7 +3,6 @@ package launchserver;
 import launcher.helper.CommonHelper;
 
 public class CoreModule implements Module {
-
 	@Override
 	public String getName() {
 		return "LaunchServer";
@@ -24,6 +23,11 @@ public class CoreModule implements Module {
 		// nothing to do
 	}
 
+	@Override
+	public void postInit(LaunchServer lsrv) {
+		// nothing to do
+	}
+	
 	@Override
 	public void close() {
 		// nothing to do

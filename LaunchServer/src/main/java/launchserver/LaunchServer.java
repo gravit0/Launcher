@@ -217,6 +217,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Set server socket thread
         serverSocketHandler = new ServerSocketHandler(this, sessionManager);
+        
+        // post init modules
+        modulesManager.postInitModules();
     }
 
     @Override
