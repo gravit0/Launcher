@@ -4,7 +4,7 @@ import javassist.*;
 
 import java.io.IOException;
 
-public class JAConfigurator {
+public class JAConfigurator implements AutoCloseable {
     ClassPool pool = ClassPool.getDefault();
     CtClass ctClass;
     CtConstructor ctConstructor;
@@ -50,5 +50,10 @@ public class JAConfigurator {
         body.append("}");
         ctConstructor.setBody(body.toString());
         return ctClass.toBytecode();
+    }
+
+    @Override
+    public void close() {
+        ctClass.defrost();
     }
 }
