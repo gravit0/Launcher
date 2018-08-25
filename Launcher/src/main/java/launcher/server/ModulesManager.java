@@ -5,6 +5,7 @@ import launcher.LauncherClassLoader;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.modules.Module;
+import launcher.modules.ModulesManagerInterface;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -15,15 +16,15 @@ import java.util.ArrayList;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-public class ModulesManager implements AutoCloseable {
+public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
     public ArrayList<Module> modules;
     public LauncherClassLoader classloader;
 	private final ServerModuleContext context;
 
-    public ModulesManager() {
+    public ModulesManager(ServerWrapper wrapper) {
         this.modules = new ArrayList<>();
         this.classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
-        this.context = new ServerModuleContext(classloader);
+        this.context = new ServerModuleContext(wrapper, classloader);
     }
     
     @LauncherAPI

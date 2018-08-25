@@ -1,7 +1,6 @@
 package launcher.modules;
 
 import launcher.LauncherVersion;
-import launcher.modules.ModuleContext;
 
 public interface Module extends AutoCloseable {
 

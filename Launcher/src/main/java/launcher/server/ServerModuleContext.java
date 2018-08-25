@@ -5,9 +5,11 @@ import launcher.modules.ModuleContext;
 
 public class ServerModuleContext implements ModuleContext {
     public final LauncherClassLoader classLoader;
+    public final ServerWrapper wrapper;
 
-    public ServerModuleContext(LauncherClassLoader classLoader) {
+    public ServerModuleContext(ServerWrapper wrapper, LauncherClassLoader classLoader) {
         this.classLoader = classLoader;
+        this.wrapper = wrapper;
     }
 
     @Override
