@@ -1,7 +1,8 @@
 package launchserver.modules;
 
 import launcher.LauncherVersion;
-import launchserver.LaunchServer;
+import launcher.modules.Module;
+import launcher.modules.ModuleContext;
 
 public class SimpleModule implements Module {
     @Override
@@ -14,27 +15,23 @@ public class SimpleModule implements Module {
         return new LauncherVersion(1,0,0);
     }
 
-	@Override
-	public void preInit(LaunchServer lsrv) {
-		// pre-init code
-	}
-    
     @Override
-    public void init(LaunchServer lsrv) {
-        // init code
+    public void init(ModuleContext context) {
+
     }
 
-	@Override
-	public void postInit(LaunchServer lsrv) {
-		// post-init code
-	}
-    
-    public static void main(String[] args) {
-        System.err.println("Модуль нельзя запускать как программу");
-        System.exit(0);
+    @Override
+    public void preInit(ModuleContext context) {
+
     }
 
-	@Override
+    @Override
+    public void postInit(ModuleContext context) {
+
+    }
+
+
+    @Override
 	public void close() {
 		// on stop
 	}

@@ -1,6 +1,8 @@
 package launchserver.modules;
 
 import launcher.LauncherVersion;
+import launcher.modules.Module;
+import launcher.modules.ModuleContext;
 import launchserver.LaunchServer;
 
 public class CoreModule implements Module {
@@ -15,20 +17,21 @@ public class CoreModule implements Module {
 	}
 
 	@Override
-	public void preInit(LaunchServer lsrv) {
-		// nothing to do
-	}
-	
-	@Override
-	public void init(LaunchServer lsrv) {
-		// nothing to do
+	public void init(ModuleContext context) {
+
 	}
 
 	@Override
-	public void postInit(LaunchServer lsrv) {
-		// nothing to do
+	public void preInit(ModuleContext context) {
+
 	}
-	
+
+	@Override
+	public void postInit(ModuleContext context) {
+
+	}
+
+
 	@Override
 	public void close() {
 		// nothing to do

@@ -6,7 +6,8 @@ import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launchserver.modules.CoreModule;
 import launchserver.LaunchServer;
-import launchserver.modules.Module;
+import launcher.modules.Module;
+import launchserver.modules.ServerModuleContext;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,12 +21,12 @@ import java.util.jar.Manifest;
 public class ModulesManager implements AutoCloseable {
     public ArrayList<Module> modules;
     public LauncherClassLoader classloader;
-	private LaunchServer lsrv;
+	private final ServerModuleContext context;
 
     public ModulesManager(LaunchServer lsrv) {
-    	this.lsrv = lsrv;
-    	modules = new ArrayList<Module>();
-    	classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
+        this.modules = new ArrayList<>();
+        this.classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
+        this.context = new ServerModuleContext(lsrv,classloader);
     }
     
     @LauncherAPI
@@ -43,8 +44,8 @@ public class ModulesManager implements AutoCloseable {
         Class moduleclass = Class.forName(classname, true, classloader);
         Module module = (Module) moduleclass.newInstance();
         modules.add(module);
-        module.preInit(lsrv);
-        if(!preload) module.init(lsrv);
+        module.preInit(context);
+        if(!preload) module.init(context);
         LogHelper.info("Module %s version: %s loaded",module.getName(),module.getVersion());
     }
 
@@ -57,7 +58,7 @@ public class ModulesManager implements AutoCloseable {
 
 	public void postInitModules() {
         for (Module m : modules) {
-            m.postInit(lsrv);
+            m.postInit(context);
             LogHelper.info("Module %s version: %s post-init", m.getName(), m.getVersion());
         }
 	}
@@ -65,7 +66,7 @@ public class ModulesManager implements AutoCloseable {
     @LauncherAPI
     public void initModules() {
         for (Module m : modules) {
-            m.init(lsrv);
+            m.init(context);
             LogHelper.info("Module %s version: %s init", m.getName(), m.getVersion());
         }
     }
@@ -73,7 +74,7 @@ public class ModulesManager implements AutoCloseable {
     @LauncherAPI
     public void preInitModules() {
         for (Module m : modules) {
-            m.preInit(lsrv);
+            m.preInit(context);
             LogHelper.info("Module %s version: %s pre-init", m.getName(), m.getVersion());
         }
     }
@@ -91,7 +92,7 @@ public class ModulesManager implements AutoCloseable {
     public void autoload() throws IOException {
         LogHelper.info("Load modules");
         registerCoreModule();
-        Path modules = lsrv.dir.resolve("modules");
+        Path modules = context.launchServer.dir.resolve("modules");
         if (Files.notExists(modules)) Files.createDirectory(modules);
         IOHelper.walk(modules, new ModulesVisitor(), true);
         LogHelper.info("Loaded %d modules", this.modules.size());
@@ -109,7 +110,7 @@ public class ModulesManager implements AutoCloseable {
     @LauncherAPI
 	public void load(Module module, boolean preload) {
 		load(module);
-		if (!preload) module.init(lsrv);
+		if (!preload) module.init(context);
 	}
 
     private final class ModulesVisitor extends SimpleFileVisitor<Path> {

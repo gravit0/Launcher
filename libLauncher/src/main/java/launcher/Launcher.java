@@ -25,7 +25,9 @@ public final class Launcher {
     public static final String BUILD = String.valueOf(LauncherVersion.readBuildNumber());
     //Начиная с 4.0.0 PROTOCOL_MAGIC изменит свою форму
     @LauncherAPI
-    public static final int PROTOCOL_MAGIC = 0x724724_00 + 24;
+    public static final int PROTOCOL_MAGIC_LEGACY = 0x724724_00 + 24;
+    @LauncherAPI
+    public static final int PROTOCOL_MAGIC = 0xA205B064; // e = 2.718281828
 
     // Constants
     @LauncherAPI

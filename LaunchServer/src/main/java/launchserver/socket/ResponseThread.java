@@ -80,11 +80,16 @@ public final class ResponseThread implements Runnable {
         // Verify magic number
         int magicNumber = input.readInt();
         if (magicNumber != Launcher.PROTOCOL_MAGIC) {
-            if (magicNumber != Launcher.PROTOCOL_MAGIC - 1) { // Previous launcher protocol
+            if (magicNumber != Launcher.PROTOCOL_MAGIC_LEGACY - 1) { // Previous launcher protocol
+                session = 0;
+                legacy = true;
             }
-            session = 0;
-            legacy = true;
-        } else {
+            else if (magicNumber != Launcher.PROTOCOL_MAGIC_LEGACY){
+                sessions.updateClient(session);
+            }
+
+        }
+        else {
             sessions.updateClient(session);
         }
         // Verify key modulus
