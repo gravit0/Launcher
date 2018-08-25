@@ -55,14 +55,8 @@ public final class JARLauncherBinary extends LauncherBinary {
             try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
-                    //if(e.getName().equals(findName))
-                    //{
-                    //    System.out.println("FOUND!");
-                    //    ZipEntry en = new ZipEntry(e.getName());
-                    //    output.putNextEntry(en);
-                    //    output.write(ctClass.toBytecode());
-                    //}
-                    //else {
+                    if(BuildHookManager.isContainsBlacklist(e.getName()))
+                        continue;
                     output.putNextEntry(e);
                     IOHelper.transfer(input, output);
                     //}
