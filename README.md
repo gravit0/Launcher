@@ -1,23 +1,4 @@
-[![Build Status](https://travis-ci.org/gravit0/Launcher.svg?branch=gravit-fix)](https://travis-ci.org/gravit0/Launcher)  
-# Модификация лаунчера sashok724's v3 от Gravit
-* Discord канал: https://discord.gg/aJK6nMN
-* Поддержка нативной библиотеки защиты Avanguard
-* Сборка Gradle
-* Код избавлен от множества грязных "хаков", зависящих от реализации и недокументированных особенностей конкретной JVM
-* Вырезана установка своей JVM
-* Защита от брута пароля
-* Лаунчер комплируется и запускается с JDK 10
-* Патч launchwrapper с поддержкой Java 10
-* JsonAuthProvider и PHP скрипт для работы с Yii2
-* ClassPath не виден в строке запуска
-* Полностью разрешены симлинки без ограничений
-* Вырезана недокументированная возможность использования JavaScript плагинов на стороне сервера
-* Различные исправления и доработки
-* Разбиение на 3 модуля вместо двух
-* Старые обходы не работают
-* Частично изменена структура классов
-* Исправления багов из основной ветки лаунчера
-* Возможность устанавливать разные скины на разные сервера
-* Отправка HWID
-* Гибкая настройка параметров exe при сборке
-* И многое другое!
+# Modification of the launcher sashok724's v3 from Gravit [![Build Status](https://travis-ci.org/gravit0/Launcher.svg?branch=gravit-fix)](https://travis-ci.org/gravit0/Launcher)
+* Discord channel: https://discord.gg/aJK6nMN
+* [See license](LICENSE.md#the-mit-license-mit)
+* Changes: [ru-ru](docs/RU-changes.md#Изменения) [en-us](docs/EN-changes.md#changes) 
