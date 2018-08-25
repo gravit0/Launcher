@@ -24,6 +24,7 @@ import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 import launchserver.manangers.BuildHookManager;
+import proguard.*;
 
 import static launcher.helper.IOHelper.newZipEntry;
 
@@ -93,6 +94,20 @@ public final class JARLauncherBinary extends LauncherBinary {
             e.printStackTrace();
         } catch (NotFoundException e) {
             e.printStackTrace();
+        }
+
+        //ProGuard
+        Configuration proguard_cfg = new Configuration();
+        String[] args = new String[1];
+        args[0] = "@".concat("proguard.pro");
+        ConfigurationParser parser = new ConfigurationParser(args,
+                System.getProperties());
+        try {
+            parser.parse(proguard_cfg);
+            ProGuard proGuard = new ProGuard(proguard_cfg);
+            proGuard.execute();
+        } catch (ParseException e1) {
+            e1.printStackTrace();
         }
     }
 
