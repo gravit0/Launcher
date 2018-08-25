@@ -18,7 +18,7 @@ public final class LauncherConfig extends StreamObject {
     public static final String ADDRESS_OVERRIDE_PROPERTY = "launcher.addressOverride";
     @LauncherAPI
     public static final String ADDRESS_OVERRIDE = System.getProperty(ADDRESS_OVERRIDE_PROPERTY, null);
-
+    private static final AutogenConfig config = new AutogenConfig();
     // Instance
     @LauncherAPI
     public final InetSocketAddress address;
@@ -37,9 +37,9 @@ public final class LauncherConfig extends StreamObject {
 
     @LauncherAPI
     public LauncherConfig(HInput input) throws IOException, InvalidKeySpecException {
-        String localAddress = input.readASCII(255);
+        String localAddress = config.address;
         address = InetSocketAddress.createUnresolved(
-                ADDRESS_OVERRIDE == null ? localAddress : ADDRESS_OVERRIDE, input.readLength(65535));
+                ADDRESS_OVERRIDE == null ? localAddress : ADDRESS_OVERRIDE, config.port);
         publicKey = SecurityHelper.toPublicRSAKey(input.readByteArray(SecurityHelper.CRYPTO_MAX_LENGTH));
 
         // Read signed runtime
@@ -61,8 +61,6 @@ public final class LauncherConfig extends StreamObject {
 
     @Override
     public void write(HOutput output) throws IOException {
-        output.writeASCII(address.getHostString(), 255);
-        output.writeLength(address.getPort(), 65535);
         output.writeByteArray(publicKey.getEncoded(), SecurityHelper.CRYPTO_MAX_LENGTH);
 
         // Write signed runtime
