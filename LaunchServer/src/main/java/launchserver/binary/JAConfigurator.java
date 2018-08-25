@@ -10,11 +10,13 @@ public class JAConfigurator {
     CtConstructor ctConstructor;
     String classname;
     StringBuilder body;
+    int autoincrement;
     public JAConfigurator(Class configclass) throws NotFoundException {
         classname = configclass.getName();
         ctClass = pool.get(classname);
         ctConstructor = ctClass.getDeclaredConstructor(null);
         body = new StringBuilder("{");
+        autoincrement = 0;
     }
     public void setAddress(String address)
     {
@@ -28,11 +30,24 @@ public class JAConfigurator {
         body.append(port);
         body.append(";");
     }
+    public void addModuleClass(String fullName)
+    {
+        body.append("launcher.modules.Module mod");
+        body.append(autoincrement);
+        body.append(" = new ");
+        body.append(fullName);
+        body.append("();");
+        body.append("launcher.client.ClientModuleManager.registerModule( mod");
+        body.append(autoincrement);
+        body.append(" );");
+        autoincrement++;
+    }
     public String getZipEntryPath()
     {
         return classname.replace('.','/').concat(".class");
     }
     public byte[] getBytecode() throws IOException, CannotCompileException {
+        body.append("}");
         ctConstructor.setBody(body.toString());
         return ctClass.toBytecode();
     }

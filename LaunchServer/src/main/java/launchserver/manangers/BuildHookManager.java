@@ -1,6 +1,7 @@
 package launchserver.manangers;
 
 import launcher.AutogenConfig;
+import launchserver.binary.JAConfigurator;
 import launchserver.binary.JARLauncherBinary;
 
 import java.util.HashSet;
@@ -23,6 +24,10 @@ public class BuildHookManager {
     public static void registerClientModuleClass(String clazz)
     {
         MODULE_CLASS.add(clazz);
+    }
+    public static void registerAllClientModuleClass(JAConfigurator cfg)
+    {
+        for(String clazz : MODULE_CLASS) cfg.addModuleClass(clazz);
     }
     public static boolean isContainsBlacklist(String clazz)
     {

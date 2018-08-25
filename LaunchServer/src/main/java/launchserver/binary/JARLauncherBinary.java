@@ -52,6 +52,7 @@ public final class JARLauncherBinary extends LauncherBinary {
             JAConfigurator jaConfigurator = new JAConfigurator(AutogenConfig.class);
             jaConfigurator.setAddress(server.config.getAddress());
             jaConfigurator.setPort(server.config.port);
+            BuildHookManager.registerAllClientModuleClass(jaConfigurator);
             try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
