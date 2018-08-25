@@ -1,14 +1,10 @@
-package launchserver.manangers;
+package launcher.server;
 
 import launcher.LauncherAPI;
 import launcher.LauncherClassLoader;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
-import launcher.modules.ModulesManagerInterface;
-import launchserver.modules.CoreModule;
-import launchserver.LaunchServer;
 import launcher.modules.Module;
-import launchserver.modules.LaunchServerModuleContext;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,15 +15,15 @@ import java.util.ArrayList;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
+public class ModulesManager implements AutoCloseable {
     public ArrayList<Module> modules;
     public LauncherClassLoader classloader;
-	private final LaunchServerModuleContext context;
+	private final ServerModuleContext context;
 
-    public ModulesManager(LaunchServer lsrv) {
+    public ModulesManager() {
         this.modules = new ArrayList<>();
         this.classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
-        this.context = new LaunchServerModuleContext(lsrv,classloader);
+        this.context = new ServerModuleContext(classloader);
     }
     
     @LauncherAPI
@@ -90,17 +86,13 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
     }
 
     @LauncherAPI
-    public void autoload() throws IOException {
+    public void autoload(Path dir) throws IOException {
         LogHelper.info("Load modules");
-        registerCoreModule();
-        Path modules = context.launchServer.dir.resolve("modules");
+        Path modules = dir.resolve("modules");
         if (Files.notExists(modules)) Files.createDirectory(modules);
         IOHelper.walk(modules, new ModulesVisitor(), true);
         LogHelper.info("Loaded %d modules", this.modules.size());
     }
-    private void registerCoreModule() {
-    	load(new CoreModule());
-	}
     
     @LauncherAPI
 	public void load(Module module) {

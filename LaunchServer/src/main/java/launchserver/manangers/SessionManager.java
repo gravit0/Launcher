@@ -1,7 +1,7 @@
 package launchserver.manangers;
 
 import launcher.LauncherAPI;
-import launchserver.NeedGarbageCollection;
+import launcher.NeedGarbageCollection;
 import launchserver.socket.Client;
 
 import java.util.HashSet;

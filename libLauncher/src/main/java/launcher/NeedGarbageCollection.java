@@ -1,4 +1,4 @@
-package launchserver;
+package launcher;
 
 
 @FunctionalInterface

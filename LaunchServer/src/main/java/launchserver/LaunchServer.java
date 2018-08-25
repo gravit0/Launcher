@@ -56,7 +56,7 @@ import launchserver.binary.LauncherBinary;
 import launchserver.command.handler.CommandHandler;
 import launchserver.command.handler.JLineCommandHandler;
 import launchserver.command.handler.StdCommandHandler;
-import launchserver.manangers.GarbageManager;
+import launcher.managers.GarbageManager;
 import launchserver.manangers.ModulesManager;
 import launchserver.manangers.SessionManager;
 import launchserver.response.Response;

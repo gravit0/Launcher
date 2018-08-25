@@ -1,6 +1,6 @@
-package launchserver.manangers;
+package launcher.managers;
 
-import launchserver.NeedGarbageCollection;
+import launcher.NeedGarbageCollection;
 
 import java.util.ArrayList;
 import java.util.Timer;

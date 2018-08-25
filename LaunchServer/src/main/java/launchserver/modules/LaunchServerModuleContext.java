@@ -4,8 +4,8 @@ import launcher.LauncherClassLoader;
 import launcher.modules.ModuleContext;
 import launchserver.LaunchServer;
 
-public class ServerModuleContext implements ModuleContext {
-    public ServerModuleContext(LaunchServer server,LauncherClassLoader classloader)
+public class LaunchServerModuleContext implements ModuleContext {
+    public LaunchServerModuleContext(LaunchServer server, LauncherClassLoader classloader)
     {
         this.launchServer = server;
         this.classloader = classloader;

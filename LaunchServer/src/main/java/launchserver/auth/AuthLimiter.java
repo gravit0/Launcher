@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import launcher.LauncherAPI;
 import launchserver.LaunchServer;
-import launchserver.NeedGarbageCollection;
+import launcher.NeedGarbageCollection;
 
 public class AuthLimiter implements NeedGarbageCollection {
     public final int rateLimit;

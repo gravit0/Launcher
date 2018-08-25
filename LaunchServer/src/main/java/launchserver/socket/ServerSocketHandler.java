@@ -14,7 +14,7 @@ import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
-import launchserver.manangers.GarbageManager;
+import launcher.managers.GarbageManager;
 import launchserver.manangers.SessionManager;
 
 public final class ServerSocketHandler implements Runnable, AutoCloseable {
