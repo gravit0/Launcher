@@ -11,8 +11,6 @@ import launcher.helper.IOHelper;
 import launcher.helper.SecurityHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
-import launcher.serialize.stream.EnumSerializer;
-import launcher.serialize.stream.EnumSerializer.Itf;
 
 public abstract class Request<R> {
     @LauncherAPI

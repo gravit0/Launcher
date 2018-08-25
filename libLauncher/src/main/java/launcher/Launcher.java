@@ -19,7 +19,7 @@ public final class Launcher {
     //Все версии модификации считаются так: 3.16.xx Например 3.16.5 для коммита от 20 Августа
     @Deprecated
     @LauncherAPI
-    public static final String VERSION = "4.0.0";
+    public static final String VERSION = LauncherVersion.getVersion().getVersionString();
     @Deprecated
     @LauncherAPI
     public static final String BUILD = String.valueOf(LauncherVersion.readBuildNumber());

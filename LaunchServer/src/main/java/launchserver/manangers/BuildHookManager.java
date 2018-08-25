@@ -2,7 +2,6 @@ package launchserver.manangers;
 
 import launcher.AutogenConfig;
 import launchserver.binary.JAConfigurator;
-import launchserver.binary.JARLauncherBinary;
 
 import java.util.HashSet;
 import java.util.Set;
