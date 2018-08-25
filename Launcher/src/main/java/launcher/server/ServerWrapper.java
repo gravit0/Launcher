@@ -5,9 +5,9 @@ import launcher.Launcher;
 import launcher.LauncherConfig;
 import launcher.client.ClientLauncher;
 import launcher.helper.IOHelper;
+import launcher.helper.LogHelper;
 import launcher.profiles.ClientProfile;
-import launcher.request.Request;
-import launcher.request.update.LauncherRequest;
+import launcher.request.update.ProfilesRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.signed.SignedObjectHolder;
 
@@ -24,11 +24,13 @@ public class ServerWrapper {
         modulesManager = new ModulesManager(wrapper);
         modulesManager.autoload(Paths.get("modules"));
         LauncherConfig cfg = new LauncherConfig(new HInput(IOHelper.newInput(IOHelper.getResourceURL(Launcher.CONFIG_FILE))));
-        LauncherRequest.Result result = new LauncherRequest(cfg).request();
+        ProfilesRequest.Result result = new ProfilesRequest(cfg).request();
         for(SignedObjectHolder<ClientProfile> p : result.profiles)
         {
-            if(p.object.getTitle() == ClientLauncher.title) {
+            LogHelper.debug("Get profile: %s",p.object.getTitle());
+            if(p.object.getTitle().equals(ClientLauncher.title)) {
                 wrapper.profile = p.object;
+                LogHelper.debug("Found profile: %s",ClientLauncher.title);
                 break;
             }
         }

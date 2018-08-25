@@ -18,6 +18,7 @@ import launchserver.response.profile.BatchProfileByUsernameResponse;
 import launchserver.response.profile.ProfileByUUIDResponse;
 import launchserver.response.profile.ProfileByUsernameResponse;
 import launchserver.response.update.LauncherResponse;
+import launchserver.response.update.ProfilesResponse;
 import launchserver.response.update.UpdateListResponse;
 import launchserver.response.update.UpdateResponse;
 
@@ -59,6 +60,7 @@ public abstract class Response {
         registerResponse(RequestType.LAUNCHER.getNumber(), LauncherResponse::new);
         registerResponse(RequestType.UPDATE_LIST.getNumber(), UpdateListResponse::new);
         registerResponse(RequestType.UPDATE.getNumber(), UpdateResponse::new);
+        registerResponse(RequestType.PROFILES.getNumber(), ProfilesResponse::new);
     }
 
     public static Response getResponse(int type, LaunchServer server, long session, HInput input, HOutput output, String ip) {
