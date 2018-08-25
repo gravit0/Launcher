@@ -21,6 +21,7 @@ import launcher.helper.SecurityHelper;
 import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
+import launchserver.manangers.BuildHookManager;
 
 public final class JARLauncherBinary extends LauncherBinary {
     @LauncherAPI
@@ -43,6 +44,7 @@ public final class JARLauncherBinary extends LauncherBinary {
         // Build launcher binary
         LogHelper.info("Building launcher binary file");
         try (ZipOutputStream output = new ZipOutputStream(IOHelper.newOutput(binaryFile))) {
+            BuildHookManager.preHook(output);
             //ClassPool pool = ClassPool.getDefault();
             //CtClass ctClass = pool.get(JAConfig.class.getCanonicalName());
             //CtConstructor ctConstructor = ctClass.getDeclaredConstructor(null);
@@ -50,7 +52,7 @@ public final class JARLauncherBinary extends LauncherBinary {
             //        "this.port = "+server.config.port+"; }");
             //String findName = "launcher/"+JAConfig.class.getSimpleName()+".class";
             //System.out.println(findName);
-            try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher-obf.jar")))) {
+            try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
                     //if(e.getName().equals(findName))
@@ -86,6 +88,7 @@ public final class JARLauncherBinary extends LauncherBinary {
             // Write launcher config file
             output.putNextEntry(IOHelper.newZipEntry(Launcher.CONFIG_FILE));
             output.write(launcherConfigBytes);
+            BuildHookManager.postHook(output);
         }
     }
 
