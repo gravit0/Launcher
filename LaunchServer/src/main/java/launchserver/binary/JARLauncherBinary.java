@@ -12,6 +12,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javassist.*;
+import launcher.AutogenConfig;
 import launcher.Launcher;
 import launcher.LauncherConfig;
 import launcher.LauncherAPI;
@@ -22,6 +24,8 @@ import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 import launchserver.manangers.BuildHookManager;
+
+import static launcher.helper.IOHelper.newZipEntry;
 
 public final class JARLauncherBinary extends LauncherBinary {
     @LauncherAPI
@@ -45,18 +49,16 @@ public final class JARLauncherBinary extends LauncherBinary {
         LogHelper.info("Building launcher binary file");
         try (ZipOutputStream output = new ZipOutputStream(IOHelper.newOutput(binaryFile))) {
             BuildHookManager.preHook(output);
-            //ClassPool pool = ClassPool.getDefault();
-            //CtClass ctClass = pool.get(JAConfig.class.getCanonicalName());
-            //CtConstructor ctConstructor = ctClass.getDeclaredConstructor(null);
-            //ctConstructor.setBody("{ this.address = \""+server.config.getAddress()+"\";"+
-            //        "this.port = "+server.config.port+"; }");
-            //String findName = "launcher/"+JAConfig.class.getSimpleName()+".class";
-            //System.out.println(findName);
+            JAConfigurator jaConfigurator = new JAConfigurator(AutogenConfig.class);
+            jaConfigurator.setAddress(server.config.getAddress());
+            jaConfigurator.setPort(server.config.port);
             try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
-                    if(BuildHookManager.isContainsBlacklist(e.getName()))
+                    if(BuildHookManager.isContainsBlacklist(e.getName())) {
+                        e = input.getNextEntry();
                         continue;
+                    }
                     output.putNextEntry(e);
                     IOHelper.transfer(input, output);
                     //}
@@ -80,9 +82,16 @@ public final class JARLauncherBinary extends LauncherBinary {
             }
 
             // Write launcher config file
-            output.putNextEntry(IOHelper.newZipEntry(Launcher.CONFIG_FILE));
+            output.putNextEntry(newZipEntry(Launcher.CONFIG_FILE));
             output.write(launcherConfigBytes);
+            ZipEntry e = newZipEntry(jaConfigurator.getZipEntryPath());
+            output.putNextEntry(e);
+            output.write(jaConfigurator.getBytecode());
             BuildHookManager.postHook(output);
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -109,7 +118,7 @@ public final class JARLauncherBinary extends LauncherBinary {
     }
 
     private static ZipEntry newEntry(String fileName) {
-        return IOHelper.newZipEntry(Launcher.RUNTIME_DIR + IOHelper.CROSS_SEPARATOR + fileName);
+        return newZipEntry(Launcher.RUNTIME_DIR + IOHelper.CROSS_SEPARATOR + fileName);
     }
 
     private final class RuntimeDirVisitor extends SimpleFileVisitor<Path> {

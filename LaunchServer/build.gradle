@@ -33,6 +33,7 @@ dependencies {
     compileOnly 'mysql:mysql-connector-java:8.0.12'
 	compileOnly 'jline:jline:2.14.6'
 	compileOnly 'org.fusesource.jansi:jansi:1.17.1'
+	compile group: 'org.javassist', name: 'javassist', version: '3.23.1-GA'
 	compileOnly('net.sf.launch4j:launch4j:3.9') {
 		exclude group: '*'
 	}

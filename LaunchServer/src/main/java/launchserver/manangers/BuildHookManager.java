@@ -1,5 +1,8 @@
 package launchserver.manangers;
 
+import launcher.AutogenConfig;
+import launchserver.binary.JARLauncherBinary;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
@@ -8,6 +11,7 @@ public class BuildHookManager {
     private static final Set<PostBuildHook> POST_HOOKS = new HashSet<>(4);
     private static final Set<PreBuildHook> PRE_HOOKS = new HashSet<>(4);
     private static final Set<String> CLASS_BLACKLIST = new HashSet<>(4);
+    private static final Set<String> MODULE_CLASS = new HashSet<>(4);
     public static void registerPostHook(PostBuildHook hook)
     {
         POST_HOOKS.add(hook);
@@ -15,6 +19,10 @@ public class BuildHookManager {
     public static void registerIgnoredClass(String clazz)
     {
         CLASS_BLACKLIST.add(clazz);
+    }
+    public static void registerClientModuleClass(String clazz)
+    {
+        MODULE_CLASS.add(clazz);
     }
     public static boolean isContainsBlacklist(String clazz)
     {
@@ -41,5 +49,8 @@ public class BuildHookManager {
     public interface PreBuildHook
     {
         void build(ZipOutputStream output);
+    }
+    static {
+        registerIgnoredClass(AutogenConfig.class.getName().replace('.','/').concat(".class"));
     }
 }

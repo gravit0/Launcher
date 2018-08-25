@@ -71,6 +71,9 @@ public class LauncherEngine {
     public static void main(String... args) throws Throwable {
         JVMHelper.verifySystemProperties(Launcher.class, true);
         LogHelper.printVersion("Launcher");
+        AutogenConfig cfg = new AutogenConfig();
+        System.out.println(cfg.address);
+        System.out.println(cfg.port);
         // Start Launcher
         Instant start = Instant.now();
         try {
