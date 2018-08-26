@@ -48,9 +48,9 @@ public final class JARLauncherBinary extends LauncherBinary {
 
         // Build launcher binary
         LogHelper.info("Building launcher binary file");
-        try (ZipOutputStream output = new ZipOutputStream(IOHelper.newOutput(binaryFile))) {
-        	server.buildHookManager.preHook(output);
-            JAConfigurator jaConfigurator = new JAConfigurator(AutogenConfig.class);
+        try (ZipOutputStream output = new ZipOutputStream(IOHelper.newOutput(binaryFile));
+             JAConfigurator jaConfigurator = new JAConfigurator(AutogenConfig.class)) {
+            server.buildHookManager.preHook(output);
             jaConfigurator.setAddress(server.config.getAddress());
             jaConfigurator.setPort(server.config.port);
             server.buildHookManager.registerAllClientModuleClass(jaConfigurator);
