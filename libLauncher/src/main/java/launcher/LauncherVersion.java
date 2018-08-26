@@ -42,6 +42,10 @@ public class LauncherVersion {
         }
     }
 
+    public String getVersionString() {
+    	return String.format("%d.%d.%d", this.major, this.minor, this.patch);
+    }
+    
     @Override
     public String toString() {
         return "LauncherVersion{" +

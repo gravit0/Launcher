@@ -1,6 +1,6 @@
 package launchserver.command.basic;
 
-import launcher.Launcher;
+import launcher.LauncherVersion;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
 import launchserver.command.Command;
@@ -22,6 +22,6 @@ public final class VersionCommand extends Command {
 
     @Override
     public void invoke(String... args) {
-        LogHelper.subInfo("LaunchServer version: %s (build #%s)", Launcher.VERSION, Launcher.BUILD);
+        LogHelper.subInfo("LaunchServer version: %d.%d.%d (build #%d)", LauncherVersion.MAJOR, LauncherVersion.MINOR, LauncherVersion.PATCH, LauncherVersion.BUILD);
     }
 }

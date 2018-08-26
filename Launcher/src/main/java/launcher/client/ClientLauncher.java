@@ -26,6 +26,7 @@ import com.eclipsesource.json.WriterConfig;
 import launcher.Launcher;
 import launcher.LauncherClassLoader;
 import launcher.LauncherConfig;
+import launcher.LauncherVersion;
 import launcher.LauncherAPI;
 import launcher.profiles.ClientProfile;
 import launcher.profiles.ClientProfile.Version;
@@ -315,7 +316,7 @@ public final class ClientLauncher {
         Collections.addAll(args, "--assetsDir", params.assetDir.toString());
         Collections.addAll(args, "--resourcePackDir", params.clientDir.resolve(RESOURCEPACKS_DIR).toString());
         if (version.compareTo(Version.MC194) >= 0) { // Just to show it in debug screen
-            Collections.addAll(args, "--versionType", "Launcher v" + Launcher.VERSION);
+            Collections.addAll(args, "--versionType", "Launcher v" + LauncherVersion.getVersion().getVersionString());
         }
 
         // Add server args

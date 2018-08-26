@@ -1,11 +1,9 @@
 package launchserver.response.update;
 
 import launcher.helper.LogHelper;
-import launcher.helper.SecurityHelper;
 import launcher.profiles.ClientProfile;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
-import launcher.serialize.signed.SignedBytesHolder;
 import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.LaunchServer;
 import launchserver.response.Response;

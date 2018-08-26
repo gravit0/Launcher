@@ -3,7 +3,6 @@ package launchserver.modules;
 import launcher.LauncherVersion;
 import launcher.modules.Module;
 import launcher.modules.ModuleContext;
-import launchserver.LaunchServer;
 
 public class CoreModule implements Module {
 	@Override
