@@ -21,6 +21,7 @@ public class NeverDecompModule implements Module {
 		return new LauncherVersion(1, 0, 0, 3);
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void init(ModuleContext context1) {
 		if (context1.getType().equals(ModuleContext.Type.LAUNCHSERVER)) {
