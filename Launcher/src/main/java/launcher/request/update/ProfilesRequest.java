@@ -31,7 +31,6 @@ public final class ProfilesRequest extends Request<ProfilesRequest.Result> {
     }
 
     @Override
-    @SuppressWarnings("CallToSystemExit")
     protected Result requestDo(HInput input, HOutput output) throws Exception {
         output.writeBoolean(true);
         output.flush();

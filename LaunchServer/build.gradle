@@ -15,6 +15,9 @@ repositories {
 	}
 }
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 jar {
     dependsOn parent.childProjects.Launcher.tasks.build, parent.childProjects.Launcher.tasks.genRuntimeJS, parent.childProjects.Launcher.tasks.jar
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }

@@ -1,0 +1,12 @@
+def mainClassName = "launcher.neverdecomp.NeverDecompModule"
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+dependencies {
+	compile 'org.mozilla:rhino:1.7.10'
+}
+
+jar {
+	manifest.attributes("Main-Class": mainClassName)
+}
