@@ -10,6 +10,7 @@ import launcher.helper.JVMHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
+import launcher.request.RequestType;
 import launcher.request.auth.AuthRequest.Result;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
@@ -34,7 +35,7 @@ public final class AuthRequest extends Request<Result> {
 
     @Override
     public Integer getType() {
-        return Type.AUTH.getNumber();
+        return RequestType.AUTH.getNumber();
     }
 
     @Override

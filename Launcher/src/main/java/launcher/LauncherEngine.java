@@ -9,10 +9,7 @@ import launcher.helper.*;
 import launcher.profiles.ClientProfile;
 import launcher.profiles.PlayerProfile;
 import launcher.profiles.Texture;
-import launcher.request.CustomRequest;
-import launcher.request.PingRequest;
-import launcher.request.Request;
-import launcher.request.RequestException;
+import launcher.request.*;
 import launcher.request.auth.AuthRequest;
 import launcher.request.auth.CheckServerRequest;
 import launcher.request.auth.JoinServerRequest;
@@ -122,7 +119,7 @@ public class LauncherEngine {
 
         // Set request class bindings
         bindings.put("RequestClass", Request.class);
-        bindings.put("RequestTypeClass", Request.Type.class);
+        bindings.put("RequestTypeClass", RequestType.class);
         bindings.put("RequestExceptionClass", RequestException.class);
         bindings.put("CustomRequestClass", CustomRequest.class);
         bindings.put("PingRequestClass", PingRequest.class);

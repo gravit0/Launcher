@@ -17,7 +17,6 @@ import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
-import launcher.request.auth.JoinServerRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.config.entry.BlockConfigEntry;
@@ -204,7 +203,7 @@ public abstract class FileAuthHandler extends AuthHandler {
 
             // Set and verify access token
             this.accessToken = accessToken == null ? null : SecurityHelper.verifyToken(accessToken);
-            this.serverID = serverID == null ? null : JoinServerRequest.verifyServerID(serverID);
+            this.serverID = serverID == null ? null : VerifyHelper.verifyServerID(serverID);
         }
 
         @LauncherAPI
@@ -213,7 +212,7 @@ public abstract class FileAuthHandler extends AuthHandler {
             if (input.readBoolean()) {
                 accessToken = SecurityHelper.verifyToken(input.readASCII(-SecurityHelper.TOKEN_STRING_LENGTH));
                 if (input.readBoolean()) {
-                    serverID = JoinServerRequest.verifyServerID(input.readASCII(41));
+                    serverID = VerifyHelper.verifyServerID(input.readASCII(41));
                 }
             }
         }

@@ -8,6 +8,7 @@ import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;
+import launcher.request.RequestType;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
@@ -28,7 +29,7 @@ public final class ProfileByUsernameRequest extends Request<PlayerProfile> {
 
     @Override
     public Integer getType() {
-        return Type.PROFILE_BY_USERNAME.getNumber();
+        return RequestType.PROFILE_BY_USERNAME.getNumber();
     }
 
     @Override

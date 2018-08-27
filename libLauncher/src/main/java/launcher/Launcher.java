@@ -17,13 +17,17 @@ public final class Launcher {
     // Version info
     //Все версии оригинального Sashok Launcher v3 считаются как 3.xx.xx, например 3.15.3 3.15.4
     //Все версии модификации считаются так: 3.16.xx Например 3.16.5 для коммита от 20 Августа
+    @Deprecated
     @LauncherAPI
-    public static final String VERSION = "3.17.0";
+    public static final String VERSION = LauncherVersion.getVersion().getVersionString();
+    @Deprecated
     @LauncherAPI
-    public static final String BUILD = readBuildNumber();
+    public static final String BUILD = String.valueOf(LauncherVersion.readBuildNumber());
     //Начиная с 4.0.0 PROTOCOL_MAGIC изменит свою форму
     @LauncherAPI
-    public static final int PROTOCOL_MAGIC = 0x724724_00 + 24;
+    public static final int PROTOCOL_MAGIC_LEGACY = 0x724724_00 + 24;
+    @LauncherAPI
+    public static final int PROTOCOL_MAGIC = 0xA205B064; // e = 2.718281828
 
     // Constants
     @LauncherAPI
@@ -76,14 +80,6 @@ public final class Launcher {
     @SuppressWarnings({"SameReturnValue", "MethodReturnAlwaysConstant"})
     public static String getVersion() {
         return VERSION; // Because Java constants are known at compile-time
-    }
-
-    private static String readBuildNumber() {
-        try {
-            return IOHelper.request(IOHelper.getResourceURL("buildnumber"));
-        } catch (IOException ignored) {
-            return "dev"; // Maybe dev env?
-        }
     }
 
 }

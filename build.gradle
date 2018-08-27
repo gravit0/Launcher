@@ -12,41 +12,5 @@ allprojects {
 
 subprojects {
 	apply plugin: 'java'
-	sourceCompatibility = '1.8'
-	targetCompatibility = '1.8'
 	tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
-	def ini = new File('sign/info.ini')
-	Map<String, String> map = parseIni(ini)
-	def keystoreFile = new File("sign/" + map.get("keyname"))
-	def keystorepass = map.get("keystorepass")
-	def keyalias = map.get("keyalias")
-
-	task signJar(group: 'Build'){
-		dependsOn tasks.jar
-		doLast{
-			def signdir  = new File("$buildDir/jars/signed")
-			signdir.mkdirs()
-			ant.signjar(
-			destDir: "${signdir.absolutePath}",
-                  jar: tasks.jar.archivePath.getAbsolutePath(),
-                  alias:keyalias,
-                  storetype:"jks",
-                  keystore:"${keystoreFile.absolutePath}",
-                  storepass:keystorepass,
-                  verbose:true,
-                  preservelastmodified:"true"
-			)
-		}
-	}
-	
-	build.dependsOn tasks.signJar
-}
-
-Map<String, String> parseIni(File ini) throws IOException {
-	Map<String, String> toRet = new HashMap<String, String>()
-	for (String line : java.nio.file.Files.readAllLines(ini.toPath())) {
-		String[] props = line.split("=")
-		toRet.put(props[0], props[1])
-	}
-	return toRet
 }

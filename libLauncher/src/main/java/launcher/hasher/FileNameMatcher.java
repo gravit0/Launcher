@@ -20,17 +20,17 @@ public final class FileNameMatcher {
         this.exclusions = exclusions;
     }
 
-    @LauncherAPI
+
     public boolean shouldUpdate(Collection<String> path) {
         return (anyMatch(update, path) || anyMatch(verify, path)) && !anyMatch(exclusions, path);
     }
 
-    @LauncherAPI
+
     public boolean shouldVerify(Collection<String> path) {
         return anyMatch(verify, path) && !anyMatch(exclusions, path);
     }
 
-    @LauncherAPI
+
     public FileNameMatcher verifyOnly() {
         return new FileNameMatcher(NO_ENTRIES, verify, exclusions);
     }

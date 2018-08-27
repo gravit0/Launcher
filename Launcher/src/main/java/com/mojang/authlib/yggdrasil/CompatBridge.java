@@ -11,12 +11,13 @@ import launcher.request.auth.JoinServerRequest;
 import launcher.request.uuid.BatchProfileByUsernameRequest;
 import launcher.request.uuid.ProfileByUUIDRequest;
 import launcher.request.uuid.ProfileByUsernameRequest;
+import launcher.serialize.SerializeLimits;
 
 // Used to bypass Launcher's class name obfuscation and access API
 @SuppressWarnings("unused")
 @LauncherAPI
 public final class CompatBridge {
-    public static final int PROFILES_MAX_BATCH_SIZE = BatchProfileByUsernameRequest.MAX_BATCH_SIZE;
+    public static final int PROFILES_MAX_BATCH_SIZE = SerializeLimits.MAX_BATCH_SIZE;
 
     private CompatBridge() {
     }

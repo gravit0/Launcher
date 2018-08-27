@@ -56,11 +56,12 @@ import launchserver.binary.LauncherBinary;
 import launchserver.command.handler.CommandHandler;
 import launchserver.command.handler.JLineCommandHandler;
 import launchserver.command.handler.StdCommandHandler;
-import launchserver.manangers.GarbageManager;
+import launcher.managers.GarbageManager;
+import launchserver.manangers.BuildHookManager;
 import launchserver.manangers.ModulesManager;
 import launchserver.manangers.SessionManager;
 import launchserver.response.Response;
-import launchserver.response.ServerSocketHandler;
+import launchserver.socket.ServerSocketHandler;
 import launchserver.texture.TextureProvider;
 
 public final class LaunchServer implements Runnable, AutoCloseable {
@@ -102,6 +103,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     // Server
     @LauncherAPI
     public final ModulesManager modulesManager;
+    @LauncherAPI
+    public final BuildHookManager buildHookManager;
     @LauncherAPI
     public final CommandHandler commandHandler;
     @LauncherAPI
@@ -187,7 +190,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         }
         config.verify();
 
-        // init anti-brutforce
+        // build hooks anti-brutforce
+        buildHookManager = new BuildHookManager();
         limiter = new AuthLimiter(this);
 
         sessionManager = new SessionManager();

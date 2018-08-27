@@ -15,8 +15,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import launcher.Launcher;
 import launcher.LauncherAPI;
+import launcher.LauncherVersion;
+
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.Ansi.Color;
@@ -236,8 +237,8 @@ public final class LogHelper {
         return new Ansi().bold(). // Setup
                 fgBright(Color.MAGENTA).a("sashok724's "). // sashok724's
                 fgBright(Color.CYAN).a(product). // Product
-                fgBright(Color.WHITE).a(" v").fgBright(Color.BLUE).a(Launcher.VERSION). // Version
-                fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(Launcher.BUILD).fgBright(Color.WHITE).a(')'). // Build#
+                fgBright(Color.WHITE).a(" v").fgBright(Color.BLUE).a(Integer.toString(LauncherVersion.BUILD)). // Version
+                fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(LauncherVersion.getVersion().getVersionString()).fgBright(Color.WHITE).a(')'). // Build#
                 fgBright(Color.WHITE).a(" mod by ").fgBright(Color.RED).a("Gravit").
                 reset().toString(); // To string
     }
@@ -250,7 +251,7 @@ public final class LogHelper {
     }
 
     private static String formatVersion(String product) {
-        return String.format("sashok724's %s v%s (build #%s) mod by Gravit", product, Launcher.VERSION, Launcher.BUILD);
+        return String.format("sashok724's %s v%s (build #%s) mod by Gravit", product, LauncherVersion.getVersion().getVersionString(), Integer.toString(LauncherVersion.BUILD));
     }
 
     static {

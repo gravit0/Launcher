@@ -14,8 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -52,8 +50,6 @@ public final class SecurityHelper {
     public static final int CRYPTO_MAX_LENGTH = 2048;
 
     // Certificate constants
-    @LauncherAPI
-    public static final String CERTIFICATE_DIGEST = "229f90000b89d5a542aaef77b4c1e405e83f3a02682968e1327f1811effcbe6d";
     @LauncherAPI
     public static final String HEX = "0123456789abcdef";
     @LauncherAPI
@@ -114,20 +110,6 @@ public final class SecurityHelper {
     @LauncherAPI
     public static KeyPair genRSAKeyPair() {
         return genRSAKeyPair(newRandom());
-    }
-
-    @LauncherAPI
-    public static boolean isValidCertificate(Certificate cert) {
-        try {
-            return toHex(digest(DigestAlgorithm.SHA256, cert.getEncoded())).equals(CERTIFICATE_DIGEST);
-        } catch (CertificateEncodingException e) {
-            throw new InternalError(e);
-        }
-    }
-
-    @LauncherAPI
-    public static boolean isValidCertificates(Certificate... certs) {
-        return certs != null && certs.length == 1 && isValidCertificate(certs[0]);
     }
 
     @LauncherAPI
@@ -364,12 +346,6 @@ public final class SecurityHelper {
     @LauncherAPI
     public static RSAPublicKey toPublicRSAKey(byte[] bytes) throws InvalidKeySpecException {
         return (RSAPublicKey) newRSAKeyFactory().generatePublic(new X509EncodedKeySpec(bytes));
-    }
-
-    @Deprecated
-    @LauncherAPI
-    public static void verifyCertificates(Class<?> clazz) {
-
     }
 
     @LauncherAPI

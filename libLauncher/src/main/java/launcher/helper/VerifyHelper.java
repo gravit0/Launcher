@@ -23,6 +23,7 @@ public final class VerifyHelper {
     public static final Predicate<String> NOT_EMPTY = s -> !s.isEmpty();
     @LauncherAPI
     public static final Pattern USERNAME_PATTERN = Pattern.compile(Boolean.parseBoolean(System.getProperty("username.russian", "true")) ? "[a-zA-Zа-яА-Я0-9_.\\-]{1,16}" : "[a-zA-Z0-9-_\\\\.]{1,16}");
+    private static final Pattern SERVERID_PATTERN = Pattern.compile("-?[0-9a-f]{1,40}");
 
     private VerifyHelper() {
     }
@@ -97,5 +98,16 @@ public final class VerifyHelper {
     @LauncherAPI
     public static String verifyUsername(String username) {
         return verify(username, VerifyHelper::isValidUsername, String.format("Invalid username: '%s'", username));
+    }
+
+    @LauncherAPI
+    public static boolean isValidServerID(CharSequence serverID) {
+        return SERVERID_PATTERN.matcher(serverID).matches();
+    }
+
+    @LauncherAPI
+    public static String verifyServerID(String serverID) {
+        return verify(serverID, VerifyHelper::isValidServerID,
+                String.format("Invalid server ID: '%s'", serverID));
     }
 }

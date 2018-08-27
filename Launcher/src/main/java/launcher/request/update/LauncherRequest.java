@@ -17,6 +17,7 @@ import launcher.helper.JVMHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
 import launcher.request.Request;
+import launcher.request.RequestType;
 import launcher.request.update.LauncherRequest.Result;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
@@ -40,7 +41,7 @@ public final class LauncherRequest extends Request<Result> {
 
     @Override
     public Integer getType() {
-        return Type.LAUNCHER.getNumber();
+        return RequestType.LAUNCHER.getNumber();
     }
 
     @Override

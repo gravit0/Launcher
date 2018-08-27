@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;
-import launcher.request.auth.JoinServerRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
@@ -23,7 +22,7 @@ public final class CheckServerResponse extends Response {
     @Override
     public void reply() throws IOException {
         String username = VerifyHelper.verifyUsername(input.readString(SerializeLimits.MAX_LOGIN));
-        String serverID = JoinServerRequest.verifyServerID(input.readASCII(41)); // With minus sign
+        String serverID = VerifyHelper.verifyServerID(input.readASCII(41)); // With minus sign
         String client = input.readString(SerializeLimits.MAX_CLIENT);
         debug("Username: %s, Server ID: %s", username, serverID);
 

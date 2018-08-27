@@ -12,10 +12,10 @@ import launcher.hasher.HashedDir;
 import launcher.hasher.HashedEntry;
 import launcher.hasher.HashedEntry.Type;
 import launcher.helper.IOHelper;
-import launcher.request.update.UpdateRequest;
-import launcher.request.update.UpdateRequest.Action;
+import launcher.request.UpdateAction;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.LaunchServer;
 import launchserver.response.Response;
@@ -51,18 +51,18 @@ public final class UpdateResponse extends Response {
         // Perform update
         // noinspection IOResourceOpenedButNotSafelyClosed
         OutputStream fileOutput = server.config.compress ? new DeflaterOutputStream(output.stream, IOHelper.newDeflater(), IOHelper.BUFFER_SIZE, true) : output.stream;
-        Action[] actionsSlice = new Action[UpdateRequest.MAX_QUEUE_SIZE];
+        UpdateAction[] actionsSlice = new UpdateAction[SerializeLimits.MAX_QUEUE_SIZE];
         loop:
         while (true) {
             // Read actions slice
             int length = input.readLength(actionsSlice.length);
             for (int i = 0; i < length; i++) {
-                actionsSlice[i] = new Action(input);
+                actionsSlice[i] = new UpdateAction(input);
             }
 
             // Perform actions
             for (int i = 0; i < length; i++) {
-                Action action = actionsSlice[i];
+                UpdateAction action = actionsSlice[i];
                 switch (action.type) {
                     case CD:
                         debug("CD '%s'", action.name);

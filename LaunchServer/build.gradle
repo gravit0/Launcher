@@ -1,4 +1,5 @@
 def mainClassName = "launchserver.LaunchServer"
+def mainAgentName = "launchserver.StarterAgent"
 
 repositories {
     maven {
@@ -15,24 +16,65 @@ repositories {
 	}
 }
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+configurations {
+	bundleOnly
+	bundle
+	hikari
+	bundle.extendsFrom bundleOnly
+	compileOnly.extendsFrom bundle, hikari
+}
+
 jar {
-    dependsOn parent.childProjects.Launcher.tasks.build, parent.childProjects.Launcher.tasks.genRuntimeJS, parent.childProjects.Launcher.tasks.signJar
+    dependsOn parent.childProjects.Launcher.tasks.build, parent.childProjects.Launcher.tasks.genRuntimeJS, parent.childProjects.Launcher.tasks.jar
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-    from(parent.childProjects.Launcher.file("build/jars/signed/Launcher-obf.jar"), parent.childProjects.Launcher.tasks.genRuntimeJS.archivePath)
-    manifest.attributes("Main-Class": mainClassName)
-    manifest.attributes("Class-Path": "libraries/jansi-1.17.1.jar libraries/jline-2.14.6.jar libraries/mysql-connector-java-8.0.12.jar libraries/hikaricp/HikariCP-3.2.0.jar libraries/hikaricp/javassist-3.22.0-CR1.jar libraries/hikaricp/slf4j-api-1.7.25.jar libraries/hikaricp/slf4j-simple-1.7.25.jar libraries/commons-io-2.6.jar libraries/launch4j/launch4j.jar")
+    from(parent.childProjects.Launcher.tasks.jar.archivePath, parent.childProjects.Launcher.tasks.genRuntimeJS.archivePath)
+    manifest.attributes("Main-Class": mainClassName,
+		"Premain-Class": mainAgentName,
+		"Can-Redefine-Classes": "true",
+		"Can-Retransform-Classes": "true",
+		"Can-Set-Native-Method-Prefix": "true"
+		)
 }
 
 dependencies {
-    compile project(':libLauncher')
-    compileOnly 'commons-io:commons-io:2.6'
-    compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
-    compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT'
-    compileOnly 'hikari-cp:hikari-cp:2.6.0'
-    compileOnly 'mysql:mysql-connector-java:8.0.12'
-	  compileOnly 'jline:jline:2.14.6'
-	  compileOnly 'org.fusesource.jansi:jansi:1.17.1'
-	  compileOnly('net.sf.launch4j:launch4j:3.9') {
+    compile project(':libLauncher') // pack
+    compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT' // api
+    compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT' // api
+    
+	bundle 'mysql:mysql-connector-java:8.0.12'
+	bundle 'jline:jline:2.14.6'
+	bundle 'net.sf.proguard:proguard-base:6.0.3'
+	bundle 'org.bouncycastle:bcpkix-jdk15on:1.49'
+	bundle 'org.fusesource.jansi:jansi:1.17.1'
+	bundle 'commons-io:commons-io:2.6'
+	bundle 'org.javassist:javassist:3.23.1-GA'
+	bundle 'org.slf4j:slf4j-simple:1.7.25'
+	bundle 'org.slf4j:slf4j-api:1.7.25'
+	
+	hikari 'io.micrometer:micrometer-core:1.0.6'
+	hikari('hikari-cp:hikari-cp:2.6.0') {
+		exclude group: 'javassist'
+		exclude group: 'io.micrometer'
+		exclude group: 'org.slf4j'
+	}
+	
+	compileOnly('net.sf.launch4j:launch4j:3.12') { // need user
 		exclude group: '*'
 	}
 }
+
+task hikari(type: Copy) {
+	into "$buildDir/libs/libraries/hikaricp"
+	from configurations.hikari
+}
+
+task dumpLibs(type: Copy) {
+	dependsOn tasks.hikari
+	into "$buildDir/libs/libraries"
+	from configurations.bundle
+}
+
+build.dependsOn tasks.dumpLibs
