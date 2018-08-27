@@ -51,6 +51,7 @@ import launchserver.auth.handler.AuthHandler;
 import launchserver.auth.hwid.HWIDHandler;
 import launchserver.auth.provider.AuthProvider;
 import launchserver.binary.EXEL4JLauncherBinary;
+import launchserver.binary.EXELauncherBinary;
 import launchserver.binary.JARLauncherBinary;
 import launchserver.binary.LauncherBinary;
 import launchserver.command.handler.CommandHandler;
@@ -93,7 +94,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     @LauncherAPI
     public final LauncherBinary launcherBinary;
     @LauncherAPI
-    public final EXEL4JLauncherBinary launcherEXEBinary;
+    public final LauncherBinary launcherEXEBinary;
 
     // HWID ban + anti-brutforce
     @LauncherAPI
@@ -203,7 +204,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Set launcher EXE binary
         launcherBinary = new JARLauncherBinary(this);
-        launcherEXEBinary = new EXEL4JLauncherBinary(this);
+        launcherEXEBinary = binary();
         syncLauncherBinaries();
 
         // Sync updates dir
@@ -226,7 +227,12 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         modulesManager.postInitModules();
     }
 
-    @Override
+    private LauncherBinary binary() {
+    	if (config.launch4j.enabled) return new EXEL4JLauncherBinary(this);
+    	else return new EXELauncherBinary(this);
+    }
+
+	@Override
     public void close() {
         serverSocketHandler.close();
 
@@ -308,7 +314,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Syncing launcher EXE binary
         LogHelper.subInfo("Syncing launcher EXE binary file");
-        if (!launcherEXEBinary.sync() && launcherEXEBinary.config.enabled)
+        if (!launcherEXEBinary.sync() && config.launch4j.enabled)
             LogHelper.subWarning("Missing launcher EXE binary file");
 
     }
@@ -446,7 +452,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
         // Misc options
         @LauncherAPI
-        public final BlockConfigEntry launch4J;
+        public final ExeConf launch4j;
         @LauncherAPI
         public final boolean compress;
         @LauncherAPI
@@ -490,7 +496,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                     block.getEntry("hwidHandlerConfig", BlockConfigEntry.class));
 
             // Set misc config
-            launch4J = block.getEntry("launch4J", BlockConfigEntry.class);
+            launch4j = new ExeConf(block.getEntry("launch4J", BlockConfigEntry.class));
             binaryName = block.getEntryValue("binaryName", StringConfigEntry.class);
             compress = block.getEntryValue("compress", BooleanConfigEntry.class);
         }
@@ -518,6 +524,42 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         @LauncherAPI
         public void verify() {
             VerifyHelper.verify(getAddress(), VerifyHelper.NOT_EMPTY, "LaunchServer address can't be empty");
+        }
+    }
+    
+    public static class ExeConf extends ConfigObject {
+        public final boolean enabled;
+        public String productName;
+        public String productVer;
+        public String fileDesc;
+        public String fileVer;
+        public String internalName;
+        public String copyright;
+        public String trademarks;
+
+        public String txtFileVersion;
+        public String txtProductVersion;
+
+        private ExeConf(BlockConfigEntry block) {
+            super(block);
+            enabled = block.getEntryValue("enabled", BooleanConfigEntry.class);
+            productName = block.hasEntry("productName") ? block.getEntryValue("productName", StringConfigEntry.class)
+                    : "sashok724's Launcher v3 mod by Gravit";
+            productVer = block.hasEntry("productVer") ? block.getEntryValue("productVer", StringConfigEntry.class)
+                    : "1.0.0.0";
+            fileDesc = block.hasEntry("fileDesc") ? block.getEntryValue("fileDesc", StringConfigEntry.class)
+                    : "sashok724's Launcher v3 mod by Gravit";
+            fileVer = block.hasEntry("fileVer") ? block.getEntryValue("fileVer", StringConfigEntry.class) : "1.0.0.0";
+            internalName = block.hasEntry("internalName") ? block.getEntryValue("internalName", StringConfigEntry.class)
+                    : "Launcher";
+            copyright = block.hasEntry("copyright") ? block.getEntryValue("copyright", StringConfigEntry.class)
+                    : "© sashok724 LLC";
+            trademarks = block.hasEntry("trademarks") ? block.getEntryValue("trademarks", StringConfigEntry.class)
+                    : "This product is licensed under MIT License";
+            txtFileVersion = block.hasEntry("txtFileVersion") ? block.getEntryValue("txtFileVersion", StringConfigEntry.class)
+                    : CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
+            txtProductVersion = block.hasEntry("txtProductVersion") ? block.getEntryValue("txtProductVersion", StringConfigEntry.class)
+                    : CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
         }
     }
 }

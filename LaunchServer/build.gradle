@@ -43,7 +43,9 @@ dependencies {
     compile project(':libLauncher') // pack
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT' // api
     compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT' // api
-    
+	
+	compileOnly 'org.ow2.asm:asm-debug-all:5.0.4'
+	bundleOnly 'org.ow2.asm:asm-all:5.0.4'
 	bundle 'mysql:mysql-connector-java:8.0.12'
 	bundle 'jline:jline:2.14.6'
 	bundle 'net.sf.proguard:proguard-base:6.0.3'

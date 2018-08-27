@@ -18,10 +18,14 @@ public class AntiDecompileMethodVisitor extends AdviceAdapter implements Opcodes
 	
 	public Label newLabel(int instr) {
 		Label l = newLabel();
+		this.visitLabel(l);
 		this.visitInsn(instr);
 		return l;
 	}
 	
+	public void newTry() {
+		this.visitTryCatchBlock(null, null, null, methodDesc);
+	}
 	public Label jumpLabel(Label to) {
 		Label l = newLabel();
 		this.visitJumpInsn(GOTO, to);
