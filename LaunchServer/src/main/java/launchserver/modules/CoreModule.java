@@ -3,7 +3,6 @@ package launchserver.modules;
 import launcher.LauncherVersion;
 import launcher.modules.Module;
 import launcher.modules.ModuleContext;
-import launchserver.LaunchServer;
 
 public class CoreModule implements Module {
 	@Override
@@ -18,17 +17,17 @@ public class CoreModule implements Module {
 
 	@Override
 	public void init(ModuleContext context) {
-
+		// nothing to do
 	}
 
 	@Override
 	public void preInit(ModuleContext context) {
-
+		// nothing to do
 	}
 
 	@Override
 	public void postInit(ModuleContext context) {
-
+		// nothing to do
 	}
 
 

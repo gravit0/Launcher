@@ -1,9 +1,7 @@
 package launcher.request.update;
 
-import launcher.Launcher;
 import launcher.LauncherAPI;
 import launcher.LauncherConfig;
-import launcher.helper.IOHelper;
 import launcher.profiles.ClientProfile;
 import launcher.request.Request;
 import launcher.request.RequestType;
@@ -33,7 +31,6 @@ public final class ProfilesRequest extends Request<ProfilesRequest.Result> {
     }
 
     @Override
-    @SuppressWarnings("CallToSystemExit")
     protected Result requestDo(HInput input, HOutput output) throws Exception {
         output.writeBoolean(true);
         output.flush();

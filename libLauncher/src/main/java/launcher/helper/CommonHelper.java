@@ -8,8 +8,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
-import launcher.Launcher;
 import launcher.LauncherAPI;
+import launcher.LauncherVersion;
 
 public final class CommonHelper {
     @LauncherAPI
@@ -81,6 +81,6 @@ public final class CommonHelper {
 
     @LauncherAPI
     public static String formatVars(String in) {
-        return replace(in, VERSIONREPLACE , Launcher.VERSION, BUILDREPLACE, Launcher.BUILD);
+        return replace(in, VERSIONREPLACE , LauncherVersion.getVersion().getVersionString(), BUILDREPLACE, Integer.toString(LauncherVersion.BUILD));
     }
 }

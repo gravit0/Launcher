@@ -23,7 +23,7 @@ import launcher.helper.SecurityHelper;
 import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
-import launchserver.manangers.BuildHookManager;
+
 import proguard.*;
 
 import static launcher.helper.IOHelper.newZipEntry;
@@ -48,16 +48,16 @@ public final class JARLauncherBinary extends LauncherBinary {
 
         // Build launcher binary
         LogHelper.info("Building launcher binary file");
-        try (ZipOutputStream output = new ZipOutputStream(IOHelper.newOutput(binaryFile))) {
-            BuildHookManager.preHook(output);
-            JAConfigurator jaConfigurator = new JAConfigurator(AutogenConfig.class);
+        try (ZipOutputStream output = new ZipOutputStream(IOHelper.newOutput(binaryFile));
+             JAConfigurator jaConfigurator = new JAConfigurator(AutogenConfig.class)) {
+            server.buildHookManager.preHook(output);
             jaConfigurator.setAddress(server.config.getAddress());
             jaConfigurator.setPort(server.config.port);
-            BuildHookManager.registerAllClientModuleClass(jaConfigurator);
+            server.buildHookManager.registerAllClientModuleClass(jaConfigurator);
             try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
-                    if(BuildHookManager.isContainsBlacklist(e.getName())) {
+                    if(server.buildHookManager.isContainsBlacklist(e.getName())) {
                         e = input.getNextEntry();
                         continue;
                     }
@@ -89,7 +89,7 @@ public final class JARLauncherBinary extends LauncherBinary {
             ZipEntry e = newZipEntry(jaConfigurator.getZipEntryPath());
             output.putNextEntry(e);
             output.write(jaConfigurator.getBytecode());
-            BuildHookManager.postHook(output);
+            server.buildHookManager.postHook(output);
         } catch (CannotCompileException e) {
             e.printStackTrace();
         } catch (NotFoundException e) {
