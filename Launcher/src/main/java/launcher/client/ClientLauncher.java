@@ -159,14 +159,15 @@ public final class ClientLauncher {
             args.add(JVMHelper.systemToJvmProperty("avn64"));
         }
         // Add classpath and main class
-        StringBuilder classPathString = new StringBuilder(IOHelper.getCodeSource(ClientLauncher.class).toString());
+        String pathLauncher = IOHelper.getCodeSource(ClientLauncher.class).toString();
+        StringBuilder classPathString = new StringBuilder(pathLauncher);
         LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
         for (Path path : classPath) {
             classPathString.append(File.pathSeparatorChar).append(path.toString());
         }
         Collections.addAll(args, profile.object.getJvmArgs());
         Collections.addAll(args, "-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
-        //Collections.addAll(args,"-javaagent:launcher.LauncherAgent");
+        Collections.addAll(args,"-javaagent:".concat(pathLauncher));
         //Collections.addAll(args, "-classpath", classPathString.toString());
         if(wrapper)
         Collections.addAll(args, "-Djava.class.path=".concat(classPathString.toString())); // Add Class Path
@@ -246,6 +247,7 @@ public final class ClientLauncher {
         URL[] classpathurls = resolveClassPath(params.clientDir, profile.object.getClassPath());
         classLoader = new LauncherClassLoader(classpathurls, ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
+        LauncherClassLoader.systemclassloader = classLoader;
         // Start client with WatchService monitoring
         boolean digest = !profile.object.isUpdateFastCheck();
         LogHelper.debug("Starting JVM and client WatchService");

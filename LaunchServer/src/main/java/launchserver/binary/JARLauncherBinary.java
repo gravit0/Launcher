@@ -1,8 +1,6 @@
 package launchserver.binary;
 
 import java.io.*;
-import java.nio.channels.Channel;
-import java.nio.channels.Channels;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +24,6 @@ import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 
-import launchserver.manangers.BuildHookManager;
 import proguard.*;
 
 import static launcher.helper.IOHelper.newZipEntry;
@@ -60,19 +57,22 @@ public final class JARLauncherBinary extends LauncherBinary {
             try (ZipInputStream input = new ZipInputStream(IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
                 ZipEntry e = input.getNextEntry();
                 while (e != null) {
-                    if(server.buildHookManager.isContainsBlacklist(e.getName())) {
+                    String filename = e.getName();
+                    if(server.buildHookManager.isContainsBlacklist(filename)) {
                         e = input.getNextEntry();
                         continue;
                     }
                     output.putNextEntry(e);
-                    if(e.getName().endsWith(".class"))
+                    if(filename.endsWith(".class"))
                     {
+                        CharSequence classname = filename.replace('/','.').subSequence(0,filename.length() - ".class".length());
+                        System.out.println(classname);
                         byte[] bytes;
                         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(2048)) {
                             IOHelper.transfer(input, outputStream);
                             bytes = outputStream.toByteArray();
                         }
-                        bytes = server.buildHookManager.classTransform(bytes);
+                        bytes = server.buildHookManager.classTransform(bytes, classname);
                         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
                             IOHelper.transfer(inputStream, output);
                         }
