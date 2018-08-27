@@ -18,6 +18,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import launcher.LauncherAPI;
 import launcher.LauncherVersion;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.Ansi.Color;
@@ -25,6 +28,7 @@ import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.AnsiOutputStream;
 
 public final class LogHelper {
+    private static Logger logger = LogManager.getLogger("LogHelper");
     @LauncherAPI
     public static final String DEBUG_PROPERTY = "launcher.debug";
     @LauncherAPI
@@ -109,9 +113,7 @@ public final class LogHelper {
 
     @LauncherAPI
     public static void log(Level level, String message, boolean sub) {
-        String dateTime = DATE_TIME_FORMATTER.format(LocalDateTime.now());
-        println(JANSI ? ansiFormatLog(level, dateTime, message, sub) :
-                formatLog(level, message, dateTime, sub));
+        logger.log(level,message);
     }
 
     @LauncherAPI
@@ -160,7 +162,7 @@ public final class LogHelper {
 
     @LauncherAPI
     public static void subWarning(String message) {
-        log(Level.WARNING, message, true);
+        log(Level.WARN, message, true);
     }
 
     @LauncherAPI
@@ -182,55 +184,12 @@ public final class LogHelper {
 
     @LauncherAPI
     public static void warning(String message) {
-        log(Level.WARNING, message, false);
+        log(Level.WARN, message, false);
     }
 
     @LauncherAPI
     public static void warning(String format, Object... args) {
         warning(String.format(format, args));
-    }
-
-    private static String ansiFormatLog(Level level, String dateTime, String message, boolean sub) {
-        Color levelColor;
-        boolean bright = level != Level.DEBUG;
-        switch (level) {
-            case WARNING:
-                levelColor = Color.YELLOW;
-                break;
-            case ERROR:
-                levelColor = Color.RED;
-                break;
-            default: // INFO, DEBUG, Unknown
-                levelColor = Color.WHITE;
-                break;
-        }
-
-        // Date-time
-        Ansi ansi = new Ansi();
-        ansi.fg(Color.WHITE).a(dateTime);
-
-        // Level
-        ansi.fgBright(Color.WHITE).a(" [").bold();
-        if (bright) {
-            ansi.fgBright(levelColor);
-        } else {
-            ansi.fg(levelColor);
-        }
-        ansi.a(level).boldOff().fgBright(Color.WHITE).a("] ");
-
-        // Message
-        if (bright) {
-            ansi.fgBright(levelColor);
-        } else {
-            ansi.fg(levelColor);
-        }
-        if (sub) {
-            ansi.a(' ').a(Attribute.ITALIC);
-        }
-        ansi.a(message);
-
-        // Finish with reset code
-        return ansi.reset().toString();
     }
 
     private static String ansiFormatVersion(String product) {
@@ -241,13 +200,6 @@ public final class LogHelper {
                 fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(LauncherVersion.getVersion().getVersionString()).fgBright(Color.WHITE).a(')'). // Build#
                 fgBright(Color.WHITE).a(" mod by ").fgBright(Color.RED).a("Gravit").
                 reset().toString(); // To string
-    }
-
-    private static String formatLog(Level level, String message, String dateTime, boolean sub) {
-        if (sub) {
-            message = ' ' + message;
-        }
-        return dateTime + " [" + level.name + "] " + message;
     }
 
     private static String formatVersion(String product) {
@@ -289,21 +241,6 @@ public final class LogHelper {
     @FunctionalInterface
     public interface Output {
         void println(String message);
-    }
-
-    @LauncherAPI
-    public enum Level {
-        DEBUG("DEBUG"), INFO("INFO"), WARNING("WARN"), ERROR("ERROR");
-        public final String name;
-
-        Level(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
     }
 
     private static final class JAnsiOutput extends WriterOutput {
