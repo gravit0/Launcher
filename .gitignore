@@ -99,6 +99,7 @@ modules.xml
 /build/
 /buildSrc/build/
 /buildSrc/.gradle
+modules/NeverDecomp/build
 # Ignore Gradle GUI config
 gradle-app.setting
 
