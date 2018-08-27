@@ -1,6 +1,8 @@
 package launchserver.binary;
 
 import java.io.*;
+import java.nio.channels.Channel;
+import java.nio.channels.Channels;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +26,7 @@ import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 
+import launchserver.manangers.BuildHookManager;
 import proguard.*;
 
 import static launcher.helper.IOHelper.newZipEntry;
@@ -62,6 +65,19 @@ public final class JARLauncherBinary extends LauncherBinary {
                         continue;
                     }
                     output.putNextEntry(e);
+                    if(e.getName().endsWith(".class"))
+                    {
+                        byte[] bytes;
+                        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(2048)) {
+                            IOHelper.transfer(input, outputStream);
+                            bytes = outputStream.toByteArray();
+                        }
+                        bytes = server.buildHookManager.classTransform(bytes);
+                        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
+                            IOHelper.transfer(inputStream, output);
+                        }
+                    }
+                    else
                     IOHelper.transfer(input, output);
                     //}
                     e = input.getNextEntry();

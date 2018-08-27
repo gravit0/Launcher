@@ -10,6 +10,7 @@ import java.util.zip.ZipOutputStream;
 public class BuildHookManager {
     private final Set<PostBuildHook> POST_HOOKS;
     private final Set<PreBuildHook> PRE_HOOKS;
+    private final Set<Transformer> CLASS_TRANSFORMER;
     private final Set<String> CLASS_BLACKLIST;
     private final Set<String> MODULE_CLASS;
 	public BuildHookManager() {
@@ -17,11 +18,22 @@ public class BuildHookManager {
 		PRE_HOOKS = new HashSet<>(4);
 		CLASS_BLACKLIST = new HashSet<>(4);
 		MODULE_CLASS = new HashSet<>(4);
+        CLASS_TRANSFORMER = new HashSet<>(4);
 		autoRegisterIgnoredClass(AutogenConfig.class.getName());
 	}
     public void registerPostHook(PostBuildHook hook)
     {
         POST_HOOKS.add(hook);
+    }
+    public void registerClassTransformer(Transformer transformer)
+    {
+        CLASS_TRANSFORMER.add(transformer);
+    }
+    public byte[] classTransform(byte[] clazz)
+    {
+        byte[] result = clazz;
+        for(Transformer transformer : CLASS_TRANSFORMER) result = transformer.transform(result);
+        return result;
     }
     public void registerIgnoredClass(String clazz)
     {
@@ -59,6 +71,11 @@ public class BuildHookManager {
     public interface PostBuildHook
     {
         void build(ZipOutputStream output);
+    }
+    @FunctionalInterface
+    public interface Transformer
+    {
+        byte[] transform(byte[] input);
     }
     @FunctionalInterface
     public interface PreBuildHook
