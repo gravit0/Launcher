@@ -17,17 +17,17 @@ public class CoreModule implements Module {
 
 	@Override
 	public void init(ModuleContext context) {
-
+		// nothing to do
 	}
 
 	@Override
 	public void preInit(ModuleContext context) {
-
+		// nothing to do
 	}
 
 	@Override
 	public void postInit(ModuleContext context) {
-
+		// nothing to do
 	}
 
 

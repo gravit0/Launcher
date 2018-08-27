@@ -113,6 +113,8 @@ gradle-app.setting
 LaunchServer/build
 Launcher/build
 libLauncher/build
+modules/NeverDecomp/build
+modules/build
 buildnumber
 Launcher.iws
 *.directory
