@@ -1,8 +1,6 @@
 package launchserver.binary;
 
 import java.io.*;
-import java.nio.channels.Channel;
-import java.nio.channels.Channels;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +24,6 @@ import launcher.helper.SecurityHelper.DigestAlgorithm;
 import launcher.serialize.HOutput;
 import launchserver.LaunchServer;
 
-import launchserver.manangers.BuildHookManager;
 import proguard.*;
 
 import static launcher.helper.IOHelper.newZipEntry;
@@ -83,13 +80,16 @@ public final class JARLauncherBinary extends LauncherBinary {
                     e = input.getNextEntry();
                 }
             }
-            // Verify has init script file
-            if (!IOHelper.isFile(initScriptFile)) {
-                throw new IOException(String.format("Missing init script file ('%s')", Launcher.INIT_SCRIPT_FILE));
-            }
-            // Write launcher runtime dir
+            //map for runtime
             Map<String, byte[]> runtime = new HashMap<>(256);
-            IOHelper.walk(runtimeDir, new RuntimeDirVisitor(output, runtime), false);
+            if (server.buildHookManager.buildRuntime()) {
+                // Verify has init script file
+                if (!IOHelper.isFile(initScriptFile)) {
+                    throw new IOException(String.format("Missing init script file ('%s')", Launcher.INIT_SCRIPT_FILE));
+                }
+            	// Write launcher runtime dir
+            	IOHelper.walk(runtimeDir, new RuntimeDirVisitor(output, runtime), false);
+            }
             // Create launcher config file
             byte[] launcherConfigBytes;
             try (ByteArrayOutputStream configArray = IOHelper.newByteArrayOutput()) {
@@ -106,10 +106,8 @@ public final class JARLauncherBinary extends LauncherBinary {
             output.putNextEntry(e);
             output.write(jaConfigurator.getBytecode());
             server.buildHookManager.postHook(output);
-        } catch (CannotCompileException e) {
-            e.printStackTrace();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
+        } catch (CannotCompileException | NotFoundException e) {
+            LogHelper.error(e);
         }
 
         //ProGuard
