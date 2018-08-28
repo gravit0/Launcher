@@ -1,4 +1,6 @@
 String mainClassName = "launcher.LauncherEngine"
+String mainAgentName = "launcher.LauncherAgent"
+
 
 repositories {
     maven {
@@ -11,11 +13,16 @@ targetCompatibility = '1.8'
 
 jar {
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-    manifest.attributes("Main-Class": mainClassName)
+    manifest.attributes("Main-Class": mainClassName,
+		"Premain-Class": mainAgentName,
+		"Can-Redefine-Classes": "true",
+		"Can-Retransform-Classes": "true",
+		"Can-Set-Native-Method-Prefix": "true")
 }
 
 dependencies {
     compile project(':libLauncher')
+	compile 'org.javassist:javassist:3.23.1-GA'
     compileOnly 'com.google.code.gson:gson:2.8.5'
     compileOnly 'com.google.guava:guava:26.0-jre'
 }

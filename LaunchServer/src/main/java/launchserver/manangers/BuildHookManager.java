@@ -31,10 +31,10 @@ public class BuildHookManager {
     {
         CLASS_TRANSFORMER.add(transformer);
     }
-    public byte[] classTransform(byte[] clazz)
+    public byte[] classTransform(byte[] clazz, CharSequence classname)
     {
         byte[] result = clazz;
-        for(Transformer transformer : CLASS_TRANSFORMER) result = transformer.transform(result);
+        for(Transformer transformer : CLASS_TRANSFORMER) result = transformer.transform(result,classname);
         return result;
     }
     public void registerIgnoredClass(String clazz)
@@ -83,7 +83,7 @@ public class BuildHookManager {
     @FunctionalInterface
     public interface Transformer
     {
-        byte[] transform(byte[] input);
+        byte[] transform(byte[] input, CharSequence classname);
     }
     @FunctionalInterface
     public interface PreBuildHook

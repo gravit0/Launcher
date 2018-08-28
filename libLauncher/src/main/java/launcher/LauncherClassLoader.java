@@ -1,9 +1,13 @@
 package launcher;
 
+import launcher.helper.LogHelper;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class LauncherClassLoader extends URLClassLoader {
+	@LauncherAPI
+    public static ClassLoader systemclassloader = ClassLoader.getSystemClassLoader();
     /**
      * Constructs a new URLClassLoader for the given URLs. The URLs will be
      * searched in the order specified for classes and resources after first
@@ -52,7 +56,12 @@ public class LauncherClassLoader extends URLClassLoader {
     public LauncherClassLoader(URL[] urls) {
         super(urls);
     }
-
+    @LauncherAPI
+    public static ClassLoader getSystemClassLoader()
+    {
+        LogHelper.debug("Used FAKECLASSLOADER!!!!!!!!!");
+        return systemclassloader;
+    }
     @Override
     public void addURL(URL url) {
         super.addURL(url);
