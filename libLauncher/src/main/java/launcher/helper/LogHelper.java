@@ -21,8 +21,13 @@ import launcher.LauncherVersion;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.composite.CompositeConfiguration;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
@@ -119,9 +124,18 @@ public final class LogHelper {
         logger.log(level,message);
     }
 
-    public static void logInit()
+    public static void logInit(boolean isClientMode)
     {
-
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        Configuration cfg = context.getConfiguration();
+        LoggerConfig config = cfg.getRootLogger();
+        config.removeAppender("SimpleConsole");
+        Appender appender = cfg.getAppender("Console");
+        if(!isClientMode)
+        if(JVMHelper.OS_TYPE == JVMHelper.OS.LINUX || JVMHelper.OS_TYPE == JVMHelper.OS.MACOSX)
+        config.addAppender(appender,Level.DEBUG, cfg.getFilter());
+        context.updateLoggers();
+        //context.reconfigure();
     }
 
     @LauncherAPI

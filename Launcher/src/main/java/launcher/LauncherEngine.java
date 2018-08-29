@@ -69,6 +69,7 @@ public class LauncherEngine {
     }
 
     public static void main(String... args) throws Throwable {
+        LogHelper.logInit(false);
         JVMHelper.verifySystemProperties(Launcher.class, true);
         LogHelper.printVersion("Launcher");
         // Start Launcher

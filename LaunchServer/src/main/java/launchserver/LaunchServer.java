@@ -121,6 +121,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
     public LaunchServer(Path dir, boolean portable) throws IOException, InvalidKeySpecException {
         //setScriptBindings();
+        LogHelper.logInit(false);
         this.portable = portable;
 
         // Setup config locations
