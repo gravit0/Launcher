@@ -80,22 +80,23 @@ public final class ResponseThread implements Runnable {
         // Verify magic number
         int magicNumber = input.readInt();
         if (magicNumber != Launcher.PROTOCOL_MAGIC) {
-            if (magicNumber != Launcher.PROTOCOL_MAGIC_LEGACY - 1) { // Previous launcher protocol
+            if (magicNumber == Launcher.PROTOCOL_MAGIC_LEGACY - 1) { // Previous launcher protocol
                 session = 0;
                 legacy = true;
             }
-            else if (magicNumber != Launcher.PROTOCOL_MAGIC_LEGACY){
-                sessions.updateClient(session);
+            else if (magicNumber == Launcher.PROTOCOL_MAGIC_LEGACY){
+
+            }
+            else {
+                throw new IOException("Invalid Handshake");
             }
 
-        }
-        else {
-            sessions.updateClient(session);
         }
         // Verify key modulus
         BigInteger keyModulus = input.readBigInteger(SecurityHelper.RSA_KEY_LENGTH + 1);
         if (!legacy) {
             session = input.readLong();
+            sessions.updateClient(session);
         }
         if (!keyModulus.equals(server.privateKey.getModulus())) {
             output.writeBoolean(false);
