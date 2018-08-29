@@ -22,6 +22,9 @@ public class BuildHookManager {
         CLASS_TRANSFORMER = new HashSet<>(4);
         BUILDRUNTIME = true;
 		autoRegisterIgnoredClass(AutogenConfig.class.getName());
+        registerIgnoredClass("META-INF/DEPENDENCIES");
+        registerIgnoredClass("META-INF/LICENSE");
+        registerIgnoredClass("META-INF/NOTICE");
 	}
     public void registerPostHook(PostBuildHook hook)
     {

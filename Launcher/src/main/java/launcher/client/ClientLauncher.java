@@ -197,6 +197,7 @@ public final class ClientLauncher {
 
     @LauncherAPI
     public static void main(String... args) throws Throwable {
+        LogHelper.logInit(true);
         if (JVMHelper.OS_TYPE == OS.MUSTDIE) {
             AvanguardStarter.loadVared();
             AvanguardStarter.main(false);

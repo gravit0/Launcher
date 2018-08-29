@@ -9,6 +9,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -36,7 +37,7 @@ public final class JARLauncherBinary extends LauncherBinary {
 
     @LauncherAPI
     public JARLauncherBinary(LaunchServer server) throws IOException {
-        super(server, server.dir.resolve(server.config.binaryName + ".jar"));
+        super(server, server.dir.resolve(server.config.binaryName + ".jar"), server.dir.resolve(server.config.binaryName + "-obf.jar"));
         runtimeDir = server.dir.resolve(Launcher.RUNTIME_DIR);
         initScriptFile = runtimeDir.resolve(Launcher.INIT_SCRIPT_FILE);
         tryUnpackRuntime();
@@ -62,11 +63,17 @@ public final class JARLauncherBinary extends LauncherBinary {
                         e = input.getNextEntry();
                         continue;
                     }
-                    output.putNextEntry(e);
+                    try {
+                        output.putNextEntry(e);
+                    } catch (ZipException ex)
+                    {
+                        LogHelper.error(ex);
+                        e = input.getNextEntry();
+                        continue;
+                    }
                     if(filename.endsWith(".class"))
                     {
                         CharSequence classname = filename.replace('/','.').subSequence(0,filename.length() - ".class".length());
-                        System.out.println(classname);
                         byte[] bytes;
                         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(2048)) {
                             IOHelper.transfer(input, outputStream);

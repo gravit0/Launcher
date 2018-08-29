@@ -13,7 +13,6 @@ import launcher.serialize.HInput;
 
 public final class Launcher {
     private static final AtomicReference<LauncherConfig> CONFIG = new AtomicReference<>();
-
     // Version info
     //Все версии оригинального Sashok Launcher v3 считаются как 3.xx.xx, например 3.15.3 3.15.4
     //Все версии модификации считаются так: 3.16.xx Например 3.16.5 для коммита от 20 Августа

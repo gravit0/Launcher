@@ -20,6 +20,7 @@ public class ServerWrapper {
     public ClientProfile profile;
     public static ModulesManager modulesManager;
     public static void main(String[] args) throws Throwable {
+        LogHelper.logInit(false);
         ServerWrapper wrapper = new ServerWrapper();
         modulesManager = new ModulesManager(wrapper);
         modulesManager.autoload(Paths.get("modules"));
@@ -34,7 +35,6 @@ public class ServerWrapper {
                 break;
             }
         }
-
         String classname = args[0];
         Class mainClass = Class.forName(classname);
         MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
