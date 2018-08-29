@@ -1,24 +1,33 @@
 package launcher.choosebox;
 
 import javafx.collections.ObservableList;
+import launcher.LauncherAPI;
 
 public interface CheckModel<T> {
-    
-    public int getItemCount();
+	@LauncherAPI
+	public int getItemCount();
 
-    public ObservableList<T> getCheckedItems();
+	@LauncherAPI
+	public ObservableList<T> getCheckedItems();
 
-    public void checkAll();
+	@LauncherAPI
+	public void checkAll();
 
-    public void clearCheck(T item);
-    
-    public void clearChecks();
-    
-    public boolean isEmpty();
+	@LauncherAPI
+	public void clearCheck(T item);
 
-    public boolean isChecked(T item);
-    
-    public void check(T item);
+	@LauncherAPI
+	public void clearChecks();
 
-    public void toggleCheckState(T item);
+	@LauncherAPI
+	public boolean isEmpty();
+
+	@LauncherAPI
+	public boolean isChecked(T item);
+
+	@LauncherAPI
+	public void check(T item);
+
+	@LauncherAPI
+	public void toggleCheckState(T item);
 }

@@ -2,6 +2,7 @@ package launchserver.binary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -35,6 +36,8 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
 
+import launcher.helper.IOHelper;
+
 
 /**
  * Generator of signed Jars. It stores some data in memory therefore it is not suited for creation of large files. The
@@ -42,7 +45,7 @@ import org.bouncycastle.util.Store;
  * <pre>
  * KeyStore keystore = KeyStore.getInstance("JKS");
  * keyStore.load(keystoreStream, "keystorePassword");
- * SimpleSignedJar jar = new SimpleSignedJar(out, keyStore, "keyAlias", "keyPassword");
+ * SignerJar jar = new SignerJar(out, keyStore, "keyAlias", "keyPassword");
  * signedJar.addManifestAttribute("Main-Class", "com.example.MainClass");
  * signedJar.addManifestAttribute("Application-Name", "Example");
  * signedJar.addManifestAttribute("Permissions", "all-permissions");
@@ -52,12 +55,17 @@ import org.bouncycastle.util.Store;
  * signedJar.close();
  * </pre>
  */
-public class SignerJar {
+public class SignerJar implements AutoCloseable {
 	private static final String MANIFEST_FN = "META-INF/MANIFEST.MF";
 	private static final String SIG_FN = "META-INF/SIGNUMO.SF";
 	private static final String SIG_RSA_FN = "META-INF/SIGNUMO.RSA";
 
 	private final ZipOutputStream zos;
+	
+	public ZipOutputStream getZos() {
+		return zos;
+	}
+
 	private final KeyStore keyStore;
 	private final String keyAlias;
 	private final String password;
@@ -130,6 +138,25 @@ public class SignerJar {
 	}
 
 	/**
+	 * Adds a file to the JAR. The file is immediately added to the zipped output stream. This method cannot be called once
+	 * the stream is closed.
+	 *
+	 * @param filename name of the file to add (use forward slash as a path separator)
+	 * @param contents contents of the file
+	 * @throws java.io.IOException
+	 * @throws NullPointerException if any of the arguments is {@code null}
+	 */
+	public void addFileContents(String filename, InputStream contents) throws IOException {
+		zos.putNextEntry(new ZipEntry(filename));
+		byte[] arr = IOHelper.toByteArray(contents);
+		zos.write(arr);
+		zos.closeEntry();
+
+		String hashCode64 = Base64.getEncoder().encodeToString(hasher().digest(arr));
+		fileDigests.put(filename, hashCode64);
+	}
+	
+	/**
 	 * Finishes the JAR file by writing the manifest and signature data to it and finishing the ZIP entries. It leaves the
 	 * underlying stream open.
 	 *
@@ -150,6 +177,7 @@ public class SignerJar {
 	 * @throws java.io.IOException
 	 * @throws RuntimeException    if the signing goes wrong
 	 */
+	@Override
 	public void close() throws IOException {
 		finish();
 		zos.close();

@@ -1,23 +1,31 @@
 package launcher.choosebox;
 
 import javafx.collections.ObservableList;
+import launcher.LauncherAPI;
 
 public interface IndexedCheckModel<T> extends CheckModel<T> {
+	@LauncherAPI
+	public T getItem(int index);
 
-    public T getItem(int index);
+	@LauncherAPI
+	public int getItemIndex(T item);
 
-    public int getItemIndex(T item);
+	@LauncherAPI
+	public ObservableList<Integer> getCheckedIndices();
 
-    public ObservableList<Integer> getCheckedIndices();
+	@LauncherAPI
+	public void checkIndices(int... indices);
 
-    public void checkIndices(int... indices);
+	@LauncherAPI
+	public void clearCheck(int index);
 
-    public void clearCheck(int index);
+	@LauncherAPI
+	public boolean isChecked(int index);
 
-    public boolean isChecked(int index);
+	@LauncherAPI
+	public void check(int index);
 
-    public void check(int index);
-
-    public void toggleCheckState(int index);
+	@LauncherAPI
+	public void toggleCheckState(int index);
 
 }

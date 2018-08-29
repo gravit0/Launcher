@@ -8,7 +8,8 @@ import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 public class BuildHookManager {
-    private final Set<PostBuildHook> POST_HOOKS;
+    private boolean BUILDRUNTIME;
+	private final Set<PostBuildHook> POST_HOOKS;
     private final Set<PreBuildHook> PRE_HOOKS;
     private final Set<Transformer> CLASS_TRANSFORMER;
     private final Set<String> CLASS_BLACKLIST;
@@ -19,6 +20,7 @@ public class BuildHookManager {
 		CLASS_BLACKLIST = new HashSet<>(4);
 		MODULE_CLASS = new HashSet<>(4);
         CLASS_TRANSFORMER = new HashSet<>(4);
+        BUILDRUNTIME = true;
 		autoRegisterIgnoredClass(AutogenConfig.class.getName());
         registerIgnoredClass("META-INF/DEPENDENCIES");
         registerIgnoredClass("META-INF/LICENSE");
@@ -70,6 +72,12 @@ public class BuildHookManager {
     {
         PRE_HOOKS.add(hook);
     }
+    public void setBuildRuntime(boolean runtime) {
+    	BUILDRUNTIME = runtime;
+    }
+	public boolean buildRuntime() {
+		return BUILDRUNTIME;
+	}
     @FunctionalInterface
     public interface PostBuildHook
     {

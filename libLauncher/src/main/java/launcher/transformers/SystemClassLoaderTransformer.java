@@ -11,12 +11,12 @@ import java.security.ProtectionDomain;
 public class SystemClassLoaderTransformer implements ClassFileTransformer {
     @Override
     public byte[] transform(ClassLoader classLoader, String classname, Class<?> aClass, ProtectionDomain protectionDomain, byte[] bytes) throws IllegalClassFormatException {
-        if(classname.startsWith("launcher/")) return null;
-        if(classname.startsWith("java/")) return null;
-        if(classname.startsWith("sun/")) return null;
-        if(classname.startsWith("com/sun/")) return null;
-        if(classname.startsWith("javax/")) return null;
-        if(classname.startsWith("jdk/")) return null;
+    	if(classname.startsWith("launcher/")) return bytes;
+        if(classname.startsWith("java/")) return bytes;
+        if(classname.startsWith("sun/")) return bytes;
+        if(classname.startsWith("com/sun/")) return bytes;
+        if(classname.startsWith("javax/")) return bytes;
+        if(classname.startsWith("jdk/")) return bytes;
         try {
             ClassPool pool = ClassPool.getDefault();
             pool.appendClassPath(new LoaderClassPath(LauncherClassLoader.systemclassloader));
@@ -25,7 +25,6 @@ public class SystemClassLoaderTransformer implements ClassFileTransformer {
             CtMethod m11 = s1.getDeclaredMethod("getSystemClassLoader"); // Находим метод, который нам нужно заменить
             CtClass s2 = pool.get(LauncherClassLoader.class.getName());
             CtMethod m21 = s2.getDeclaredMethod("getSystemClassLoader"); // Находим метод, на который мы будем заменять
-
             CodeConverter cc = new CodeConverter();
             cc.redirectMethodCall(m11, m21); // Указываем что на что нам нужно заменить
 
@@ -41,8 +40,7 @@ public class SystemClassLoaderTransformer implements ClassFileTransformer {
             }
             return cl.toBytecode();
         } catch (Exception ex) {
-            //System.out.println("Exception: " + ex);
-            //ex.printStackTrace();
+        	
         }
         return bytes;
     }

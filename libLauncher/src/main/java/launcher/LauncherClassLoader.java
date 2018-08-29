@@ -2,11 +2,11 @@ package launcher;
 
 import launcher.helper.LogHelper;
 
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-@LauncherAPI
+
 public class LauncherClassLoader extends URLClassLoader {
+	@LauncherAPI
     public static ClassLoader systemclassloader = ClassLoader.getSystemClassLoader();
     /**
      * Constructs a new URLClassLoader for the given URLs. The URLs will be
