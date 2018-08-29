@@ -89,10 +89,9 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
     @LauncherAPI
     public void autoload(Path dir) throws IOException {
         LogHelper.info("Load modules");
-        Path modules = dir.resolve("modules");
-        if (Files.notExists(modules)) Files.createDirectory(modules);
-        IOHelper.walk(modules, new ModulesVisitor(), true);
-        LogHelper.info("Loaded %d modules", this.modules.size());
+        if (Files.notExists(dir)) Files.createDirectory(dir);
+        IOHelper.walk(dir, new ModulesVisitor(), true);
+        LogHelper.info("Loaded %d modules", modules.size());
     }
     
     @LauncherAPI
