@@ -2,6 +2,7 @@ package launchserver.manangers;
 
 import launcher.AutogenConfig;
 import launchserver.binary.JAConfigurator;
+import launchserver.modules.TestClientModule;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -25,6 +26,7 @@ public class BuildHookManager {
         registerIgnoredClass("META-INF/DEPENDENCIES");
         registerIgnoredClass("META-INF/LICENSE");
         registerIgnoredClass("META-INF/NOTICE");
+        registerClientModuleClass(TestClientModule.class.getName());
 	}
     public void registerPostHook(PostBuildHook hook)
     {

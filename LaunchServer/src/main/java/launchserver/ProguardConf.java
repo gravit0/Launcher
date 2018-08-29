@@ -6,9 +6,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
@@ -22,20 +20,21 @@ public class ProguardConf {
 	public final Path config;
 	public final Path mappings;
 	public final Path words;
-	public final List<String> confStrs;
+	public final Set<String> confStrs;
 	public ProguardConf(LaunchServer srv) {
 		this.srv = srv;
 		proguard =  this.srv.dir.resolve("proguard");
 		config = proguard.resolve("proguard.config");
 		mappings = proguard.resolve("mappings.pro");
 		words = proguard.resolve("random.pro");
-		confStrs = new ArrayList<String>();
+		confStrs = new HashSet<String>();
 		checkDirs();
 		if (!IOHelper.exists(proguard)) prepare(false);
+		confStrs.add(readConf());
 		if (this.srv.config.genMappings) confStrs.add("-printmapping \'" + mappings.toFile().getName() + "\'");
 		confStrs.add("-obfuscationdictionary \'" + words.toFile().getName() + "\'");
 		confStrs.add("-classobfuscationdictionary \'" + words.toFile().getName() + "\'");
-		confStrs.addAll(readConf());
+
 	}
 	
 	private void checkDirs() {
@@ -46,12 +45,8 @@ public class ProguardConf {
 		}
 	}
 
-	private List<String> readConf() {
-		try {
-			return Files.readAllLines(config, IOHelper.UNICODE_CHARSET);
-		} catch (IOException e) {
-			return Collections.emptyList();
-		}
+	private String readConf() {
+		return "@".concat(config.toString());
 	}
 
 	public void prepare(boolean force) {
