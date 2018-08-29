@@ -24,6 +24,7 @@ import launchserver.command.basic.DebugCommand;
 import launchserver.command.basic.GCCommand;
 import launchserver.command.basic.HelpCommand;
 import launchserver.command.basic.LogConnectionsCommand;
+import launchserver.command.basic.ProguardCleanCommand;
 import launchserver.command.basic.RebindCommand;
 import launchserver.command.basic.StopCommand;
 import launchserver.command.basic.VersionCommand;
@@ -50,6 +51,7 @@ public abstract class CommandHandler implements Runnable {
         registerCommand("debug", new DebugCommand(server));
         registerCommand("clear", new ClearCommand(server));
         registerCommand("gc", new GCCommand(server));
+        registerCommand("proguardClean", new ProguardCleanCommand(server));
         registerCommand("logConnections", new LogConnectionsCommand(server));
         registerCommand("loadModule", new LoadModuleCommand(server));
         registerCommand("modules", new ModulesCommand(server));

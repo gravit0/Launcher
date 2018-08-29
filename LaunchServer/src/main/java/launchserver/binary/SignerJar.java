@@ -151,6 +151,24 @@ public class SignerJar implements AutoCloseable {
 	 * Adds a file to the JAR. The file is immediately added to the zipped output stream. This method cannot be called once
 	 * the stream is closed.
 	 *
+	 * @param entry name of the file to add (use forward slash as a path separator)
+	 * @param contents contents of the file
+	 * @throws java.io.IOException
+	 * @throws NullPointerException if any of the arguments is {@code null}
+	 */
+	public void addFileContents(ZipEntry entry, byte[] contents) throws IOException {
+		zos.putNextEntry(entry);
+		zos.write(contents);
+		zos.closeEntry();
+
+		String hashCode64 = Base64.getEncoder().encodeToString(hasher().digest(contents));
+		fileDigests.put(entry.getName(), hashCode64);
+	}
+	
+	/**
+	 * Adds a file to the JAR. The file is immediately added to the zipped output stream. This method cannot be called once
+	 * the stream is closed.
+	 *
 	 * @param filename name of the file to add (use forward slash as a path separator)
 	 * @param contents contents of the file
 	 * @throws java.io.IOException
@@ -165,6 +183,26 @@ public class SignerJar implements AutoCloseable {
 		String hashCode64 = Base64.getEncoder().encodeToString(hasher().digest(arr));
 		fileDigests.put(filename, hashCode64);
 	}
+	
+	/**
+	 * Adds a file to the JAR. The file is immediately added to the zipped output stream. This method cannot be called once
+	 * the stream is closed.
+	 *
+	 * @param entry name of the file to add (use forward slash as a path separator)
+	 * @param contents contents of the file
+	 * @throws java.io.IOException
+	 * @throws NullPointerException if any of the arguments is {@code null}
+	 */
+	public void addFileContents(ZipEntry entry, InputStream contents) throws IOException {
+		zos.putNextEntry(entry);
+		byte[] arr = IOHelper.toByteArray(contents);
+		zos.write(arr);
+		zos.closeEntry();
+
+		String hashCode64 = Base64.getEncoder().encodeToString(hasher().digest(arr));
+		fileDigests.put(entry.getName(), hashCode64);
+	}
+	
 	
 	/**
 	 * Finishes the JAR file by writing the manifest and signature data to it and finishing the ZIP entries. It leaves the
