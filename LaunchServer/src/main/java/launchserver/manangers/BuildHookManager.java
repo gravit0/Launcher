@@ -4,8 +4,8 @@ import launcher.AutogenConfig;
 import launchserver.binary.JAConfigurator;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipOutputStream;
 
 public class BuildHookManager {
     private boolean BUILDRUNTIME;
@@ -60,11 +60,11 @@ public class BuildHookManager {
     {
         return CLASS_BLACKLIST.contains(clazz);
     }
-    public void postHook(ZipOutputStream output)
+    public void postHook(Map<String, byte[]> output)
     {
         for(PostBuildHook hook : POST_HOOKS) hook.build(output);
     }
-    public void preHook(ZipOutputStream output)
+    public void preHook(Map<String, byte[]> output)
     {
         for(PreBuildHook hook : PRE_HOOKS) hook.build(output);
     }
@@ -81,7 +81,7 @@ public class BuildHookManager {
     @FunctionalInterface
     public interface PostBuildHook
     {
-        void build(ZipOutputStream output);
+        void build(Map<String, byte[]> output);
     }
     @FunctionalInterface
     public interface Transformer
@@ -91,6 +91,6 @@ public class BuildHookManager {
     @FunctionalInterface
     public interface PreBuildHook
     {
-        void build(ZipOutputStream output);
+        void build(Map<String, byte[]> output);
     }
 }

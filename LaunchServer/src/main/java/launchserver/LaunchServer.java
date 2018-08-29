@@ -572,7 +572,9 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     
     public static class SignConf extends ConfigObject {
         public final boolean enabled;
+        public String algo;
         public Path key;
+        public boolean hasStorePass;
         public String storepass;
         public boolean hasPass;
         public String pass;
@@ -580,13 +582,16 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         private SignConf(BlockConfigEntry block, Path coredir) {
             super(block);
             enabled = block.getEntryValue("enabled", BooleanConfigEntry.class);
+            storepass = null;
             pass = null;
             if (enabled) {
+            	algo = block.hasEntry("storeType") ? block.getEntryValue("storeType", StringConfigEntry.class) : "JKS";
             	key =  coredir.resolve(block.getEntryValue("keyFile", StringConfigEntry.class));
-            	storepass = block.getEntryValue("keyStorePass", StringConfigEntry.class);
+            	hasStorePass = block.hasEntry("keyStorePass");
+            	if (hasStorePass) storepass = block.getEntryValue("keyStorePass", StringConfigEntry.class);
             	keyalias = block.getEntryValue("keyAlias", StringConfigEntry.class);
             	hasPass = block.hasEntry("keyPass");
-            	pass = block.getEntryValue("keyPass", StringConfigEntry.class);
+            	if (hasPass) pass = block.getEntryValue("keyPass", StringConfigEntry.class);
             }
         }
     }
