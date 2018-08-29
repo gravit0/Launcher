@@ -4,7 +4,7 @@ import launchserver.LaunchServer;
 import launchserver.command.Command;
 
 public class ProguardCleanCommand extends Command {
-	protected ProguardCleanCommand(LaunchServer server) {
+	public ProguardCleanCommand(LaunchServer server) {
 		super(server);
 	}
 
