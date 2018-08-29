@@ -198,6 +198,8 @@ public final class ClientLauncher {
     @LauncherAPI
     public static void main(String... args) throws Throwable {
         LogHelper.logInit(true);
+        Launcher.modulesManager = new ClientModuleManager(null);
+        Launcher.modulesManager.preInitModules();
         if (JVMHelper.OS_TYPE == OS.MUSTDIE) {
             AvanguardStarter.loadVared();
             AvanguardStarter.main(false);

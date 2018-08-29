@@ -2,7 +2,7 @@ package launchserver.manangers;
 
 import launcher.AutogenConfig;
 import launchserver.binary.JAConfigurator;
-import launchserver.modules.TestClientModule;
+import launcher.modules.TestClientModule;
 
 import java.util.HashSet;
 import java.util.Map;

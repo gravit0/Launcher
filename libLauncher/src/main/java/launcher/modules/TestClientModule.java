@@ -1,4 +1,4 @@
-package launchserver.modules;
+package launcher.modules;
 
 
 import launcher.LauncherVersion;

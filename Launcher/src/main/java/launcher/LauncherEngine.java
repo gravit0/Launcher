@@ -88,6 +88,8 @@ public class LauncherEngine {
 
     @LauncherAPI
     public void start(String... args) throws Throwable {
+        Launcher.modulesManager = new ClientModuleManager(this);
+        Launcher.modulesManager.preInitModules();
         Objects.requireNonNull(args, "args");
         if (started.getAndSet(true)) {
             throw new IllegalStateException("Launcher has been already started");
