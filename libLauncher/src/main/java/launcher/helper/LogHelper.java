@@ -21,6 +21,9 @@ import launcher.LauncherVersion;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.ConfigurationFactory;
+import org.apache.logging.log4j.core.config.composite.CompositeConfiguration;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.Ansi.Color;
@@ -114,6 +117,11 @@ public final class LogHelper {
     @LauncherAPI
     public static void log(Level level, String message, boolean sub) {
         logger.log(level,message);
+    }
+
+    public static void logInit()
+    {
+
     }
 
     @LauncherAPI
