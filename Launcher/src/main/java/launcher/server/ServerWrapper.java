@@ -11,15 +11,25 @@ import launcher.request.update.ProfilesRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.signed.SignedObjectHolder;
 
+import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ServerWrapper {
     public ClientProfile profile;
     public static ModulesManager modulesManager;
     public static void main(String[] args) throws Throwable {
+        if(System.getProperty("log4j.configurationFile") == null) {
+            try(InputStream stream = IOHelper.newInput(IOHelper.getResourceURL("log4j2.xml"))) {
+                System.setProperty("log4j.configurationFile", "launcher/log4j2.xml,log4j2.xml");
+            } catch (Exception e) {
+                System.setProperty("log4j.configurationFile", "launcher/log4j2.xml");
+            }
+        }
         LogHelper.logInit(false);
         ServerWrapper wrapper = new ServerWrapper();
         modulesManager = new ModulesManager(wrapper);

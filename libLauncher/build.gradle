@@ -1,19 +1,10 @@
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-configurations {
-	bundleOnly
-	bundle
-	bundle.extendsFrom bundleOnly
-	compileOnly.extendsFrom bundle
-}
-jar {
-    from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-}
 dependencies {
-	bundle 'org.fusesource.jansi:jansi:1.17.1'
+	compileOnly 'org.fusesource.jansi:jansi:1.17.1'
 	compile files('../compat/authlib/authlib-clean.jar')
 	compile 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
 	compile 'org.apache.logging.log4j:log4j-core:2.9.0'
-	bundle 'org.javassist:javassist:3.23.1-GA' //TEST
+	compileOnly 'org.javassist:javassist:3.23.1-GA' //TEST
 }
