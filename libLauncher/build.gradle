@@ -1,9 +1,6 @@
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-jar {
-    from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-}
 dependencies {
 	compileOnly 'org.fusesource.jansi:jansi:1.17.1'
 	compileOnly 'org.javassist:javassist:3.23.1-GA'
