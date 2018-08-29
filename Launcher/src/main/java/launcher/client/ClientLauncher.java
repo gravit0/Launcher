@@ -200,6 +200,7 @@ public final class ClientLauncher {
         LogHelper.logInit(true);
         Launcher.modulesManager = new ClientModuleManager(null);
         Launcher.modulesManager.preInitModules();
+        LauncherConfig.getAutogenConfig(); //INIT
         if (JVMHelper.OS_TYPE == OS.MUSTDIE) {
             AvanguardStarter.loadVared();
             AvanguardStarter.main(false);
