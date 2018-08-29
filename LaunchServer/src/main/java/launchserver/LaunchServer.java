@@ -110,6 +110,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
     @LauncherAPI
     public final BuildHookManager buildHookManager;
     @LauncherAPI
+    public final ProguardConf proguardConf;
+    @LauncherAPI
     public final CommandHandler commandHandler;
     @LauncherAPI
     public final ServerSocketHandler serverSocketHandler;
@@ -195,10 +197,10 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         }
         config.verify();
 
-        // build hooks anti-brutforce
+        // build hooks, anti-brutforce and other
         buildHookManager = new BuildHookManager();
         limiter = new AuthLimiter(this);
-
+        proguardConf = new ProguardConf(this);
         sessionManager = new SessionManager();
         GarbageManager.registerNeedGC(sessionManager);
         GarbageManager.registerNeedGC(limiter);
@@ -470,6 +472,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         @LauncherAPI
         public final String whitelistRejectString;
         @LauncherAPI
+        public final boolean genMappings;
+        @LauncherAPI
         public final String binaryName;
         private final StringConfigEntry address;
         private final String bindAddress;
@@ -502,6 +506,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                     block.getEntry("hwidHandlerConfig", BlockConfigEntry.class));
 
             // Set misc config
+            genMappings = block.getEntryValue("proguardPrintMappings", BooleanConfigEntry.class);
             launch4j = new ExeConf(block.getEntry("launch4J", BlockConfigEntry.class));
             sign = new SignConf(block.getEntry("signing", BlockConfigEntry.class), coredir);
             binaryName = block.getEntryValue("binaryName", StringConfigEntry.class);
