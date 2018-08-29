@@ -4,12 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +75,7 @@ public class SignerJar implements AutoCloseable {
 
 	private final Map<String, String> manifestAttributes;
 
-	private final String hashFunctionName;
+	private static final String hashFunctionName = "SHA-256";
 
 	private String manifestHash;
 	private String manifestMainHash;
@@ -96,18 +99,25 @@ public class SignerJar implements AutoCloseable {
 		this.manifestAttributes = new LinkedHashMap();
 		this.fileDigests = new LinkedHashMap();
 		this.sectionDigests = new LinkedHashMap();
-
-		this.hashFunctionName = "SHA-256";
 	}
 
 	private final static MessageDigest hasher() {
 		try {
-			return MessageDigest.getInstance("SHA-256");
+			return MessageDigest.getInstance(hashFunctionName);
 		} catch (NoSuchAlgorithmException e) {
 			return null;
 		}
 	}
 
+	public static final KeyStore getStore(Path file, String storepass, String algo) throws IOException {
+		try {
+			KeyStore st = KeyStore.getInstance(algo);
+			st.load(IOHelper.newInput(file), storepass != null ? storepass.toCharArray() : null);
+			return st;
+		} catch (NoSuchAlgorithmException | CertificateException| KeyStoreException e) {
+			throw new IOException(e);
+		}
+	}
 	/**
 	 * Adds a header to the manifest of the JAR.
 	 *
@@ -191,7 +201,7 @@ public class SignerJar implements AutoCloseable {
 		List<Certificate> certChain = new ArrayList(Arrays.asList(keyStore.getCertificateChain(keyAlias)));
 		Store certStore = new JcaCertStore(certChain);
 		Certificate cert = keyStore.getCertificate(keyAlias);
-		PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyAlias, password.toCharArray());
+		PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyAlias, password != null ? password.toCharArray() : null);
 		ContentSigner signer = new JcaContentSignerBuilder("SHA256WITHRSA").setProvider("BC").build(privateKey);
 		CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
 		DigestCalculatorProvider dcp = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();

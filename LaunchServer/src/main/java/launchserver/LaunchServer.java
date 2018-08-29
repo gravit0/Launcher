@@ -191,7 +191,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         generateConfigIfNotExists();
         logger.info("Reading LaunchServer config file");
         try (BufferedReader reader = IOHelper.newReader(configFile)) {
-            config = new Config(TextConfigReader.read(reader, true));
+            config = new Config(TextConfigReader.read(reader, true), dir);
         }
         config.verify();
 
@@ -378,7 +378,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         logger.info("Creating LaunchServer config");
         Config newConfig;
         try (BufferedReader reader = IOHelper.newReader(IOHelper.getResourceURL("launchserver/defaults/config.cfg"))) {
-            newConfig = new Config(TextConfigReader.read(reader, false));
+            newConfig = new Config(TextConfigReader.read(reader, false), this.dir);
         }
 
         // Set server address
@@ -458,6 +458,8 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         @LauncherAPI
         public final ExeConf launch4j;
         @LauncherAPI
+        public final SignConf sign;
+        @LauncherAPI
         public final boolean compress;
         @LauncherAPI
         public final int authRateLimit;
@@ -472,7 +474,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         private final StringConfigEntry address;
         private final String bindAddress;
 
-        private Config(BlockConfigEntry block) {
+        private Config(BlockConfigEntry block, Path coredir) {
             super(block);
             address = block.getEntry("address", StringConfigEntry.class);
             port = VerifyHelper.verifyInt(block.getEntryValue("port", IntegerConfigEntry.class),
@@ -501,6 +503,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
             // Set misc config
             launch4j = new ExeConf(block.getEntry("launch4J", BlockConfigEntry.class));
+            sign = new SignConf(block.getEntry("signing", BlockConfigEntry.class), coredir);
             binaryName = block.getEntryValue("binaryName", StringConfigEntry.class);
             compress = block.getEntryValue("compress", BooleanConfigEntry.class);
         }
@@ -564,6 +567,32 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                     : CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
             txtProductVersion = block.hasEntry("txtProductVersion") ? block.getEntryValue("txtProductVersion", StringConfigEntry.class)
                     : CommonHelper.formatVars("$VERSION$, build $BUILDNUMBER$");
+        }
+    }
+    
+    public static class SignConf extends ConfigObject {
+        public final boolean enabled;
+        public String algo;
+        public Path key;
+        public boolean hasStorePass;
+        public String storepass;
+        public boolean hasPass;
+        public String pass;
+        public String keyalias;
+        private SignConf(BlockConfigEntry block, Path coredir) {
+            super(block);
+            enabled = block.getEntryValue("enabled", BooleanConfigEntry.class);
+            storepass = null;
+            pass = null;
+            if (enabled) {
+            	algo = block.hasEntry("storeType") ? block.getEntryValue("storeType", StringConfigEntry.class) : "JKS";
+            	key =  coredir.resolve(block.getEntryValue("keyFile", StringConfigEntry.class));
+            	hasStorePass = block.hasEntry("keyStorePass");
+            	if (hasStorePass) storepass = block.getEntryValue("keyStorePass", StringConfigEntry.class);
+            	keyalias = block.getEntryValue("keyAlias", StringConfigEntry.class);
+            	hasPass = block.hasEntry("keyPass");
+            	if (hasPass) pass = block.getEntryValue("keyPass", StringConfigEntry.class);
+            }
         }
     }
 }
