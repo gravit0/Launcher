@@ -26,7 +26,7 @@ public class NeverDecompModule implements Module {
 	public void init(ModuleContext context1) {
 		if (context1.getType().equals(ModuleContext.Type.LAUNCHSERVER)) {
 			LaunchServerModuleContext context = (LaunchServerModuleContext) context1;
-			
+			context.launchServer.buildHookManager.registerClassTransformer(new TransformerClass());
 		}
 	}
 
