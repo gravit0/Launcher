@@ -1,2 +1,0 @@
-16:43:51.258 [INFO ] [LogHelper] Setting up script engine bindings
-16:43:51.271 [ERROR] [LogHelper] java.lang.SecurityException: java.nio.file.NoSuchFileException: config.bin
