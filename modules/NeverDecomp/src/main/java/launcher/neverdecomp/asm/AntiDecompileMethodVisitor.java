@@ -1,4 +1,4 @@
-package launcher.neverdecomp;
+package launcher.neverdecomp.asm;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -22,9 +22,9 @@ public class AntiDecompileMethodVisitor extends AdviceAdapter implements Opcodes
 		Label lbl1 = this.newLabel(), lbl15 = this.newLabel(), lbl2 = this.newLabel(), lbl3 = this.newLabel(), lbl35 = this.newLabel(), lbl4 = this.newLabel();
 		
 		// try-catch блок с lbl1 до lbl2 с переходом на lbl15 при java/lang/Exception
-		this.visitTryCatchBlock(lbl1, lbl2, lbl15, "java/lang/Exception");
+		this.visitException(lbl1, lbl2, lbl15);
 		// try-catch блок с lbl3 до lbl4 с переходом на lbl3 при java/lang/Exception
-		this.visitTryCatchBlock(lbl3, lbl4, lbl3, "java/lang/Exception");
+		this.visitException(lbl3, lbl4, lbl3);
 		
 		// lbl1: goto lbl2
 		this.visitLabel(lbl1);
@@ -45,10 +45,27 @@ public class AntiDecompileMethodVisitor extends AdviceAdapter implements Opcodes
 		this.visitLabel(lbl4);
 		this.visitInsn(NOP);
 	}
+	
+	private void visitException(Label st, Label en, Label h) {
+		this.visitTryCatchBlock(st, en, h, "java/lang/Exception");
+	}
 
-	public Label jumpLabel(Label to) {
-		Label l = newLabel();
+	// experemental
+	@Override
+	public void visitInsn(int opcode) {
+		super.visitInsn(POP);
+		super.visitInsn(NOP);
+		super.visitInsn(opcode);
+	}
+
+	// experemental
+	@Override
+	public void onMethodExit(int opcode) {
+		super.onMethodExit(opcode);
+		antiDecomp();
+	}
+	
+	public void jumpLabel(Label to) {
 		this.visitJumpInsn(GOTO, to);
-		return l;
 	}
 }

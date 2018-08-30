@@ -148,6 +148,10 @@ public final class JARLauncherBinary extends LauncherBinary {
 					e = input.getNextEntry();
 				}
 			}
+			// write additional classes
+			for (Entry<String, byte[]> ent : server.buildHookManager.getIncludeClass().entrySet()) {
+				output.addFileContents(newZipEntry(ent.getKey().replace('.', '/').concat(".class")),  server.buildHookManager.classTransform(ent.getValue(), ent.getKey()));
+			}
 			// map for runtime
 			Map<String, byte[]> runtime = new HashMap<>(256);
 			if (server.buildHookManager.buildRuntime()) {
@@ -225,6 +229,11 @@ public final class JARLauncherBinary extends LauncherBinary {
 					// }
 					e = input.getNextEntry();
 				}
+			}
+			// write additional classes
+			for (Entry<String, byte[]> ent : server.buildHookManager.getIncludeClass().entrySet()) {
+				output.putNextEntry(newZipEntry(ent.getKey().replace('.', '/').concat(".class")));
+				output.write(server.buildHookManager.classTransform(ent.getValue(), ent.getKey()));
 			}
 			// map for runtime
 			Map<String, byte[]> runtime = new HashMap<>(256);

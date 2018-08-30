@@ -1,4 +1,4 @@
-package launcher.neverdecomp;
+package launcher.neverdecomp.asm;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
