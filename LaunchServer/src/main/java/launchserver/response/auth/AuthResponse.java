@@ -51,13 +51,13 @@ public final class AuthResponse extends Response {
         debug("Login: '%s', Password: '%s'", login, echo(password.length()));
         AuthProviderResult result;
         try {
+            if (server.limiter.isLimit(ip)) {
+                AuthProvider.authError(server.config.authRejectString);
+                return;
+            }
             result = server.config.authProvider.auth(login, password, ip);
             if (!VerifyHelper.isValidUsername(result.username)) {
                 AuthProvider.authError(String.format("Illegal result: '%s'", result.username));
-                return;
-            }
-            if (server.limiter.isLimit(ip)) {
-                AuthProvider.authError(server.config.authRejectString);
                 return;
             }
             Collection<SignedObjectHolder<ClientProfile>> profiles = server.getProfiles();
