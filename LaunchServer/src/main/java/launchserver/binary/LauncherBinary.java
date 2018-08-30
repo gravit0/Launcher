@@ -1,5 +1,6 @@
 package launchserver.binary;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -34,7 +35,7 @@ public abstract class LauncherBinary {
 
     @LauncherAPI
     public final boolean exists() {
-        return IOHelper.isFile(binaryFile);
+        return IOHelper.isFile(syncBinaryFile);
     }
 
     @LauncherAPI

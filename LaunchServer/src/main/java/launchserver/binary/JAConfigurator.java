@@ -37,9 +37,9 @@ public class JAConfigurator implements AutoCloseable {
         body.append(" = new ");
         body.append(fullName);
         body.append("();");
-        body.append("launcher.client.ClientModuleManager.registerModule( mod");
+        body.append("launcher.Launcher.modulesManager.registerModule( mod");
         body.append(autoincrement);
-        body.append(" );");
+        body.append(" , true );");
         autoincrement++;
     }
     public String getZipEntryPath()

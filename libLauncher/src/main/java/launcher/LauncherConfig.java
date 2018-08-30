@@ -34,7 +34,11 @@ public final class LauncherConfig extends StreamObject {
         this.publicKey = Objects.requireNonNull(publicKey, "publicKey");
         this.runtime = Collections.unmodifiableMap(new HashMap<>(runtime));
     }
-
+    @LauncherAPI
+    public static AutogenConfig getAutogenConfig()
+    {
+        return config;
+    }
     @LauncherAPI
     public LauncherConfig(HInput input) throws IOException, InvalidKeySpecException {
         String localAddress = config.address;

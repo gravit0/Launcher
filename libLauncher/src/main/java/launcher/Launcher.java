@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import launcher.helper.*;
+import launcher.modules.ModulesManagerInterface;
 import launcher.serialize.HInput;
 
 public final class Launcher {
@@ -23,6 +24,8 @@ public final class Launcher {
     @LauncherAPI
     public static final String BUILD = String.valueOf(LauncherVersion.readBuildNumber());
     //Начиная с 4.0.0 PROTOCOL_MAGIC изменит свою форму
+    @LauncherAPI
+    public static ModulesManagerInterface modulesManager = null;
     @LauncherAPI
     public static final int PROTOCOL_MAGIC_LEGACY = 0x724724_00 + 24;
     @LauncherAPI
