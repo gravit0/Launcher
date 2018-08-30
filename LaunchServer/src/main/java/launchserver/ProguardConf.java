@@ -1,5 +1,6 @@
 package launchserver;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -7,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import launcher.helper.IOHelper;
@@ -57,15 +57,19 @@ public class ProguardConf {
 	private void genConfig(boolean force) throws IOException {
 		if (IOHelper.exists(config) || !force) return;
 		Files.deleteIfExists(config);
-		List<String> lines = Files.readAllLines(config, IOHelper.UNICODE_CHARSET);
-		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(IOHelper.newOutput(config), IOHelper.UNICODE_CHARSET))) {
-			lines.forEach(out::println);
+		config.toFile().createNewFile();
+		try (BufferedReader lines = IOHelper.newReader(IOHelper.newInput(IOHelper.getResourceURL("launchserver/defaults/proguard.config")), IOHelper.UNICODE_CHARSET); PrintWriter out = new PrintWriter(new OutputStreamWriter(IOHelper.newOutput(config), IOHelper.UNICODE_CHARSET))) {
+			String line = null;
+			while ((line = lines.readLine()) != null) {
+				out.println(line);
+			}
 		}
 	}
 
 	private void genWords(boolean force) throws IOException {
 		if (IOHelper.exists(words) || !force) return;
 		Files.deleteIfExists(words);
+		words.toFile().createNewFile();
 		SecureRandom rand = SecurityHelper.newRandom();
 		rand.setSeed(SecureRandom.getSeed(32));
 		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(IOHelper.newOutput(words), IOHelper.UNICODE_CHARSET))) {
