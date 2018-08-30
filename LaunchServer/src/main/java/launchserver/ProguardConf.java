@@ -20,7 +20,7 @@ public class ProguardConf {
 	private static String generateString(SecureRandom rand, int il) {
 		StringBuffer sb = new StringBuffer(il);
 		sb.append(charsFirst.charAt(rand.nextInt(charsFirst.length())));
-		for (int i = 0; i < il - 1; i++) sb.append(chars.charAt(rand.nextInt(chars.length())));
+		for (int i = 0; i < il; i++) sb.append(chars.charAt(rand.nextInt(chars.length())));
 		return sb.toString();
 	}
 	private final LaunchServer srv;
@@ -38,7 +38,7 @@ public class ProguardConf {
 		words = proguard.resolve("random.pro");
 		confStrs = new HashSet<>();
 		checkDirs();
-		if (!IOHelper.exists(proguard)) prepare(false);
+		prepare(false);
 		confStrs.add(readConf());
 		if (this.srv.config.genMappings) confStrs.add("-printmapping \'" + mappings.toFile().getName() + "\'");
 		confStrs.add("-obfuscationdictionary \'" + words.toFile().getName() + "\'");

@@ -55,7 +55,8 @@ dependencies {
 	bundle 'org.javassist:javassist:3.23.1-GA'
 	bundle 'org.slf4j:slf4j-simple:1.7.25'
 	bundle 'org.slf4j:slf4j-api:1.7.25'
-	
+	aptOnly 'org.apache.logging.log4j:log4j-core:2.9.0'
+	bundle 'org.apache.logging.log4j:log4j-core:2.9.0'
 	hikari 'io.micrometer:micrometer-core:1.0.6'
 	hikari('hikari-cp:hikari-cp:2.6.0') {
 		exclude group: 'javassist'
