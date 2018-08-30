@@ -235,7 +235,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
     private LauncherBinary binary() {
     	if (config.launch4j.enabled) return new EXEL4JLauncherBinary(this);
-    	else return new EXELauncherBinary(this);
+		return new EXELauncherBinary(this);
     }
 
 	@Override

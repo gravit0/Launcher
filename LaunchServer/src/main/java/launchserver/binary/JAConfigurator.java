@@ -11,7 +11,7 @@ public class JAConfigurator implements AutoCloseable {
     String classname;
     StringBuilder body;
     int autoincrement;
-    public JAConfigurator(Class configclass) throws NotFoundException {
+    public JAConfigurator(Class<?> configclass) throws NotFoundException {
         classname = configclass.getName();
         ctClass = pool.get(classname);
         ctConstructor = ctClass.getDeclaredConstructor(null);

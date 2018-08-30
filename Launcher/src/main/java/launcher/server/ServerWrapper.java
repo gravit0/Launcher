@@ -44,7 +44,7 @@ public class ServerWrapper {
             }
         }
         String classname = args[0];
-        Class mainClass = Class.forName(classname);
+        Class<?> mainClass = Class.forName(classname);
         MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
         String[] real_args = new String[args.length - 1];
         System.arraycopy(args,1,real_args,0,args.length - 1);

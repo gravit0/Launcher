@@ -121,7 +121,7 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
 	public void loadModule(URL jarpath, String classname, boolean preload)
 			throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 		classloader.addURL(jarpath);
-		Class moduleclass = Class.forName(classname, true, classloader);
+		Class<?> moduleclass = Class.forName(classname, true, classloader);
 		Module module = (Module) moduleclass.newInstance();
 		modules.add(module);
 		module.preInit(context);

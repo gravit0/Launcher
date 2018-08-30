@@ -27,7 +27,8 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
         this.context = new ServerModuleContext(wrapper, classloader);
     }
     
-    @LauncherAPI
+    @Override
+	@LauncherAPI
     public void loadModule(URL jarpath, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException, URISyntaxException, IOException {
         JarFile f = new JarFile(Paths.get(jarpath.toURI()).toString());
         Manifest m = f.getManifest();
@@ -36,10 +37,11 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
         f.close();
     }
 
-    @LauncherAPI
+    @Override
+	@LauncherAPI
     public void loadModule(URL jarpath, String classname, boolean preload) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         classloader.addURL(jarpath);
-        Class moduleclass = Class.forName(classname, true, classloader);
+        Class<?> moduleclass = Class.forName(classname, true, classloader);
         Module module = (Module) moduleclass.newInstance();
         modules.add(module);
         module.preInit(context);
@@ -47,13 +49,15 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
         LogHelper.info("Module %s version: %s loaded",module.getName(),module.getVersion());
     }
 
-    @LauncherAPI
+    @Override
+	@LauncherAPI
     public void registerModule(Module module,boolean preload)
     {
         load(module, preload);
         LogHelper.info("Module %s version: %s registered",module.getName(),module.getVersion());
     }
 
+	@Override
 	public void postInitModules() {
         for (Module m : modules) {
             m.postInit(context);
@@ -61,7 +65,8 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
         }
 	}
     
-    @LauncherAPI
+    @Override
+	@LauncherAPI
     public void initModules() {
         for (Module m : modules) {
             m.init(context);
@@ -69,7 +74,8 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
         }
     }
 
-    @LauncherAPI
+    @Override
+	@LauncherAPI
     public void preInitModules() {
         for (Module m : modules) {
             m.preInit(context);
@@ -78,7 +84,8 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
     }
 
     
-    @LauncherAPI
+    @Override
+	@LauncherAPI
     public void printModules() {
         for (Module m : modules) {
             LogHelper.info("Module %s version: %s", m.getName(), m.getVersion());
@@ -94,13 +101,15 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
         LogHelper.info("Loaded %d modules", modules.size());
     }
     
-    @LauncherAPI
+    @Override
+	@LauncherAPI
 	public void load(Module module) {
 		modules.add(module);
 	}
     
     
-    @LauncherAPI
+    @Override
+	@LauncherAPI
 	public void load(Module module, boolean preload) {
 		load(module);
 		if (!preload) module.init(context);

@@ -135,8 +135,7 @@ public class CheckComboBoxSkin<T> extends BehaviorSkinBase<CheckComboBox<T>, Beh
 
 		if (control.getTitle() != null)
 			return control.getTitle();
-		else
-			return buildString();
+		return buildString();
 
 	}
 
@@ -163,6 +162,7 @@ public class CheckComboBoxSkin<T> extends BehaviorSkinBase<CheckComboBox<T>, Beh
 				return false;
 			}
 		};
+		@SuppressWarnings("unchecked")
 		final ListView<T> listView = (ListView<T>) comboBoxListViewSkin.getPopupContent();
 		listView.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.SPACE) {

@@ -96,9 +96,9 @@ public class SignerJar implements AutoCloseable {
 		this.keyAlias = keyAlias;
 		this.password = keyPassword;
 
-		this.manifestAttributes = new LinkedHashMap();
-		this.fileDigests = new LinkedHashMap();
-		this.sectionDigests = new LinkedHashMap();
+		this.manifestAttributes = new LinkedHashMap<>();
+		this.fileDigests = new LinkedHashMap<>();
+		this.sectionDigests = new LinkedHashMap<>();
 	}
 
 	private final static MessageDigest hasher() {
@@ -236,7 +236,7 @@ public class SignerJar implements AutoCloseable {
 	private CMSSignedDataGenerator createSignedDataGenerator() throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
 
-		List<Certificate> certChain = new ArrayList(Arrays.asList(keyStore.getCertificateChain(keyAlias)));
+		List<Certificate> certChain = new ArrayList<>(Arrays.asList(keyStore.getCertificateChain(keyAlias)));
 		Store certStore = new JcaCertStore(certChain);
 		Certificate cert = keyStore.getCertificate(keyAlias);
 		PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyAlias, password != null ? password.toCharArray() : null);

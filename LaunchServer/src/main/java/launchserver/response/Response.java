@@ -33,7 +33,7 @@ public abstract class Response {
     protected final String ip;
     @LauncherAPI
     protected final long session;
-    private static final Map<Integer, Factory> RESPONSES = new ConcurrentHashMap<>(8);
+    private static final Map<Integer, Factory<?>> RESPONSES = new ConcurrentHashMap<>(8);
 
     protected Response(LaunchServer server, long session, HInput input, HOutput output, String ip) {
         this.server = server;
@@ -43,7 +43,7 @@ public abstract class Response {
         this.session = session;
     }
 
-    public static void registerResponse(int type, Factory factory) {
+    public static void registerResponse(int type, Factory<?> factory) {
         RESPONSES.put(type, factory);
     }
 

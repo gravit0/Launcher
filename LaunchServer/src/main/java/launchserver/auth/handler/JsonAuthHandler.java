@@ -109,9 +109,8 @@ public class JsonAuthHandler extends CachedAuthHandler {
         String value;
         if ((value = result.getString(uuidKeyName, null)) != null) {
             return UUID.fromString(value);
-        } else {
-            return super.checkServer(username, serverID);
         }
+		return super.checkServer(username, serverID);
     }
 
     @Override

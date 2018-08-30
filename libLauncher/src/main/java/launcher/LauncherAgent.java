@@ -22,15 +22,15 @@ public class LauncherAgent {
 
         if(ClassFile.MAJOR_VERSION > ClassFile.JAVA_8 || enabled) {
 	        	inst.addTransformer(new SystemClassLoaderTransformer());
-	        Class[] classes = inst.getAllLoadedClasses(); // Получаем список уже загруженных классов, которые могут быть изменены. Классы, которые ещё не загружены, будут изменены при загрузке
-	        ArrayList<Class> classList = new ArrayList<Class>();
+	        Class<?>[] classes = inst.getAllLoadedClasses(); // Получаем список уже загруженных классов, которые могут быть изменены. Классы, которые ещё не загружены, будут изменены при загрузке
+	        ArrayList<Class<?>> classList = new ArrayList<>();
 	        for (int i = 0; i < classes.length; i++) {
 	        	if (inst.isModifiableClass(classes[i])) { // Если класс можно изменить, добавляем его в список
 	        		classList.add(classes[i]);
 	        	}
 	        }
 	        // Reload classes, if possible.
-	        Class[] workaround = new Class[classList.size()];
+	        Class<?>[] workaround = new Class[classList.size()];
 	        try {
 	        	inst.retransformClasses(classList.toArray(workaround)); // Запускаем процесс трансформации
 	        } catch (UnmodifiableClassException e) {

@@ -131,9 +131,7 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
     public boolean isWhitelistContains(String username)
     {
         if(!useWhitelist.getValue()) return true;
-        else {
-            return whitelist.stream(StringConfigEntry.class).anyMatch(e -> e.equals(username));
-        }
+		return whitelist.stream(StringConfigEntry.class).anyMatch(e -> e.equals(username));
     }
 
     @LauncherAPI

@@ -32,10 +32,9 @@ public class AuthLimiter implements NeedGarbageCollection {
             rate.value++;
             rate.ts = currenttime;
             return false;
-        } else {
-            map.put(ip, new AuthEntry(1, System.currentTimeMillis()));
-            return false;
         }
+		map.put(ip, new AuthEntry(1, System.currentTimeMillis()));
+		return false;
     }
 
     @Override

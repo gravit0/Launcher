@@ -12,5 +12,18 @@ allprojects {
 
 subprojects {
 	apply plugin: 'java'
-	tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
+	
+	configurations {
+		apt
+		aptCompileOnly
+		aptOnly
+		aptOnly.extendsFrom apt, aptCompileOnly
+		compile.extendsFrom apt
+		compileOnly.extendsFrom aptCompileOnly
+	}
+
+	tasks.withType(JavaCompile) {
+		options.encoding = "UTF-8"
+		options.annotationProcessorPath = configurations.aptOnly
+	}
 }
