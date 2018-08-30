@@ -64,11 +64,9 @@ public class LauncherVersion {
 
     @Override
     public String toString() {
-        return "LauncherVersion{" +
-                "major=" + major +
-                ", minor=" + minor +
-                ", patch=" + patch +
-                ", build=" + build +
-                '}';
+        return        major +
+                "." + minor +
+                "." + patch +
+                "-" + build;
     }
 }

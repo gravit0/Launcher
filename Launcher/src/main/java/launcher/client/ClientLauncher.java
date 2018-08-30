@@ -383,8 +383,8 @@ public final class ClientLauncher {
     public static void main(String... args) throws Throwable {
         LogHelper.logInit(true);
         Launcher.modulesManager = new ClientModuleManager(null);
-        Launcher.modulesManager.preInitModules();
         LauncherConfig.getAutogenConfig(); //INIT
+        Launcher.modulesManager.preInitModules();
         if (JVMHelper.OS_TYPE == OS.MUSTDIE) {
             AvanguardStarter.loadVared();
             AvanguardStarter.main(false);
@@ -412,6 +412,7 @@ public final class ClientLauncher {
             Files.delete(paramsFile);
         }
         title = params.title;
+        Launcher.modulesManager.initModules();
         // Verify ClientLauncher sign and classpath
         LogHelper.debug("Verifying ClientLauncher sign and classpath");
         SecurityHelper.verifySign(LauncherRequest.BINARY_PATH, params.launcherSign, publicKey);
@@ -444,7 +445,7 @@ public final class ClientLauncher {
             //verifyHDir(IOHelper.JVM_DIR, jvmHDir.object, null, digest);
             verifyHDir(params.assetDir, assetHDir.object, assetMatcher, digest);
             verifyHDir(params.clientDir, clientHDir.object, clientMatcher, digest);
-
+            Launcher.modulesManager.postInitModules();
             // Start WatchService, and only then client
             CommonHelper.newThread("Asset Directory Watcher", true, assetWatcher).start();
             CommonHelper.newThread("Client Directory Watcher", true, clientWatcher).start();

@@ -30,7 +30,9 @@ public class ServerWrapper {
         ServerWrapper wrapper = new ServerWrapper();
         modulesManager = new ModulesManager(wrapper);
         modulesManager.autoload(Paths.get("modules"));
+        Launcher.modulesManager = modulesManager;
         LauncherConfig cfg = new LauncherConfig(new HInput(IOHelper.newInput(IOHelper.getResourceURL(Launcher.CONFIG_FILE))));
+        modulesManager.preInitModules();
         ProfilesRequest.Result result = new ProfilesRequest(cfg).request();
         for(SignedObjectHolder<ClientProfile> p : result.profiles)
         {
@@ -41,11 +43,13 @@ public class ServerWrapper {
                 break;
             }
         }
+        modulesManager.initModules();
         String classname = args[0];
         Class<?> mainClass = Class.forName(classname);
         MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
         String[] real_args = new String[args.length - 1];
         System.arraycopy(args,1,real_args,0,args.length - 1);
+        modulesManager.postInitModules();
         mainMethod.invoke(real_args);
     }
     public ClientProfile profile;

@@ -190,12 +190,12 @@ public class LauncherEngine {
     @LauncherAPI
     public void start(String... args) throws Throwable {
         Launcher.modulesManager = new ClientModuleManager(this);
-        Launcher.modulesManager.preInitModules();
         LauncherConfig.getAutogenConfig(); //INIT
+        Launcher.modulesManager.preInitModules();
         Objects.requireNonNull(args, "args");
         if (started.getAndSet(true))
 			throw new IllegalStateException("Launcher has been already started");
-
+        Launcher.modulesManager.initModules();
         // Load init.js script
         loadScript(Launcher.getResourceURL(INIT_SCRIPT_FILE));
         LogHelper.info("Invoking start() function");
@@ -205,6 +205,7 @@ public class LauncherEngine {
             AvanguardStarter.loadVared();
             AvanguardStarter.main(false);
         }
+        Launcher.modulesManager.postInitModules();
         invoker.invokeFunction("start", (Object) args);
     }
 }
