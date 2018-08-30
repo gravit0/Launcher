@@ -5,6 +5,7 @@ import static launcher.helper.IOHelper.newZipEntry;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +37,7 @@ import proguard.ParseException;
 import proguard.ProGuard;
 
 public final class JARLauncherBinary extends LauncherBinary {
+	public static final URL cleanJar = JARLauncherBinary.class.getClassLoader().getResource("Launcher.jar");
 	private final class RuntimeDirVisitor extends SimpleFileVisitor<Path> {
 		private final ZipOutputStream output;
 		private final Map<String, byte[]> runtime;
@@ -124,7 +126,7 @@ public final class JARLauncherBinary extends LauncherBinary {
 			jaConfigurator.setPort(server.config.port);
 			server.buildHookManager.registerAllClientModuleClass(jaConfigurator);
 			try (ZipInputStream input = new ZipInputStream(
-					IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
+					IOHelper.newInput(cleanJar))) {
 				ZipEntry e = input.getNextEntry();
 				while (e != null) {
 					String filename = e.getName();
@@ -197,7 +199,7 @@ public final class JARLauncherBinary extends LauncherBinary {
 			jaConfigurator.setPort(server.config.port);
 			server.buildHookManager.registerAllClientModuleClass(jaConfigurator);
 			try (ZipInputStream input = new ZipInputStream(
-					IOHelper.newInput(IOHelper.getResourceURL("Launcher.jar")))) {
+					IOHelper.newInput(cleanJar))) {
 				ZipEntry e = input.getNextEntry();
 				while (e != null) {
 					String filename = e.getName();

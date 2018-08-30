@@ -66,6 +66,8 @@ dependencies {
 	compileOnly('net.sf.launch4j:launch4j:3.12') { // need user
 		exclude group: '*'
 	}
+
+	//compile 'org.mozilla:rhino:1.7.10' will be module
 }
 
 task hikari(type: Copy) {
