@@ -7,9 +7,10 @@ import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
-import launcher.profiles.PlayerProfile;
+
 import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;
+import launcher.profiles.PlayerProfile;
 import launcher.request.uuid.BatchProfileByUsernameRequest;
 import launcher.serialize.SerializeLimits;
 
@@ -20,6 +21,14 @@ public final class YggdrasilGameProfileRepository implements GameProfileReposito
     private static final long ERROR_BUSY_WAIT_MS = VerifyHelper.verifyLong(
             Long.parseLong(System.getProperty("launcher.authlib.errorBusyWait", Long.toString(500L))),
             VerifyHelper.L_NOT_NEGATIVE, "launcher.authlib.errorBusyWait can't be < 0");
+
+    private static void busyWait(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            LogHelper.error(e);
+        }
+    }
 
     public YggdrasilGameProfileRepository() {
         LogHelper.debug("Patched GameProfileRepository created");
@@ -64,14 +73,6 @@ public final class YggdrasilGameProfileRepository implements GameProfileReposito
 
             // Busy wait, like in standard authlib
             busyWait(BUSY_WAIT_MS);
-        }
-    }
-
-    private static void busyWait(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            LogHelper.error(e);
         }
     }
 }

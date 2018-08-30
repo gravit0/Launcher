@@ -1,11 +1,11 @@
 package launchserver.manangers;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import launcher.LauncherAPI;
 import launcher.NeedGarbageCollection;
 import launchserver.socket.Client;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class SessionManager implements NeedGarbageCollection {
     @LauncherAPI
@@ -18,19 +18,24 @@ public class SessionManager implements NeedGarbageCollection {
         return true;
     }
 
+    @Override
+	@LauncherAPI
+    public void garbageCollection() {
+        long time = System.currentTimeMillis();
+        clientSet.removeIf(c -> c.timestamp + SESSION_TIMEOUT < time);
+    }
+
     @LauncherAPI
     public Client getClient(long session) {
-        for (Client c : clientSet) {
-            if (c.session == session) return c;
-        }
+        for (Client c : clientSet)
+			if (c.session == session) return c;
         return null;
     }
 
     @LauncherAPI
     public Client getOrNewClient(long session) {
-        for (Client c : clientSet) {
-            if (c.session == session) return c;
-        }
+        for (Client c : clientSet)
+			if (c.session == session) return c;
         Client newClient = new Client(session);
         clientSet.add(newClient);
         return newClient;
@@ -38,17 +43,10 @@ public class SessionManager implements NeedGarbageCollection {
 
     @LauncherAPI
     public void updateClient(long session) {
-        for (Client c : clientSet) {
-            if (c.session == session) {
+        for (Client c : clientSet)
+			if (c.session == session) {
                 c.up();
                 return;
             }
-        }
-    }
-
-    @LauncherAPI
-    public void garbageCollection() {
-        long time = System.currentTimeMillis();
-        clientSet.removeIf(c -> (c.timestamp + SESSION_TIMEOUT) < time);
     }
 }

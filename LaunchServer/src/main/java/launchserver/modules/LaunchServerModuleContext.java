@@ -5,13 +5,13 @@ import launcher.modules.ModuleContext;
 import launchserver.LaunchServer;
 
 public class LaunchServerModuleContext implements ModuleContext {
-    public LaunchServerModuleContext(LaunchServer server, LauncherClassLoader classloader)
-    {
-        this.launchServer = server;
-        this.classloader = classloader;
-    }
     public final LaunchServer launchServer;
     public final LauncherClassLoader classloader;
+    public LaunchServerModuleContext(LaunchServer server, LauncherClassLoader classloader)
+    {
+        launchServer = server;
+        this.classloader = classloader;
+    }
     @Override
     public Type getType() {
         return Type.LAUNCHSERVER;

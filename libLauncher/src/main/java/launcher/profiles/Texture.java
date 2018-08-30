@@ -1,17 +1,17 @@
 package launcher.profiles;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Objects;
+
 import launcher.LauncherAPI;
 import launcher.helper.IOHelper;
 import launcher.helper.SecurityHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.stream.StreamObject;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Objects;
 
 public final class Texture extends StreamObject {
     private static final SecurityHelper.DigestAlgorithm DIGEST_ALGO = SecurityHelper.DigestAlgorithm.SHA256;
@@ -23,9 +23,9 @@ public final class Texture extends StreamObject {
     public final byte[] digest;
 
     @LauncherAPI
-    public Texture(String url, byte[] digest) {
-        this.url = IOHelper.verifyURL(url);
-        this.digest = Objects.requireNonNull(digest, "digest");
+    public Texture(HInput input) throws IOException {
+        url = IOHelper.verifyURL(input.readASCII(2048));
+        digest = input.readByteArray(-DIGEST_ALGO.bytes);
     }
 
     @LauncherAPI
@@ -46,9 +46,9 @@ public final class Texture extends StreamObject {
     }
 
     @LauncherAPI
-    public Texture(HInput input) throws IOException {
-        url = IOHelper.verifyURL(input.readASCII(2048));
-        digest = input.readByteArray(-DIGEST_ALGO.bytes);
+    public Texture(String url, byte[] digest) {
+        this.url = IOHelper.verifyURL(url);
+        this.digest = Objects.requireNonNull(digest, "digest");
     }
 
     @Override

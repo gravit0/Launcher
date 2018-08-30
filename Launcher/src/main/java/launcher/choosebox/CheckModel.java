@@ -5,10 +5,7 @@ import launcher.LauncherAPI;
 
 public interface CheckModel<T> {
 	@LauncherAPI
-	public int getItemCount();
-
-	@LauncherAPI
-	public ObservableList<T> getCheckedItems();
+	public void check(T item);
 
 	@LauncherAPI
 	public void checkAll();
@@ -20,13 +17,16 @@ public interface CheckModel<T> {
 	public void clearChecks();
 
 	@LauncherAPI
-	public boolean isEmpty();
+	public ObservableList<T> getCheckedItems();
+
+	@LauncherAPI
+	public int getItemCount();
 
 	@LauncherAPI
 	public boolean isChecked(T item);
 
 	@LauncherAPI
-	public void check(T item);
+	public boolean isEmpty();
 
 	@LauncherAPI
 	public void toggleCheckState(T item);

@@ -35,15 +35,15 @@ public final class SignedObjectHolder<O extends StreamObject> extends SignedByte
         return object.hashCode();
     }
 
-    @Override
-    public String toString() {
-        return object.toString();
-    }
-
     @LauncherAPI
     public O newInstance(Adapter<O> adapter) throws IOException {
         try (HInput input = new HInput(bytes)) {
             return adapter.convert(input);
         }
+    }
+
+    @Override
+    public String toString() {
+        return object.toString();
     }
 }

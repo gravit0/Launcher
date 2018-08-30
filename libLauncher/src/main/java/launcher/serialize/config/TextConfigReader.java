@@ -18,9 +18,14 @@ import launcher.serialize.config.entry.ListConfigEntry;
 import launcher.serialize.config.entry.StringConfigEntry;
 
 public final class TextConfigReader {
+    @LauncherAPI
+    public static BlockConfigEntry read(Reader reader, boolean ro) throws IOException {
+        return new TextConfigReader(reader, ro).readBlock(0);
+    }
     private final LineNumberReader reader;
     private final boolean ro;
     private String skipped;
+
     private int ch = -1;
 
     private TextConfigReader(Reader reader, boolean ro) {
@@ -35,9 +40,8 @@ public final class TextConfigReader {
 
     private int nextChar(boolean eof) throws IOException {
         ch = reader.read();
-        if (eof && ch < 0) {
-            throw newIOException("Unexpected end of config");
-        }
+        if (eof && ch < 0)
+			throw newIOException("Unexpected end of config");
         return ch;
     }
 
@@ -56,18 +60,16 @@ public final class TextConfigReader {
 
             // Read entry name
             String name = readToken();
-            if (skipWhitespace(true) != ':') {
-                throw newIOException("Value start expected");
-            }
+            if (skipWhitespace(true) != ':')
+				throw newIOException("Value start expected");
             String postNameComment = skipped;
 
             // Read entry value
             nextClean(true);
             String preValueComment = skipped;
             ConfigEntry<?> entry = readEntry(4);
-            if (skipWhitespace(true) != ';') {
-                throw newIOException("Value end expected");
-            }
+            if (skipWhitespace(true) != ';')
+				throw newIOException("Value end expected");
 
             // Set comments
             entry.setComment(0, preNameComment);
@@ -76,9 +78,8 @@ public final class TextConfigReader {
             entry.setComment(3, skipped);
 
             // Try add entry to map
-            if (map.put(name, entry) != null) {
-                throw newIOException(String.format("Duplicate config entry: '%s'", name));
-            }
+            if (map.put(name, entry) != null)
+				throw newIOException(String.format("Duplicate config entry: '%s'", name));
         }
 
         // Set comment after last entry and return block
@@ -102,9 +103,8 @@ public final class TextConfigReader {
         }
 
         // Possibly integer value
-        if (ch == '-' || ch >= '0' && ch <= '9') {
-            return readInteger(cc);
-        }
+        if (ch == '-' || ch >= '0' && ch <= '9')
+			return readInteger(cc);
 
         // Statement?
         String statement = readToken();
@@ -137,9 +137,8 @@ public final class TextConfigReader {
 
             // Prepare for next element read
             if (hasNextElement) {
-                if (ch != ',') {
-                    throw newIOException("Comma expected");
-                }
+                if (ch != ',')
+					throw newIOException("Comma expected");
                 nextClean(true);
                 preValueComment = skipped;
             }
@@ -148,9 +147,8 @@ public final class TextConfigReader {
         // Set in-list comment (if no elements)
         boolean additional = listValue.isEmpty();
         ConfigEntry<List<ConfigEntry<?>>> list = new ListConfigEntry(listValue, ro, additional ? cc + 1 : cc);
-        if (additional) {
-            list.setComment(cc, skipped);
-        }
+        if (additional)
+			list.setComment(cc, skipped);
 
         // Return list
         nextChar(false);
@@ -161,8 +159,8 @@ public final class TextConfigReader {
         StringBuilder builder = new StringBuilder();
 
         // Read string chars
-        while (nextChar(true) != '"') {
-            switch (ch) {
+        while (nextChar(true) != '"')
+			switch (ch) {
                 case '\r':
                 case '\n': // String termination
                     throw newIOException("String termination");
@@ -196,7 +194,6 @@ public final class TextConfigReader {
                     builder.append((char) ch);
                     break;
             }
-        }
 
         // Return string
         nextChar(false);
@@ -213,9 +210,8 @@ public final class TextConfigReader {
 
         // Return token as string
         String token = builder.toString();
-        if (token.isEmpty()) {
-            throw newIOException("Not a token");
-        }
+        if (token.isEmpty())
+			throw newIOException("Not a token");
         return token;
     }
 
@@ -238,10 +234,5 @@ public final class TextConfigReader {
         }
         skipped = skippedBuilder.toString();
         return ch;
-    }
-
-    @LauncherAPI
-    public static BlockConfigEntry read(Reader reader, boolean ro) throws IOException {
-        return new TextConfigReader(reader, ro).readBlock(0);
     }
 }

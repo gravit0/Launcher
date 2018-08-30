@@ -9,7 +9,6 @@ import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
 
 public final class LaunchServerPluginBridge implements Runnable, AutoCloseable {
-    private final LaunchServer server;
     /**
      * Permission.
      */
@@ -18,6 +17,12 @@ public final class LaunchServerPluginBridge implements Runnable, AutoCloseable {
      * Err text.
      */
     public static final String nonInitText = "Лаунчсервер не был полностью загружен";
+    static {
+        //SecurityHelper.verifyCertificates(LaunchServer.class);
+        JVMHelper.verifySystemProperties(LaunchServer.class, false);
+    }
+
+    private final LaunchServer server;
 
     public LaunchServerPluginBridge(Path dir) throws Throwable {
         LogHelper.addOutput(dir.resolve("LaunchServer.log"));
@@ -40,17 +45,12 @@ public final class LaunchServerPluginBridge implements Runnable, AutoCloseable {
         server.close();
     }
 
-    @Override
-    public void run() {
-        server.run();
-    }
-
     public void eval(String... command) {
         server.commandHandler.eval(command, false);
     }
 
-    static {
-        //SecurityHelper.verifyCertificates(LaunchServer.class);
-        JVMHelper.verifySystemProperties(LaunchServer.class, false);
+    @Override
+    public void run() {
+        server.run();
     }
 }

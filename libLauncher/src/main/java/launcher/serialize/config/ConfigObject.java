@@ -9,6 +9,12 @@ import launcher.serialize.config.entry.BlockConfigEntry;
 import launcher.serialize.stream.StreamObject;
 
 public abstract class ConfigObject extends StreamObject {
+    @FunctionalInterface
+    public interface Adapter<O extends ConfigObject> {
+        @LauncherAPI
+        O convert(BlockConfigEntry entry);
+    }
+
     @LauncherAPI
     public final BlockConfigEntry block;
 
@@ -20,11 +26,5 @@ public abstract class ConfigObject extends StreamObject {
     @Override
     public final void write(HOutput output) throws IOException {
         block.write(output);
-    }
-
-    @FunctionalInterface
-    public interface Adapter<O extends ConfigObject> {
-        @LauncherAPI
-        O convert(BlockConfigEntry entry);
     }
 }

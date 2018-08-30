@@ -10,6 +10,25 @@ import launcher.helper.VerifyHelper;
 import launcher.serialize.config.entry.BlockConfigEntry;
 
 public final class MemoryAuthHandler extends CachedAuthHandler {
+    private static String toUsername(UUID uuid) {
+        byte[] bytes = ByteBuffer.allocate(16).
+                putLong(uuid.getMostSignificantBits()).
+                putLong(uuid.getLeastSignificantBits()).array();
+
+        // Find username end
+        int length = 0;
+        while (length < bytes.length && bytes[length] != 0)
+			length++;
+
+        // Decode and verify
+        return VerifyHelper.verifyUsername(new String(bytes, 0, length, IOHelper.ASCII_CHARSET));
+    }
+
+    private static UUID toUUID(String username) {
+        ByteBuffer buffer = ByteBuffer.wrap(Arrays.copyOf(IOHelper.encodeASCII(username), 16));
+        return new UUID(buffer.getLong(), buffer.getLong()); // MOST, LEAST
+    }
+
     public MemoryAuthHandler(BlockConfigEntry block) {
         super(block);
         LogHelper.warning("Usage of MemoryAuthHandler isn't recommended!");
@@ -21,13 +40,13 @@ public final class MemoryAuthHandler extends CachedAuthHandler {
     }
 
     @Override
-    protected Entry fetchEntry(UUID uuid) {
-        return new Entry(uuid, toUsername(uuid), null, null);
+    protected Entry fetchEntry(String username) {
+        return new Entry(toUUID(username), username, null, null);
     }
 
     @Override
-    protected Entry fetchEntry(String username) {
-        return new Entry(toUUID(username), username, null, null);
+    protected Entry fetchEntry(UUID uuid) {
+        return new Entry(uuid, toUsername(uuid), null, null);
     }
 
     @Override
@@ -38,25 +57,5 @@ public final class MemoryAuthHandler extends CachedAuthHandler {
     @Override
     protected boolean updateServerID(UUID uuid, String serverID) {
         return true; // Do nothing
-    }
-
-    private static UUID toUUID(String username) {
-        ByteBuffer buffer = ByteBuffer.wrap(Arrays.copyOf(IOHelper.encodeASCII(username), 16));
-        return new UUID(buffer.getLong(), buffer.getLong()); // MOST, LEAST
-    }
-
-    private static String toUsername(UUID uuid) {
-        byte[] bytes = ByteBuffer.allocate(16).
-                putLong(uuid.getMostSignificantBits()).
-                putLong(uuid.getLeastSignificantBits()).array();
-
-        // Find username end
-        int length = 0;
-        while (length < bytes.length && bytes[length] != 0) {
-            length++;
-        }
-
-        // Decode and verify
-        return VerifyHelper.verifyUsername(new String(bytes, 0, length, IOHelper.ASCII_CHARSET));
     }
 }

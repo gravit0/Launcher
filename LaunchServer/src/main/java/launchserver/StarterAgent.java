@@ -14,13 +14,6 @@ import java.util.jar.JarFile;
 
 public class StarterAgent {
 	
-	public static void premain(String agentArgument, Instrumentation inst) {
-		try {
-			Files.walkFileTree(Paths.get("libraries"), Collections.singleton(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new StarterVisitor(inst));
-		} catch (IOException e) {
-			e.printStackTrace(System.err);
-		}
-	}
 	public static final class StarterVisitor extends SimpleFileVisitor<Path> {
 		private Instrumentation inst;
 
@@ -32,6 +25,13 @@ public class StarterAgent {
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 			if (file.toFile().getName().endsWith(".jar")) inst.appendToSystemClassLoaderSearch(new JarFile(file.toFile()));
 			return super.visitFile(file, attrs);
+		}
+	}
+	public static void premain(String agentArgument, Instrumentation inst) {
+		try {
+			Files.walkFileTree(Paths.get("libraries"), Collections.singleton(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new StarterVisitor(inst));
+		} catch (IOException e) {
+			e.printStackTrace(System.err);
 		}
 	}
 }

@@ -8,10 +8,22 @@ import launcher.LauncherAPI;
 public final class FileNameMatcher {
     private static final String[] NO_ENTRIES = new String[0];
 
+    private static boolean anyMatch(String[] entries, Collection<String> path) {
+        return path.stream().anyMatch(e -> Arrays.stream(entries).anyMatch(p -> p.endsWith(e)));
+        //for(String p : path)
+        //{
+        //    for(String e : entries)
+        //    {
+        //        if(p.endsWith(e)) return true;
+        //    }
+        //}
+    }
     // Instance
     private final String[] update;
     private final String[] verify;
+
     private final String[] exclusions;
+
 
     @LauncherAPI
     public FileNameMatcher(String[] update, String[] verify, String[] exclusions) {
@@ -30,19 +42,7 @@ public final class FileNameMatcher {
         return anyMatch(verify, path) && !anyMatch(exclusions, path);
     }
 
-
     public FileNameMatcher verifyOnly() {
         return new FileNameMatcher(NO_ENTRIES, verify, exclusions);
-    }
-
-    private static boolean anyMatch(String[] entries, Collection<String> path) {
-        return path.stream().anyMatch(e -> Arrays.stream(entries).anyMatch(p -> p.endsWith(e)));
-        //for(String p : path)
-        //{
-        //    for(String e : entries)
-        //    {
-        //        if(p.endsWith(e)) return true;
-        //    }
-        //}
     }
 }

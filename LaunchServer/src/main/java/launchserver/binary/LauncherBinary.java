@@ -1,6 +1,5 @@
 package launchserver.binary;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -21,7 +20,7 @@ public abstract class LauncherBinary {
     protected LauncherBinary(LaunchServer server, Path binaryFile) {
         this.server = server;
         this.binaryFile = binaryFile;
-        this.syncBinaryFile = binaryFile;
+        syncBinaryFile = binaryFile;
     }
     @LauncherAPI
     protected LauncherBinary(LaunchServer server, Path binaryFile, Path syncBinaryFile) {

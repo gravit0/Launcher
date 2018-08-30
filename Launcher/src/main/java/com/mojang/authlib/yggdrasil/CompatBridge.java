@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import launcher.LauncherAPI;
 import launcher.client.ClientLauncher;
-import launcher.profiles.PlayerProfile;
 import launcher.helper.LogHelper;
+import launcher.profiles.PlayerProfile;
 import launcher.request.auth.CheckServerRequest;
 import launcher.request.auth.JoinServerRequest;
 import launcher.request.uuid.BatchProfileByUsernameRequest;
@@ -19,9 +19,6 @@ import launcher.serialize.SerializeLimits;
 public final class CompatBridge {
     public static final int PROFILES_MAX_BATCH_SIZE = SerializeLimits.MAX_BATCH_SIZE;
 
-    private CompatBridge() {
-    }
-
     @SuppressWarnings("unused")
     public static CompatProfile checkServer(String username, String serverID) throws Exception {
         LogHelper.debug("CompatBridge.checkServer, Username: '%s', Server ID: %s", username, serverID);
@@ -30,18 +27,12 @@ public final class CompatBridge {
 
     @SuppressWarnings("unused")
     public static boolean joinServer(String username, String accessToken, String serverID) throws Exception {
-        if (!ClientLauncher.isLaunched()) {
-            throw new IllegalStateException("Bad Login (Cheater)");
-        }
+        if (!ClientLauncher.isLaunched())
+			throw new IllegalStateException("Bad Login (Cheater)");
 
         // Join server
         LogHelper.debug("LegacyBridge.joinServer, Username: '%s', Access token: %s, Server ID: %s", username, accessToken, serverID);
         return new JoinServerRequest(username, accessToken, serverID).request();
-    }
-
-    @SuppressWarnings("unused")
-    public static CompatProfile profileByUUID(UUID uuid) throws Exception {
-        return CompatProfile.fromPlayerProfile(new ProfileByUUIDRequest(uuid).request());
     }
 
     @SuppressWarnings("unused")
@@ -50,16 +41,23 @@ public final class CompatBridge {
     }
 
     @SuppressWarnings("unused")
+    public static CompatProfile profileByUUID(UUID uuid) throws Exception {
+        return CompatProfile.fromPlayerProfile(new ProfileByUUIDRequest(uuid).request());
+    }
+
+    @SuppressWarnings("unused")
     public static CompatProfile[] profilesByUsername(String... usernames) throws Exception {
         PlayerProfile[] profiles = new BatchProfileByUsernameRequest(usernames).request();
 
         // Convert profiles
         CompatProfile[] resultProfiles = new CompatProfile[profiles.length];
-        for (int i = 0; i < profiles.length; i++) {
-            resultProfiles[i] = CompatProfile.fromPlayerProfile(profiles[i]);
-        }
+        for (int i = 0; i < profiles.length; i++)
+			resultProfiles[i] = CompatProfile.fromPlayerProfile(profiles[i]);
 
         // We're dones
         return resultProfiles;
+    }
+
+    private CompatBridge() {
     }
 }

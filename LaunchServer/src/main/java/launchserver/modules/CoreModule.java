@@ -6,6 +6,11 @@ import launcher.modules.ModuleContext;
 
 public class CoreModule implements Module {
 	@Override
+	public void close() {
+		// nothing to do
+	}
+
+	@Override
 	public String getName() {
 		return "LaunchServer";
 	}
@@ -21,18 +26,13 @@ public class CoreModule implements Module {
 	}
 
 	@Override
-	public void preInit(ModuleContext context) {
-		// nothing to do
-	}
-
-	@Override
 	public void postInit(ModuleContext context) {
 		// nothing to do
 	}
 
 
 	@Override
-	public void close() {
+	public void preInit(ModuleContext context) {
 		// nothing to do
 	}
 }

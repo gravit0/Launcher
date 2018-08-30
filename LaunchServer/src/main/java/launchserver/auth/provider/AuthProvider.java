@@ -16,17 +16,6 @@ public abstract class AuthProvider extends ConfigObject implements AutoCloseable
     private static boolean registredProv = false;
 
     @LauncherAPI
-    protected AuthProvider(BlockConfigEntry block) {
-        super(block);
-    }
-
-    @Override
-    public abstract void close() throws IOException;
-
-    @LauncherAPI
-    public abstract AuthProviderResult auth(String login, String password, String ip) throws Exception;
-
-    @LauncherAPI
     public static AuthProviderResult authError(String message) throws AuthException {
         throw new AuthException(message);
     }
@@ -60,4 +49,15 @@ public abstract class AuthProvider extends ConfigObject implements AutoCloseable
             registredProv = true;
         }
     }
+
+    @LauncherAPI
+    protected AuthProvider(BlockConfigEntry block) {
+        super(block);
+    }
+
+    @LauncherAPI
+    public abstract AuthProviderResult auth(String login, String password, String ip) throws Exception;
+
+    @Override
+    public abstract void close() throws IOException;
 }

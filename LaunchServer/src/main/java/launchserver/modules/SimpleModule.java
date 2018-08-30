@@ -6,6 +6,11 @@ import launcher.modules.ModuleContext;
 
 public class SimpleModule implements Module {
     @Override
+	public void close() {
+		// on stop
+	}
+
+    @Override
     public String getName() {
         return "SimpleModule";
     }
@@ -21,18 +26,13 @@ public class SimpleModule implements Module {
     }
 
     @Override
-    public void preInit(ModuleContext context) {
-
-    }
-
-    @Override
     public void postInit(ModuleContext context) {
 
     }
 
 
     @Override
-	public void close() {
-		// on stop
-	}
+    public void preInit(ModuleContext context) {
+
+    }
 }

@@ -3,6 +3,7 @@ package launchserver.response.auth;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
@@ -25,6 +26,12 @@ import launchserver.response.Response;
 import launchserver.response.profile.ProfileByUUIDResponse;
 
 public final class AuthResponse extends Response {
+    private static String echo(int length) {
+        char[] chars = new char[length];
+        Arrays.fill(chars, '*');
+        return new String(chars);
+    }
+
     public AuthResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
         super(server, session, input, output, ip);
     }
@@ -51,25 +58,20 @@ public final class AuthResponse extends Response {
         debug("Login: '%s', Password: '%s'", login, echo(password.length()));
         AuthProviderResult result;
         try {
+            if (server.limiter.isLimit(ip)) {
+                AuthProvider.authError(server.config.authRejectString);
+                return;
+            }
             result = server.config.authProvider.auth(login, password, ip);
             if (!VerifyHelper.isValidUsername(result.username)) {
                 AuthProvider.authError(String.format("Illegal result: '%s'", result.username));
                 return;
             }
-            if (server.limiter.isLimit(ip)) {
-                AuthProvider.authError(server.config.authRejectString);
-                return;
-            }
             Collection<SignedObjectHolder<ClientProfile>> profiles = server.getProfiles();
             for(SignedObjectHolder<ClientProfile> p : profiles)
-            {
-                if(p.object.getTitle().equals(client))
-                {
-                    if(!p.object.isWhitelistContains(login)){
-                        throw new AuthException(server.config.whitelistRejectString);
-                    }
-                }
-            }
+				if(p.object.getTitle().equals(client))
+					if(!p.object.isWhitelistContains(login))
+						throw new AuthException(server.config.whitelistRejectString);
             server.config.hwidHandler.check(HWID.gen(hwid_hdd, hwid_bios, hwid_cpu), result.username);
         } catch (AuthException e) {
             requestError(e.getMessage());
@@ -99,11 +101,5 @@ public final class AuthResponse extends Response {
         // Write profile and UUID
         ProfileByUUIDResponse.getProfile(server, uuid, result.username, client).write(output);
         output.writeASCII(result.accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
-    }
-
-    private static String echo(int length) {
-        char[] chars = new char[length];
-        Arrays.fill(chars, '*');
-        return new String(chars);
     }
 }

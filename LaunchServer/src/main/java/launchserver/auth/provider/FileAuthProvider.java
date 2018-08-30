@@ -21,11 +21,26 @@ import launcher.serialize.config.entry.ConfigEntry.Type;
 import launcher.serialize.config.entry.StringConfigEntry;
 
 public final class FileAuthProvider extends DigestAuthProvider {
-    private final Path file;
+    private static final class Entry extends ConfigObject {
+        private final String username;
+        private final String password;
+        private final String ip;
 
+        private Entry(BlockConfigEntry block) {
+            super(block);
+            username = VerifyHelper.verifyUsername(block.getEntryValue("username", StringConfigEntry.class));
+            password = VerifyHelper.verify(block.getEntryValue("password", StringConfigEntry.class),
+                    VerifyHelper.NOT_EMPTY, String.format("Password can't be empty: '%s'", username));
+            ip = block.hasEntry("ip") ? VerifyHelper.verify(block.getEntryValue("ip", StringConfigEntry.class),
+                    VerifyHelper.NOT_EMPTY, String.format("IP can't be empty: '%s'", username)) : null;
+        }
+    }
+
+    private final Path file;
     // Cache
     private final Map<String, Entry> entries = new HashMap<>(256);
     private final Object cacheLock = new Object();
+
     private FileTime cacheLastModified;
 
     public FileAuthProvider(BlockConfigEntry block) {
@@ -50,9 +65,8 @@ public final class FileAuthProvider extends DigestAuthProvider {
 
         // Verify digest and return true username
         verifyDigest(entry == null ? null : entry.password, password);
-        if (entry == null || entry.ip != null && !entry.ip.equals(ip)) {
-            authError("Authentication from this IP is not allowed");
-        }
+        if (entry == null || entry.ip != null && !entry.ip.equals(ip))
+			authError("Authentication from this IP is not allowed");
 
         // We're done
         return new AuthProviderResult(entry.username, SecurityHelper.randomStringToken());
@@ -65,9 +79,8 @@ public final class FileAuthProvider extends DigestAuthProvider {
 
     private void updateCache() throws IOException {
         FileTime lastModified = IOHelper.readAttributes(file).lastModifiedTime();
-        if (lastModified.equals(cacheLastModified)) {
-            return; // Not modified, so cache is up-to-date
-        }
+        if (lastModified.equals(cacheLastModified))
+			return; // Not modified, so cache is up-to-date
 
         // Read file
         LogHelper.info("Recaching auth provider file: '%s'", file);
@@ -92,20 +105,5 @@ public final class FileAuthProvider extends DigestAuthProvider {
 
         // Update last modified time
         cacheLastModified = lastModified;
-    }
-
-    private static final class Entry extends ConfigObject {
-        private final String username;
-        private final String password;
-        private final String ip;
-
-        private Entry(BlockConfigEntry block) {
-            super(block);
-            username = VerifyHelper.verifyUsername(block.getEntryValue("username", StringConfigEntry.class));
-            password = VerifyHelper.verify(block.getEntryValue("password", StringConfigEntry.class),
-                    VerifyHelper.NOT_EMPTY, String.format("Password can't be empty: '%s'", username));
-            ip = block.hasEntry("ip") ? VerifyHelper.verify(block.getEntryValue("ip", StringConfigEntry.class),
-                    VerifyHelper.NOT_EMPTY, String.format("IP can't be empty: '%s'", username)) : null;
-        }
     }
 }

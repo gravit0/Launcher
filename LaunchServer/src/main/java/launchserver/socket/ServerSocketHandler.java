@@ -13,22 +13,33 @@ import java.util.concurrent.atomic.AtomicReference;
 import launcher.LauncherAPI;
 import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
-import launchserver.LaunchServer;
 import launcher.managers.GarbageManager;
+import launchserver.LaunchServer;
 import launchserver.manangers.SessionManager;
 
 public final class ServerSocketHandler implements Runnable, AutoCloseable {
+    public interface Listener {
+        @LauncherAPI
+        boolean onConnect(InetAddress address);
+
+        @LauncherAPI
+        void onDisconnect(Exception e);
+
+        @LauncherAPI
+        boolean onHandshake(long session, Integer type);
+    }
     private static final ThreadFactory THREAD_FACTORY = r -> CommonHelper.newThread("Network Thread", true, r);
+
     @LauncherAPI
     public volatile boolean logConnections = Boolean.getBoolean("launcher.logConnections");
-
     // Instance
     private final LaunchServer server;
     private final AtomicReference<ServerSocket> serverSocket = new AtomicReference<>();
     private final ExecutorService threadPool = Executors.newCachedThreadPool(THREAD_FACTORY);
-    public final SessionManager sessionManager;
 
+    public final SessionManager sessionManager;
     private final AtomicLong idCounter = new AtomicLong(0L);
+
     private volatile Listener listener;
 
     public ServerSocketHandler(LaunchServer server) {
@@ -55,13 +66,21 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
         }
     }
 
+    /*package*/ void onDisconnect(Exception e) {
+        if (listener != null)
+			listener.onDisconnect(e);
+    }
+
+    /*package*/ boolean onHandshake(long session, Integer type) {
+        return listener == null || listener.onHandshake(session, type);
+    }
+
     @Override
     public void run() {
         LogHelper.info("Starting server socket thread");
         try (ServerSocket serverSocket = new ServerSocket()) {
-            if (!this.serverSocket.compareAndSet(null, serverSocket)) {
-                throw new IllegalStateException("Previous socket wasn't closed");
-            }
+            if (!this.serverSocket.compareAndSet(null, serverSocket))
+				throw new IllegalStateException("Previous socket wasn't closed");
 
             // Set socket params
             serverSocket.setReuseAddress(true);
@@ -76,44 +95,21 @@ public final class ServerSocketHandler implements Runnable, AutoCloseable {
 
                 // Invoke pre-connect listener
                 long id = idCounter.incrementAndGet();
-                if (listener != null && !listener.onConnect(socket.getInetAddress())) {
-                    continue; // Listener didn't accepted this connection
-                }
+                if (listener != null && !listener.onConnect(socket.getInetAddress()))
+					continue; // Listener didn't accepted this connection
 
                 // Reply in separate thread
                 threadPool.execute(new ResponseThread(server, id, socket, sessionManager));
             }
         } catch (IOException e) {
             // Ignore error after close/rebind
-            if (serverSocket.get() != null) {
-                LogHelper.error(e);
-            }
+            if (serverSocket.get() != null)
+				LogHelper.error(e);
         }
     }
 
     @LauncherAPI
     public void setListener(Listener listener) {
         this.listener = listener;
-    }
-
-    /*package*/ void onDisconnect(Exception e) {
-        if (listener != null) {
-            listener.onDisconnect(e);
-        }
-    }
-
-    /*package*/ boolean onHandshake(long session, Integer type) {
-        return listener == null || listener.onHandshake(session, type);
-    }
-
-    public interface Listener {
-        @LauncherAPI
-        boolean onConnect(InetAddress address);
-
-        @LauncherAPI
-        void onDisconnect(Exception e);
-
-        @LauncherAPI
-        boolean onHandshake(long session, Integer type);
     }
 }

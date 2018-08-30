@@ -1,14 +1,29 @@
 package launcher.managers;
 
-import launcher.NeedGarbageCollection;
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import launcher.NeedGarbageCollection;
+
 public class GarbageManager {
+    static class Entry {
+        NeedGarbageCollection invoke;
+        long timer;
+
+        public Entry(NeedGarbageCollection invoke, long timer) {
+            this.invoke = invoke;
+            this.timer = timer;
+        }
+    }
     private static final Timer timer = new Timer("GarbageTimer");
+
     private static final ArrayList<Entry> NEED_GARBARE_COLLECTION = new ArrayList<>();
+
+    public static void gc() {
+        for (Entry gc : NEED_GARBARE_COLLECTION)
+			gc.invoke.garbageCollection();
+    }
 
     public static void registerNeedGC(NeedGarbageCollection gc) {
         NEED_GARBARE_COLLECTION.add(new Entry(gc, 0L));
@@ -27,21 +42,5 @@ public class GarbageManager {
 
     public static void unregisterNeedGC(NeedGarbageCollection gc) {
         NEED_GARBARE_COLLECTION.removeIf(e -> e.invoke == gc);
-    }
-
-    public static void gc() {
-        for (Entry gc : NEED_GARBARE_COLLECTION) {
-            gc.invoke.garbageCollection();
-        }
-    }
-
-    static class Entry {
-        NeedGarbageCollection invoke;
-        long timer;
-
-        public Entry(NeedGarbageCollection invoke, long timer) {
-            this.invoke = invoke;
-            this.timer = timer;
-        }
     }
 }

@@ -25,9 +25,8 @@ public final class DebugCommand extends Command {
         if (args.length >= 1) {
             newValue = Boolean.parseBoolean(args[0]);
             LogHelper.setDebugEnabled(newValue);
-        } else {
-            newValue = LogHelper.isDebugEnabled();
-        }
+        } else
+			newValue = LogHelper.isDebugEnabled();
         LogHelper.subInfo("Debug enabled: " + newValue);
     }
 }

@@ -17,7 +17,11 @@ import launcher.helper.VerifyHelper;
 import launchserver.LaunchServer;
 import launchserver.command.Command;
 import launchserver.command.CommandException;
-import launchserver.command.auth.*;
+import launchserver.command.auth.AuthCommand;
+import launchserver.command.auth.BanCommand;
+import launchserver.command.auth.UUIDToUsernameCommand;
+import launchserver.command.auth.UnbanCommand;
+import launchserver.command.auth.UsernameToUUIDCommand;
 import launchserver.command.basic.BuildCommand;
 import launchserver.command.basic.ClearCommand;
 import launchserver.command.basic.DebugCommand;
@@ -39,6 +43,55 @@ import launchserver.command.modules.LoadModuleCommand;
 import launchserver.command.modules.ModulesCommand;
 
 public abstract class CommandHandler implements Runnable {
+    private static String[] parse(CharSequence line) throws CommandException {
+        boolean quoted = false;
+        boolean wasQuoted = false;
+
+        // Read line char by char
+        Collection<String> result = new LinkedList<>();
+        StringBuilder builder = new StringBuilder(100);
+        for (int i = 0; i <= line.length(); i++) {
+            boolean end = i >= line.length();
+            char ch = end ? '\0' : line.charAt(i);
+
+            // Maybe we should read next argument?
+            if (end || !quoted && Character.isWhitespace(ch)) {
+                if (end && quoted)
+					throw new CommandException("Quotes wasn't closed");
+
+                // Empty args are ignored (except if was quoted)
+                if (wasQuoted || builder.length() > 0)
+					result.add(builder.toString());
+
+                // Reset string builder
+                wasQuoted = false;
+                builder.setLength(0);
+                continue;
+            }
+
+            // Append next char
+            switch (ch) {
+                case '"': // "abc"de, "abc""de" also allowed
+                    quoted = !quoted;
+                    wasQuoted = true;
+                    break;
+                case '\\': // All escapes, including spaces etc
+                    if (i + 1 >= line.length())
+						throw new CommandException("Escape character is not specified");
+                    char next = line.charAt(i + 1);
+                    builder.append(next);
+                    i++;
+                    break;
+                default: // Default char, simply append
+                    builder.append(ch);
+                    break;
+            }
+        }
+
+        // Return result as array
+        return result.toArray(new String[0]);
+    }
+
     private final Map<String, Command> commands = new ConcurrentHashMap<>(32);
 
     protected CommandHandler(LaunchServer server) {
@@ -73,23 +126,11 @@ public abstract class CommandHandler implements Runnable {
         registerCommand("unban", new UnbanCommand(server));
     }
 
-    @Override
-    public final void run() {
-        try {
-            readLoop();
-        } catch (IOException e) {
-            LogHelper.error(e);
-        }
-    }
-
     @LauncherAPI
     public abstract void bell() throws IOException;
 
     @LauncherAPI
     public abstract void clear() throws IOException;
-
-    @LauncherAPI
-    public abstract String readLine() throws IOException;
 
     @LauncherAPI
     public final Map<String, Command> commandsMap() {
@@ -115,9 +156,8 @@ public abstract class CommandHandler implements Runnable {
 
     @LauncherAPI
     public final void eval(String[] args, boolean bell) {
-        if (args.length == 0) {
-            return;
-        }
+        if (args.length == 0)
+			return;
 
         // Measure start time and invoke command
         Instant startTime = Instant.now();
@@ -129,22 +169,28 @@ public abstract class CommandHandler implements Runnable {
 
         // Bell if invocation took > 1s
         Instant endTime = Instant.now();
-        if (bell && Duration.between(startTime, endTime).getSeconds() >= 5) {
-            try {
+        if (bell && Duration.between(startTime, endTime).getSeconds() >= 5)
+			try {
                 bell();
             } catch (IOException e) {
                 LogHelper.error(e);
             }
-        }
     }
 
     @LauncherAPI
     public final Command lookup(String name) throws CommandException {
         Command command = commands.get(name);
-        if (command == null) {
-            throw new CommandException(String.format("Unknown command: '%s'", name));
-        }
+        if (command == null)
+			throw new CommandException(String.format("Unknown command: '%s'", name));
         return command;
+    }
+
+    @LauncherAPI
+    public abstract String readLine() throws IOException;
+
+    private void readLoop() throws IOException {
+        for (String line = readLine(); line != null; line = readLine())
+			eval(line, true);
     }
 
     @LauncherAPI
@@ -154,61 +200,12 @@ public abstract class CommandHandler implements Runnable {
                 String.format("Command has been already registered: '%s'", name));
     }
 
-    private void readLoop() throws IOException {
-        for (String line = readLine(); line != null; line = readLine()) {
-            eval(line, true);
+    @Override
+    public final void run() {
+        try {
+            readLoop();
+        } catch (IOException e) {
+            LogHelper.error(e);
         }
-    }
-
-    private static String[] parse(CharSequence line) throws CommandException {
-        boolean quoted = false;
-        boolean wasQuoted = false;
-
-        // Read line char by char
-        Collection<String> result = new LinkedList<>();
-        StringBuilder builder = new StringBuilder(100);
-        for (int i = 0; i <= line.length(); i++) {
-            boolean end = i >= line.length();
-            char ch = end ? '\0' : line.charAt(i);
-
-            // Maybe we should read next argument?
-            if (end || !quoted && Character.isWhitespace(ch)) {
-                if (end && quoted) { // Quotes should be closed
-                    throw new CommandException("Quotes wasn't closed");
-                }
-
-                // Empty args are ignored (except if was quoted)
-                if (wasQuoted || builder.length() > 0) {
-                    result.add(builder.toString());
-                }
-
-                // Reset string builder
-                wasQuoted = false;
-                builder.setLength(0);
-                continue;
-            }
-
-            // Append next char
-            switch (ch) {
-                case '"': // "abc"de, "abc""de" also allowed
-                    quoted = !quoted;
-                    wasQuoted = true;
-                    break;
-                case '\\': // All escapes, including spaces etc
-                    if (i + 1 >= line.length()) {
-                        throw new CommandException("Escape character is not specified");
-                    }
-                    char next = line.charAt(i + 1);
-                    builder.append(next);
-                    i++;
-                    break;
-                default: // Default char, simply append
-                    builder.append(ch);
-                    break;
-            }
-        }
-
-        // Return result as array
-        return result.toArray(new String[0]);
     }
 }

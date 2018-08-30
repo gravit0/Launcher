@@ -10,9 +10,27 @@ import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
 import net.sf.launch4j.Builder;
 import net.sf.launch4j.Log;
-import net.sf.launch4j.config.*;
+import net.sf.launch4j.config.Config;
+import net.sf.launch4j.config.ConfigPersister;
+import net.sf.launch4j.config.Jre;
+import net.sf.launch4j.config.LanguageID;
+import net.sf.launch4j.config.VersionInfo;
 
 public final class EXEL4JLauncherBinary extends LauncherBinary {
+	private final static class Launch4JLog extends Log {
+		private static final Launch4JLog INSTANCE = new Launch4JLog();
+
+		@Override
+		public void append(String s) {
+			LogHelper.subInfo(s);
+		}
+
+		@Override
+		public void clear() {
+			// Do nothing
+		}
+	}
+
 	// URL constants
 	private static final String DOWNLOAD_URL = "http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html"; // Oracle
 	// JRE
@@ -34,9 +52,9 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 
 		// Set favicon path
 		Config config = ConfigPersister.getInstance().getConfig();
-		if (IOHelper.isFile(faviconFile)) {
+		if (IOHelper.isFile(faviconFile))
 			config.setIcon(faviconFile.toFile());
-		} else {
+		else {
 			config.setIcon(null);
 			LogHelper.warning("Missing favicon.ico file");
 		}
@@ -49,7 +67,7 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 			throw new IOException(e);
 		}
 	}
-
+	
 	private void setConfig() {
 		Config config = new Config();
 		// Set string options
@@ -94,19 +112,5 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 
 		// Return prepared config
 		ConfigPersister.getInstance().setAntConfig(config, null);
-	}
-	
-	private final static class Launch4JLog extends Log {
-		private static final Launch4JLog INSTANCE = new Launch4JLog();
-
-		@Override
-		public void append(String s) {
-			LogHelper.subInfo(s);
-		}
-
-		@Override
-		public void clear() {
-			// Do nothing
-		}
 	}
 }

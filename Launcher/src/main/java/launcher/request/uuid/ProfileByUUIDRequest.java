@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
-import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.LauncherConfig;
 import launcher.client.ClientLauncher;
 import launcher.profiles.PlayerProfile;
 import launcher.request.Request;

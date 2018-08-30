@@ -2,11 +2,11 @@ package launcher.request.auth;
 
 import java.io.IOException;
 
-import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.LauncherConfig;
 import launcher.client.ClientLauncher;
-import launcher.profiles.PlayerProfile;
 import launcher.helper.VerifyHelper;
+import launcher.profiles.PlayerProfile;
 import launcher.request.Request;
 import launcher.request.RequestType;
 import launcher.serialize.HInput;
