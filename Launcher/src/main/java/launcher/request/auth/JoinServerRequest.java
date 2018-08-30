@@ -2,8 +2,8 @@ package launcher.request.auth;
 
 import java.io.IOException;
 
-import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.LauncherConfig;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
 import launcher.request.Request;

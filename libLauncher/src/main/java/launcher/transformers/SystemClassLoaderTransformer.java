@@ -1,12 +1,17 @@
 package launcher.transformers;
 
-import javassist.*;
-import launcher.LauncherClassLoader;
-
 import java.io.ByteArrayInputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+
+import javassist.ClassPool;
+import javassist.CodeConverter;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import launcher.LauncherClassLoader;
 
 public class SystemClassLoaderTransformer implements ClassFileTransformer {
     @Override
@@ -31,13 +36,11 @@ public class SystemClassLoaderTransformer implements ClassFileTransformer {
             CtClass cl = pool.makeClass(new ByteArrayInputStream(bytes), false); // Загружаем класс, переданный для трансформации
             if(cl.isFrozen()) return null;
             CtConstructor[] constructors = cl.getConstructors(); // Находим все конструкторы класса
-            for(CtConstructor constructor : constructors) {
-                constructor.instrument(cc); // Заменяем вызовы
-            }
+            for(CtConstructor constructor : constructors)
+				constructor.instrument(cc); // Заменяем вызовы
             CtMethod[] methods = cl.getDeclaredMethods(); // Находим все методы класса
-            for(CtMethod method : methods) {
-                method.instrument(cc); // Заменяем вызовы
-            }
+            for(CtMethod method : methods)
+				method.instrument(cc); // Заменяем вызовы
             return cl.toBytecode();
         } catch (Exception ex) {
         	

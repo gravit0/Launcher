@@ -57,6 +57,11 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
         mySQLHolder.close();
     }
 
+    private Entry constructEntry(ResultSet set) throws SQLException {
+        return set.next() ? new Entry(UUID.fromString(set.getString(uuidColumn)), set.getString(usernameColumn),
+                set.getString(accessTokenColumn), set.getString(serverIDColumn)) : null;
+    }
+
     @Override
     protected Entry fetchEntry(String username) throws IOException {
         return query(queryByUsernameSQL, username);
@@ -65,6 +70,22 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
     @Override
     protected Entry fetchEntry(UUID uuid) throws IOException {
         return query(queryByUUIDSQL, uuid.toString());
+    }
+
+    private Entry query(String sql, String value) throws IOException {
+        try {
+            Connection c = mySQLHolder.getConnection();
+            PreparedStatement s = c.prepareStatement(sql);
+            s.setString(1, value);
+
+            // Execute query
+            s.setQueryTimeout(MySQLSourceConfig.TIMEOUT);
+            try (ResultSet set = s.executeQuery()) {
+                return constructEntry(set);
+            }
+        } catch (SQLException e) {
+            throw new IOException(e);
+        }
     }
 
     @Override
@@ -95,27 +116,6 @@ public final class MySQLAuthHandler extends CachedAuthHandler {
             // Execute update
             s.setQueryTimeout(MySQLSourceConfig.TIMEOUT);
             return s.executeUpdate() > 0;
-        } catch (SQLException e) {
-            throw new IOException(e);
-        }
-    }
-
-    private Entry constructEntry(ResultSet set) throws SQLException {
-        return set.next() ? new Entry(UUID.fromString(set.getString(uuidColumn)), set.getString(usernameColumn),
-                set.getString(accessTokenColumn), set.getString(serverIDColumn)) : null;
-    }
-
-    private Entry query(String sql, String value) throws IOException {
-        try {
-            Connection c = mySQLHolder.getConnection();
-            PreparedStatement s = c.prepareStatement(sql);
-            s.setString(1, value);
-
-            // Execute query
-            s.setQueryTimeout(MySQLSourceConfig.TIMEOUT);
-            try (ResultSet set = s.executeQuery()) {
-                return constructEntry(set);
-            }
         } catch (SQLException e) {
             throw new IOException(e);
         }

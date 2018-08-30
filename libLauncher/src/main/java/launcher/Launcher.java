@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.NoSuchFileException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-import launcher.helper.*;
+import launcher.helper.IOHelper;
+import launcher.helper.SecurityHelper;
 import launcher.modules.ModulesManagerInterface;
 import launcher.serialize.HInput;
 
@@ -42,11 +44,6 @@ public final class Launcher {
     private static final Pattern UUID_PATTERN = Pattern.compile("-", Pattern.LITERAL);
 
     @LauncherAPI
-    public static String toHash(UUID uuid) {
-        return UUID_PATTERN.matcher(uuid.toString()).replaceAll("");
-    }
-
-    @LauncherAPI
     public static LauncherConfig getConfig() {
         LauncherConfig config = CONFIG.get();
         if (config == null) {
@@ -64,15 +61,13 @@ public final class Launcher {
     public static URL getResourceURL(String name) throws IOException {
         LauncherConfig config = getConfig();
         byte[] validDigest = config.runtime.get(name);
-        if (validDigest == null) { // No such resource digest
-            throw new NoSuchFileException(name);
-        }
+        if (validDigest == null)
+			throw new NoSuchFileException(name);
 
         // Resolve URL and verify digest
         URL url = IOHelper.getResourceURL(RUNTIME_DIR + '/' + name);
-        if (!Arrays.equals(validDigest, SecurityHelper.digest(SecurityHelper.DigestAlgorithm.MD5, url))) {
-            throw new NoSuchFileException(name); // Digest mismatch
-        }
+        if (!Arrays.equals(validDigest, SecurityHelper.digest(SecurityHelper.DigestAlgorithm.MD5, url)))
+			throw new NoSuchFileException(name); // Digest mismatch
 
         // Return verified URL
         return url;
@@ -82,6 +77,11 @@ public final class Launcher {
     @SuppressWarnings({"SameReturnValue", "MethodReturnAlwaysConstant"})
     public static String getVersion() {
         return VERSION; // Because Java constants are known at compile-time
+    }
+
+    @LauncherAPI
+    public static String toHash(UUID uuid) {
+        return UUID_PATTERN.matcher(uuid.toString()).replaceAll("");
     }
 
 }

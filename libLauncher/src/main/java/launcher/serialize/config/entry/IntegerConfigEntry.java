@@ -8,13 +8,13 @@ import launcher.serialize.HOutput;
 
 public final class IntegerConfigEntry extends ConfigEntry<Integer> {
     @LauncherAPI
-    public IntegerConfigEntry(int value, boolean ro, int cc) {
-        super(value, ro, cc);
+    public IntegerConfigEntry(HInput input, boolean ro) throws IOException {
+        this(input.readVarInt(), ro, 0);
     }
 
     @LauncherAPI
-    public IntegerConfigEntry(HInput input, boolean ro) throws IOException {
-        this(input.readVarInt(), ro, 0);
+    public IntegerConfigEntry(int value, boolean ro, int cc) {
+        super(value, ro, cc);
     }
 
     @Override

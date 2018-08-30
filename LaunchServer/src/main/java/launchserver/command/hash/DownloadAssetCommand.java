@@ -8,14 +8,28 @@ import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import launcher.profiles.ClientProfile.Version;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
+import launcher.profiles.ClientProfile.Version;
 import launchserver.LaunchServer;
 import launchserver.command.Command;
 
 public final class DownloadAssetCommand extends Command {
     private static final String ASSET_URL_MASK = "http://launcher.sashok724.net/download/assets/%s.zip";
+
+    public static void unpack(URL url, Path dir) throws IOException {
+        try (ZipInputStream input = IOHelper.newZipInput(url)) {
+            for (ZipEntry entry = input.getNextEntry(); entry != null; entry = input.getNextEntry()) {
+                if (entry.isDirectory())
+					continue; // Skip directories
+
+                // Unpack entry
+                String name = entry.getName();
+                LogHelper.subInfo("Downloading file: '%s'", name);
+                IOHelper.transfer(input, dir.resolve(IOHelper.toPath(name)));
+            }
+        }
+    }
 
     public DownloadAssetCommand(LaunchServer server) {
         super(server);
@@ -49,20 +63,5 @@ public final class DownloadAssetCommand extends Command {
         // Finished
         server.syncUpdatesDir(Collections.singleton(dirName));
         LogHelper.subInfo("Asset successfully downloaded: '%s'", dirName);
-    }
-
-    public static void unpack(URL url, Path dir) throws IOException {
-        try (ZipInputStream input = IOHelper.newZipInput(url)) {
-            for (ZipEntry entry = input.getNextEntry(); entry != null; entry = input.getNextEntry()) {
-                if (entry.isDirectory()) {
-                    continue; // Skip directories
-                }
-
-                // Unpack entry
-                String name = entry.getName();
-                LogHelper.subInfo("Downloading file: '%s'", name);
-                IOHelper.transfer(input, dir.resolve(IOHelper.toPath(name)));
-            }
-        }
     }
 }

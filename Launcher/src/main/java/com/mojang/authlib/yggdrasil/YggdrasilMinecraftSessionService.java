@@ -19,11 +19,12 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+
 import launcher.client.ClientLauncher;
-import launcher.profiles.PlayerProfile;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
+import launcher.profiles.PlayerProfile;
 import launcher.request.auth.CheckServerRequest;
 import launcher.request.auth.JoinServerRequest;
 import launcher.request.uuid.ProfileByUUIDRequest;
@@ -31,6 +32,57 @@ import launcher.request.uuid.ProfileByUUIDRequest;
 public final class YggdrasilMinecraftSessionService extends BaseMinecraftSessionService {
     public static final JsonParser JSON_PARSER = new JsonParser();
     public static final boolean NO_TEXTURES = Boolean.parseBoolean("launcher.authlib.noTextures");
+
+    public static void fillTextureProperties(GameProfile profile, PlayerProfile pp) {
+        LogHelper.debug("fillTextureProperties, Username: '%s'", profile.getName());
+        if (NO_TEXTURES)
+			return;
+
+        // Fill textures map
+        PropertyMap properties = profile.getProperties();
+        if (pp.skin != null) {
+            properties.put(ClientLauncher.SKIN_URL_PROPERTY, new Property(ClientLauncher.SKIN_URL_PROPERTY, pp.skin.url, ""));
+            properties.put(ClientLauncher.SKIN_DIGEST_PROPERTY, new Property(ClientLauncher.SKIN_DIGEST_PROPERTY, SecurityHelper.toHex(pp.skin.digest), ""));
+            LogHelper.debug("fillTextureProperties, Has skin texture for username '%s'", profile.getName());
+        }
+        if (pp.cloak != null) {
+            properties.put(ClientLauncher.CLOAK_URL_PROPERTY, new Property(ClientLauncher.CLOAK_URL_PROPERTY, pp.cloak.url, ""));
+            properties.put(ClientLauncher.CLOAK_DIGEST_PROPERTY, new Property(ClientLauncher.CLOAK_DIGEST_PROPERTY, SecurityHelper.toHex(pp.cloak.digest), ""));
+            LogHelper.debug("fillTextureProperties, Has cloak texture for username '%s'", profile.getName());
+        }
+    }
+
+    private static void getTexturesMojang(Map<Type, MinecraftProfileTexture> textures, String texturesBase64, GameProfile profile) {
+        // Decode textures payload
+        JsonObject texturesJSON;
+        try {
+            byte[] decoded = Base64.getDecoder().decode(texturesBase64);
+            texturesJSON = JSON_PARSER.parse(new String(decoded, IOHelper.UNICODE_CHARSET)).getAsJsonObject().getAsJsonObject("textures");
+        } catch (Exception ignored) {
+            LogHelper.error("Could not decode textures payload, Username: '%s', UUID: '%s'", profile.getName(), profile.getUUID());
+            return;
+        }
+
+        // Fetch textures from textures JSON
+        for (Type type : MinecraftProfileTexture.PROFILE_TEXTURE_TYPES) {
+            if (textures.containsKey(type))
+				continue; // Overriden by launcher
+
+            // Get texture from JSON
+            JsonElement textureJSON = texturesJSON.get(type.name());
+            if (textureJSON != null && textureJSON.isJsonObject()) {
+                JsonElement urlValue = textureJSON.getAsJsonObject().get("url");
+                if (urlValue.isJsonPrimitive())
+					textures.put(type, new MinecraftProfileTexture(urlValue.getAsString()));
+            }
+        }
+    }
+
+    public static GameProfile toGameProfile(PlayerProfile pp) {
+        GameProfile profile = new GameProfile(pp.uuid, pp.username);
+        fillTextureProperties(profile, pp);
+        return profile;
+    }
 
     public YggdrasilMinecraftSessionService(AuthenticationService service) {
         super(service);
@@ -42,9 +94,8 @@ public final class YggdrasilMinecraftSessionService extends BaseMinecraftSession
         // Verify has UUID
         UUID uuid = profile.getUUID();
         LogHelper.debug("fillProfileProperties, UUID: %s", uuid);
-        if (uuid == null) {
-            return profile;
-        }
+        if (uuid == null)
+			return profile;
 
         // Make profile request
         PlayerProfile pp;
@@ -77,23 +128,20 @@ public final class YggdrasilMinecraftSessionService extends BaseMinecraftSession
             // Add skin URL to textures map
             Property skinURL = Iterables.getFirst(profile.getProperties().get(ClientLauncher.SKIN_URL_PROPERTY), null);
             Property skinDigest = Iterables.getFirst(profile.getProperties().get(ClientLauncher.SKIN_DIGEST_PROPERTY), null);
-            if (skinURL != null && skinDigest != null) {
-                textures.put(Type.SKIN, new MinecraftProfileTexture(skinURL.getValue(), skinDigest.getValue()));
-            }
+            if (skinURL != null && skinDigest != null)
+				textures.put(Type.SKIN, new MinecraftProfileTexture(skinURL.getValue(), skinDigest.getValue()));
 
             // Add cloak URL to textures map
             Property cloakURL = Iterables.getFirst(profile.getProperties().get(ClientLauncher.CLOAK_URL_PROPERTY), null);
             Property cloakDigest = Iterables.getFirst(profile.getProperties().get(ClientLauncher.CLOAK_DIGEST_PROPERTY), null);
-            if (cloakURL != null && cloakDigest != null) {
-                textures.put(Type.CAPE, new MinecraftProfileTexture(cloakURL.getValue(), cloakDigest.getValue()));
-            }
+            if (cloakURL != null && cloakDigest != null)
+				textures.put(Type.CAPE, new MinecraftProfileTexture(cloakURL.getValue(), cloakDigest.getValue()));
 
             // Try to find missing textures in textures payload (now always true because launcher is not passing elytra skins)
             if (textures.size() != MinecraftProfileTexture.PROFILE_TEXTURE_COUNT) {
                 Property texturesMojang = Iterables.getFirst(profile.getProperties().get("textures"), null);
-                if (texturesMojang != null) {
-                    getTexturesMojang(textures, texturesMojang.getValue(), profile);
-                }
+                if (texturesMojang != null)
+					getTexturesMojang(textures, texturesMojang.getValue(), profile);
             }
         }
 
@@ -126,9 +174,8 @@ public final class YggdrasilMinecraftSessionService extends BaseMinecraftSession
 
     @Override
     public void joinServer(GameProfile profile, String accessToken, String serverID) throws AuthenticationException {
-        if (!ClientLauncher.isLaunched()) {
-            throw new AuthenticationException("Bad Login (Cheater)");
-        }
+        if (!ClientLauncher.isLaunched())
+			throw new AuthenticationException("Bad Login (Cheater)");
 
         // Join server
         String username = profile.getName();
@@ -143,62 +190,7 @@ public final class YggdrasilMinecraftSessionService extends BaseMinecraftSession
         }
 
         // Verify is success
-        if (!success) {
-            throw new AuthenticationException("Bad Login (Clientside)");
-        }
-    }
-
-    public static void fillTextureProperties(GameProfile profile, PlayerProfile pp) {
-        LogHelper.debug("fillTextureProperties, Username: '%s'", profile.getName());
-        if (NO_TEXTURES) {
-            return;
-        }
-
-        // Fill textures map
-        PropertyMap properties = profile.getProperties();
-        if (pp.skin != null) {
-            properties.put(ClientLauncher.SKIN_URL_PROPERTY, new Property(ClientLauncher.SKIN_URL_PROPERTY, pp.skin.url, ""));
-            properties.put(ClientLauncher.SKIN_DIGEST_PROPERTY, new Property(ClientLauncher.SKIN_DIGEST_PROPERTY, SecurityHelper.toHex(pp.skin.digest), ""));
-            LogHelper.debug("fillTextureProperties, Has skin texture for username '%s'", profile.getName());
-        }
-        if (pp.cloak != null) {
-            properties.put(ClientLauncher.CLOAK_URL_PROPERTY, new Property(ClientLauncher.CLOAK_URL_PROPERTY, pp.cloak.url, ""));
-            properties.put(ClientLauncher.CLOAK_DIGEST_PROPERTY, new Property(ClientLauncher.CLOAK_DIGEST_PROPERTY, SecurityHelper.toHex(pp.cloak.digest), ""));
-            LogHelper.debug("fillTextureProperties, Has cloak texture for username '%s'", profile.getName());
-        }
-    }
-
-    public static GameProfile toGameProfile(PlayerProfile pp) {
-        GameProfile profile = new GameProfile(pp.uuid, pp.username);
-        fillTextureProperties(profile, pp);
-        return profile;
-    }
-
-    private static void getTexturesMojang(Map<Type, MinecraftProfileTexture> textures, String texturesBase64, GameProfile profile) {
-        // Decode textures payload
-        JsonObject texturesJSON;
-        try {
-            byte[] decoded = Base64.getDecoder().decode(texturesBase64);
-            texturesJSON = JSON_PARSER.parse(new String(decoded, IOHelper.UNICODE_CHARSET)).getAsJsonObject().getAsJsonObject("textures");
-        } catch (Exception ignored) {
-            LogHelper.error("Could not decode textures payload, Username: '%s', UUID: '%s'", profile.getName(), profile.getUUID());
-            return;
-        }
-
-        // Fetch textures from textures JSON
-        for (Type type : MinecraftProfileTexture.PROFILE_TEXTURE_TYPES) {
-            if (textures.containsKey(type)) {
-                continue; // Overriden by launcher
-            }
-
-            // Get texture from JSON
-            JsonElement textureJSON = texturesJSON.get(type.name());
-            if (textureJSON != null && textureJSON.isJsonObject()) {
-                JsonElement urlValue = textureJSON.getAsJsonObject().get("url");
-                if (urlValue.isJsonPrimitive()) {
-                    textures.put(type, new MinecraftProfileTexture(urlValue.getAsString()));
-                }
-            }
-        }
+        if (!success)
+			throw new AuthenticationException("Bad Login (Clientside)");
     }
 }

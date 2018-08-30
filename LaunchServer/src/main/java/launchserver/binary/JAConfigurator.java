@@ -1,8 +1,12 @@
 package launchserver.binary;
 
-import javassist.*;
-
 import java.io.IOException;
+
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.NotFoundException;
 
 public class JAConfigurator implements AutoCloseable {
     ClassPool pool = ClassPool.getDefault();
@@ -18,18 +22,6 @@ public class JAConfigurator implements AutoCloseable {
         body = new StringBuilder("{");
         autoincrement = 0;
     }
-    public void setAddress(String address)
-    {
-        body.append("this.address = \"");
-        body.append(address);
-        body.append("\";");
-    }
-    public void setPort(int port)
-    {
-        body.append("this.port = ");
-        body.append(port);
-        body.append(";");
-    }
     public void addModuleClass(String fullName)
     {
         body.append("launcher.modules.Module mod");
@@ -42,18 +34,30 @@ public class JAConfigurator implements AutoCloseable {
         body.append(" , true );");
         autoincrement++;
     }
-    public String getZipEntryPath()
-    {
-        return classname.replace('.','/').concat(".class");
+    @Override
+    public void close() {
+        ctClass.defrost();
     }
     public byte[] getBytecode() throws IOException, CannotCompileException {
         body.append("}");
         ctConstructor.setBody(body.toString());
         return ctClass.toBytecode();
     }
+    public String getZipEntryPath()
+    {
+        return classname.replace('.','/').concat(".class");
+    }
+    public void setAddress(String address)
+    {
+        body.append("this.address = \"");
+        body.append(address);
+        body.append("\";");
+    }
 
-    @Override
-    public void close() {
-        ctClass.defrost();
+    public void setPort(int port)
+    {
+        body.append("this.port = ");
+        body.append(port);
+        body.append(";");
     }
 }

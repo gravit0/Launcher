@@ -1,12 +1,17 @@
 package launcher.client;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.interfaces.RSAPublicKey;
@@ -23,18 +28,26 @@ import javax.swing.JOptionPane;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.WriterConfig;
+
+import launcher.AvanguardStarter;
 import launcher.Launcher;
+import launcher.LauncherAPI;
 import launcher.LauncherClassLoader;
 import launcher.LauncherConfig;
 import launcher.LauncherVersion;
-import launcher.LauncherAPI;
-import launcher.profiles.ClientProfile;
-import launcher.profiles.ClientProfile.Version;
 import launcher.hasher.DirWatcher;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
-import launcher.helper.*;
+import launcher.helper.CommonHelper;
+import launcher.helper.EnvHelper;
+import launcher.helper.IOHelper;
+import launcher.helper.JVMHelper;
 import launcher.helper.JVMHelper.OS;
+import launcher.helper.LogHelper;
+import launcher.helper.SecurityHelper;
+import launcher.helper.VerifyHelper;
+import launcher.profiles.ClientProfile;
+import launcher.profiles.ClientProfile.Version;
 import launcher.profiles.PlayerProfile;
 import launcher.request.update.LauncherRequest;
 import launcher.serialize.HInput;
@@ -42,12 +55,107 @@ import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
 import launcher.serialize.signed.SignedObjectHolder;
 import launcher.serialize.stream.StreamObject;
-import launcher.AvanguardStarter;
 
 public final class ClientLauncher {
+    private static final class ClassPathFileVisitor extends SimpleFileVisitor<Path> {
+        private final Collection<Path> result;
+
+        private ClassPathFileVisitor(Collection<Path> result) {
+            this.result = result;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            if (IOHelper.hasExtension(file, "jar") || IOHelper.hasExtension(file, "zip"))
+				result.add(file);
+            return super.visitFile(file, attrs);
+        }
+    }
+    public static final class Params extends StreamObject {
+        // Client paths
+        @LauncherAPI
+        public final Path assetDir;
+        @LauncherAPI
+        public final Path clientDir;
+
+        // Client params
+        @LauncherAPI
+        public final PlayerProfile pp;
+        @LauncherAPI
+        public final String accessToken;
+        @LauncherAPI
+        public final String title;
+        @LauncherAPI
+        public final boolean autoEnter;
+        @LauncherAPI
+        public final boolean fullScreen;
+        @LauncherAPI
+        public final int ram;
+        @LauncherAPI
+        public final int width;
+        @LauncherAPI
+        public final int height;
+        private final byte[] launcherSign;
+
+        @LauncherAPI
+        public Params(byte[] launcherSign, Path assetDir, Path clientDir, PlayerProfile pp, String accessToken,
+                      boolean autoEnter, boolean fullScreen, int ram, int width, int height) {
+            this.launcherSign = launcherSign.clone();
+
+            // Client paths
+            this.assetDir = assetDir;
+            this.clientDir = clientDir;
+            title = ClientLauncher.title;
+            // Client params
+            this.pp = pp;
+            this.accessToken = SecurityHelper.verifyToken(accessToken);
+            this.autoEnter = autoEnter;
+            this.fullScreen = fullScreen;
+            this.ram = ram;
+            this.width = width;
+            this.height = height;
+        }
+
+        @LauncherAPI
+        public Params(HInput input) throws IOException {
+            launcherSign = input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH);
+            title = input.readString(SerializeLimits.MAX_CLIENT);
+            // Client paths
+            assetDir = IOHelper.toPath(input.readString(0));
+            clientDir = IOHelper.toPath(input.readString(0));
+
+            // Client params
+            pp = new PlayerProfile(input);
+            accessToken = SecurityHelper.verifyToken(input.readASCII(-SecurityHelper.TOKEN_STRING_LENGTH));
+            autoEnter = input.readBoolean();
+            fullScreen = input.readBoolean();
+            ram = input.readVarInt();
+            width = input.readVarInt();
+            height = input.readVarInt();
+        }
+
+        @Override
+        public void write(HOutput output) throws IOException {
+            output.writeByteArray(launcherSign, -SecurityHelper.RSA_KEY_LENGTH);
+            output.writeString(title, SerializeLimits.MAX_CLIENT);
+            // Client paths
+            output.writeString(assetDir.toString(), 0);
+            output.writeString(clientDir.toString(), 0);
+
+            // Client params
+            pp.write(output);
+            output.writeASCII(accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
+            output.writeBoolean(autoEnter);
+            output.writeBoolean(fullScreen);
+            output.writeVarInt(ram);
+            output.writeVarInt(width);
+            output.writeVarInt(height);
+        }
+    }
     private static final String[] EMPTY_ARRAY = new String[0];
     private static final String MAGICAL_INTEL_OPTION = "-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
     private static final boolean isUsingWrapper = true;
+
     @LauncherAPI
     public static final String TITLE_PROPERTY = "launcher.title";
     @SuppressWarnings("unused")
@@ -56,7 +164,6 @@ public final class ClientLauncher {
             PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_EXECUTE, // Group
             PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_EXECUTE // Others
     ));
-
     // Constants
     private static final Path NATIVES_DIR = IOHelper.toPath("natives");
     private static final Path RESOURCEPACKS_DIR = IOHelper.toPath("resourcepacks");
@@ -68,16 +175,15 @@ public final class ClientLauncher {
     public static String title;
     @LauncherAPI
     public static final String SKIN_DIGEST_PROPERTY = "skinDigest";
+
     @LauncherAPI
     public static final String CLOAK_URL_PROPERTY = "cloakURL";
+
     @LauncherAPI
     public static final String CLOAK_DIGEST_PROPERTY = "cloakDigest";
 
     // Used to determine from clientside is launched from launcher
     private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
-
-    private ClientLauncher() {
-    }
 
     static {
         String title_property = System.getProperty(TITLE_PROPERTY);
@@ -85,11 +191,69 @@ public final class ClientLauncher {
         else title = "";
     }
 
-    @LauncherAPI
-    public static boolean isLaunched() {
-        return LAUNCHED.get();
+    private static void addClientArgs(Collection<String> args, ClientProfile profile, Params params) {
+        PlayerProfile pp = params.pp;
+
+        // Add version-dependent args
+        Version version = profile.getVersion();
+        Collections.addAll(args, "--username", pp.username);
+        if (version.compareTo(Version.MC172) >= 0) {
+            Collections.addAll(args, "--uuid", Launcher.toHash(pp.uuid));
+            Collections.addAll(args, "--accessToken", params.accessToken);
+
+            // Add 1.7.10+ args (user properties, asset index)
+            if (version.compareTo(Version.MC1710) >= 0) {
+                // Add user properties
+                Collections.addAll(args, "--userType", "mojang");
+                JsonObject properties = Json.object();
+                if (pp.skin != null) {
+                    properties.add(SKIN_URL_PROPERTY, Json.array(pp.skin.url));
+                    properties.add(SKIN_DIGEST_PROPERTY, Json.array(SecurityHelper.toHex(pp.skin.digest)));
+                }
+                if (pp.cloak != null) {
+                    properties.add(CLOAK_URL_PROPERTY, Json.array(pp.cloak.url));
+                    properties.add(CLOAK_DIGEST_PROPERTY, Json.array(SecurityHelper.toHex(pp.cloak.digest)));
+                }
+                Collections.addAll(args, "--userProperties", properties.toString(WriterConfig.MINIMAL));
+
+                // Add asset index
+                Collections.addAll(args, "--assetIndex", profile.getAssetIndex());
+            }
+        } else
+			Collections.addAll(args, "--session", params.accessToken);
+
+        // Add version and dirs args
+        Collections.addAll(args, "--version", profile.getVersion().name);
+        Collections.addAll(args, "--gameDir", params.clientDir.toString());
+        Collections.addAll(args, "--assetsDir", params.assetDir.toString());
+        Collections.addAll(args, "--resourcePackDir", params.clientDir.resolve(RESOURCEPACKS_DIR).toString());
+        if (version.compareTo(Version.MC194) >= 0)
+			Collections.addAll(args, "--versionType", "Launcher v" + LauncherVersion.getVersion().getVersionString());
+
+        // Add server args
+        if (params.autoEnter) {
+            Collections.addAll(args, "--server", profile.getServerAddress());
+            Collections.addAll(args, "--port", Integer.toString(profile.getServerPort()));
+        }
+
+        // Add window size args
+        if (params.fullScreen)
+			Collections.addAll(args, "--fullscreen", Boolean.toString(true));
+        if (params.width > 0 && params.height > 0) {
+            Collections.addAll(args, "--width", Integer.toString(params.width));
+            Collections.addAll(args, "--height", Integer.toString(params.height));
+        }
     }
 
+    private static void addClientLegacyArgs(Collection<String> args, ClientProfile profile, Params params) {
+        args.add(params.pp.username);
+        args.add(params.accessToken);
+
+        // Add args for tweaker
+        Collections.addAll(args, "--version", profile.getVersion().name);
+        Collections.addAll(args, "--gameDir", params.clientDir.toString());
+        Collections.addAll(args, "--assetsDir", params.assetDir.toString());
+    }
     @LauncherAPI
     public static void checkJVMBitsAndVersion() {
         if (JVMHelper.JVM_BITS != JVMHelper.OS_BITS) {
@@ -105,16 +269,38 @@ public final class ClientLauncher {
             JOptionPane.showMessageDialog(null, error);
         }
     }
-
     @LauncherAPI
-    public static void setProfile(ClientProfile profile) {
-        ClientLauncher.title = profile.getTitle();
-        LogHelper.debug("New Profile name: %s", profile.getTitle());
+    public static boolean isLaunched() {
+        return LAUNCHED.get();
     }
+
     @LauncherAPI
     public static boolean isUsingWrapper() {
         return JVMHelper.OS_TYPE == OS.MUSTDIE && isUsingWrapper;
     }
+
+    private static void launch(ClientProfile profile, Params params) throws Throwable {
+        // Add natives path
+        //JVMHelper.addNativePath(params.clientDir.resolve(NATIVES_DIR));
+
+        // Add client args
+        Collection<String> args = new LinkedList<>();
+        if (profile.getVersion().compareTo(Version.MC164) >= 0)
+			addClientArgs(args, profile, params);
+		else
+			addClientLegacyArgs(args, profile, params);
+        Collections.addAll(args, profile.getClientArgs());
+        LogHelper.debug("Args: " + args);
+        // Resolve main class and method
+        Class<?> mainClass = classLoader.loadClass(profile.getMainClass());
+        MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
+        // Invoke main method with exception wrapping
+        LAUNCHED.set(true);
+        JVMHelper.fullGC();
+        System.setProperty("minecraft.applet.TargetDirectory", params.clientDir.toString()); // For 1.5.2
+        mainMethod.invoke((Object) args.toArray(EMPTY_ARRAY));
+    }
+
     @LauncherAPI
     public static Process launch(
 
@@ -146,9 +332,8 @@ public final class ClientLauncher {
             args.add("-Xmx" + params.ram + 'M');
         }
         args.add(JVMHelper.jvmProperty(LogHelper.DEBUG_PROPERTY, Boolean.toString(LogHelper.isDebugEnabled())));
-        if (LauncherConfig.ADDRESS_OVERRIDE != null) {
-            args.add(JVMHelper.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
-        }
+        if (LauncherConfig.ADDRESS_OVERRIDE != null)
+			args.add(JVMHelper.jvmProperty(LauncherConfig.ADDRESS_OVERRIDE_PROPERTY, LauncherConfig.ADDRESS_OVERRIDE));
         if (JVMHelper.OS_TYPE == OS.MUSTDIE) {
             if (JVMHelper.OS_VERSION.startsWith("10.")) {
                 LogHelper.debug("MustDie 10 fix is applied");
@@ -162,9 +347,8 @@ public final class ClientLauncher {
         String pathLauncher = IOHelper.getCodeSource(ClientLauncher.class).toString();
         StringBuilder classPathString = new StringBuilder(pathLauncher);
         LinkedList<Path> classPath = resolveClassPathList(params.clientDir, profile.object.getClassPath());
-        for (Path path : classPath) {
-            classPathString.append(File.pathSeparatorChar).append(path.toString());
-        }
+        for (Path path : classPath)
+			classPathString.append(File.pathSeparatorChar).append(path.toString());
         Collections.addAll(args, profile.object.getJvmArgs());
         Collections.addAll(args, "-Djava.library.path=".concat(params.clientDir.resolve(NATIVES_DIR).toString())); // Add Native Path
         Collections.addAll(args,"-javaagent:".concat(pathLauncher));
@@ -236,18 +420,15 @@ public final class ClientLauncher {
         int counter = classPath.size();
         for (String classpathURL : classpath) {
             Path file = Paths.get(classpathURL);
-            if (!file.startsWith(IOHelper.JVM_DIR)) {
-                for (Path classPathURL : classPath) {
-                    if (classpathURL.equals(classPathURL.toString())) {
+            if (!file.startsWith(IOHelper.JVM_DIR))
+				for (Path classPathURL : classPath)
+					if (classpathURL.equals(classPathURL.toString())) {
                         counter--;
                         break;
                     }
-                }
-            }
         }
-        if (counter != 0) {
-            throw new SecurityException(String.format("Forbidden classpath entry, %d != 0", counter));
-        }
+        if (counter != 0)
+			throw new SecurityException(String.format("Forbidden classpath entry, %d != 0", counter));
         URL[] classpathurls = resolveClassPath(params.clientDir, profile.object.getClassPath());
         classLoader = new LauncherClassLoader(classpathurls, ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
@@ -269,109 +450,6 @@ public final class ClientLauncher {
             CommonHelper.newThread("Client Directory Watcher", true, clientWatcher).start();
             launch(profile.object, params);
         }
-    }
-
-    @LauncherAPI
-    public static void verifyHDir(Path dir, HashedDir hdir, FileNameMatcher matcher, boolean digest) throws IOException {
-        if (matcher != null) {
-            matcher = matcher.verifyOnly();
-        }
-
-        // Hash directory and compare (ignore update-only matcher entries, it will break offline-mode)
-        HashedDir currentHDir = new HashedDir(dir, matcher, false, digest);
-        if (!hdir.diff(currentHDir, matcher).isSame()) {
-            throw new SecurityException(String.format("Forbidden modification: '%s'", IOHelper.getFileName(dir)));
-        }
-    }
-
-    private static void addClientArgs(Collection<String> args, ClientProfile profile, Params params) {
-        PlayerProfile pp = params.pp;
-
-        // Add version-dependent args
-        Version version = profile.getVersion();
-        Collections.addAll(args, "--username", pp.username);
-        if (version.compareTo(Version.MC172) >= 0) {
-            Collections.addAll(args, "--uuid", Launcher.toHash(pp.uuid));
-            Collections.addAll(args, "--accessToken", params.accessToken);
-
-            // Add 1.7.10+ args (user properties, asset index)
-            if (version.compareTo(Version.MC1710) >= 0) {
-                // Add user properties
-                Collections.addAll(args, "--userType", "mojang");
-                JsonObject properties = Json.object();
-                if (pp.skin != null) {
-                    properties.add(SKIN_URL_PROPERTY, Json.array(pp.skin.url));
-                    properties.add(SKIN_DIGEST_PROPERTY, Json.array(SecurityHelper.toHex(pp.skin.digest)));
-                }
-                if (pp.cloak != null) {
-                    properties.add(CLOAK_URL_PROPERTY, Json.array(pp.cloak.url));
-                    properties.add(CLOAK_DIGEST_PROPERTY, Json.array(SecurityHelper.toHex(pp.cloak.digest)));
-                }
-                Collections.addAll(args, "--userProperties", properties.toString(WriterConfig.MINIMAL));
-
-                // Add asset index
-                Collections.addAll(args, "--assetIndex", profile.getAssetIndex());
-            }
-        } else {
-            Collections.addAll(args, "--session", params.accessToken);
-        }
-
-        // Add version and dirs args
-        Collections.addAll(args, "--version", profile.getVersion().name);
-        Collections.addAll(args, "--gameDir", params.clientDir.toString());
-        Collections.addAll(args, "--assetsDir", params.assetDir.toString());
-        Collections.addAll(args, "--resourcePackDir", params.clientDir.resolve(RESOURCEPACKS_DIR).toString());
-        if (version.compareTo(Version.MC194) >= 0) { // Just to show it in debug screen
-            Collections.addAll(args, "--versionType", "Launcher v" + LauncherVersion.getVersion().getVersionString());
-        }
-
-        // Add server args
-        if (params.autoEnter) {
-            Collections.addAll(args, "--server", profile.getServerAddress());
-            Collections.addAll(args, "--port", Integer.toString(profile.getServerPort()));
-        }
-
-        // Add window size args
-        if (params.fullScreen) {
-            Collections.addAll(args, "--fullscreen", Boolean.toString(true));
-        }
-        if (params.width > 0 && params.height > 0) {
-            Collections.addAll(args, "--width", Integer.toString(params.width));
-            Collections.addAll(args, "--height", Integer.toString(params.height));
-        }
-    }
-
-    private static void addClientLegacyArgs(Collection<String> args, ClientProfile profile, Params params) {
-        args.add(params.pp.username);
-        args.add(params.accessToken);
-
-        // Add args for tweaker
-        Collections.addAll(args, "--version", profile.getVersion().name);
-        Collections.addAll(args, "--gameDir", params.clientDir.toString());
-        Collections.addAll(args, "--assetsDir", params.assetDir.toString());
-    }
-
-    private static void launch(ClientProfile profile, Params params) throws Throwable {
-        // Add natives path
-        //JVMHelper.addNativePath(params.clientDir.resolve(NATIVES_DIR));
-
-        // Add client args
-        Collection<String> args = new LinkedList<>();
-        if (profile.getVersion().compareTo(Version.MC164) >= 0) {
-            addClientArgs(args, profile, params);
-        } else {
-            addClientLegacyArgs(args, profile, params);
-        }
-        Collections.addAll(args, profile.getClientArgs());
-        LogHelper.debug("Args: " + args);
-        // Resolve main class and method
-        Class<?> mainClass = classLoader.loadClass(profile.getMainClass());
-        MethodHandle mainMethod = MethodHandles.publicLookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
-        // Invoke main method with exception wrapping
-        LAUNCHED.set(true);
-        JVMHelper.fullGC();
-        System.setProperty("minecraft.applet.TargetDirectory", params.clientDir.toString()); // For 1.5.2
-        mainMethod.invoke((Object) args.toArray(EMPTY_ARRAY));
     }
 
     private static URL[] resolveClassPath(Path clientDir, String... classPath) throws IOException {
@@ -400,102 +478,24 @@ public final class ClientLauncher {
         return (LinkedList<Path>) result;
     }
 
-    public static final class Params extends StreamObject {
-        // Client paths
-        @LauncherAPI
-        public final Path assetDir;
-        @LauncherAPI
-        public final Path clientDir;
-
-        // Client params
-        @LauncherAPI
-        public final PlayerProfile pp;
-        @LauncherAPI
-        public final String accessToken;
-        @LauncherAPI
-        public final String title;
-        @LauncherAPI
-        public final boolean autoEnter;
-        @LauncherAPI
-        public final boolean fullScreen;
-        @LauncherAPI
-        public final int ram;
-        @LauncherAPI
-        public final int width;
-        @LauncherAPI
-        public final int height;
-        private final byte[] launcherSign;
-
-        @LauncherAPI
-        public Params(byte[] launcherSign, Path assetDir, Path clientDir, PlayerProfile pp, String accessToken,
-                      boolean autoEnter, boolean fullScreen, int ram, int width, int height) {
-            this.launcherSign = launcherSign.clone();
-
-            // Client paths
-            this.assetDir = assetDir;
-            this.clientDir = clientDir;
-            this.title = ClientLauncher.title;
-            // Client params
-            this.pp = pp;
-            this.accessToken = SecurityHelper.verifyToken(accessToken);
-            this.autoEnter = autoEnter;
-            this.fullScreen = fullScreen;
-            this.ram = ram;
-            this.width = width;
-            this.height = height;
-        }
-
-        @LauncherAPI
-        public Params(HInput input) throws IOException {
-            launcherSign = input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH);
-            title = input.readString(SerializeLimits.MAX_CLIENT);
-            // Client paths
-            assetDir = IOHelper.toPath(input.readString(0));
-            clientDir = IOHelper.toPath(input.readString(0));
-
-            // Client params
-            pp = new PlayerProfile(input);
-            accessToken = SecurityHelper.verifyToken(input.readASCII(-SecurityHelper.TOKEN_STRING_LENGTH));
-            autoEnter = input.readBoolean();
-            fullScreen = input.readBoolean();
-            ram = input.readVarInt();
-            width = input.readVarInt();
-            height = input.readVarInt();
-        }
-
-        @Override
-        public void write(HOutput output) throws IOException {
-            output.writeByteArray(launcherSign, -SecurityHelper.RSA_KEY_LENGTH);
-            output.writeString(title, SerializeLimits.MAX_CLIENT);
-            // Client paths
-            output.writeString(assetDir.toString(), 0);
-            output.writeString(clientDir.toString(), 0);
-
-            // Client params
-            pp.write(output);
-            output.writeASCII(accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
-            output.writeBoolean(autoEnter);
-            output.writeBoolean(fullScreen);
-            output.writeVarInt(ram);
-            output.writeVarInt(width);
-            output.writeVarInt(height);
-        }
+    @LauncherAPI
+    public static void setProfile(ClientProfile profile) {
+        ClientLauncher.title = profile.getTitle();
+        LogHelper.debug("New Profile name: %s", profile.getTitle());
     }
 
-    private static final class ClassPathFileVisitor extends SimpleFileVisitor<Path> {
-        private final Collection<Path> result;
+    @LauncherAPI
+    public static void verifyHDir(Path dir, HashedDir hdir, FileNameMatcher matcher, boolean digest) throws IOException {
+        if (matcher != null)
+			matcher = matcher.verifyOnly();
 
-        private ClassPathFileVisitor(Collection<Path> result) {
-            this.result = result;
-        }
+        // Hash directory and compare (ignore update-only matcher entries, it will break offline-mode)
+        HashedDir currentHDir = new HashedDir(dir, matcher, false, digest);
+        if (!hdir.diff(currentHDir, matcher).isSame())
+			throw new SecurityException(String.format("Forbidden modification: '%s'", IOHelper.getFileName(dir)));
+    }
 
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            if (IOHelper.hasExtension(file, "jar") || IOHelper.hasExtension(file, "zip")) {
-                result.add(file);
-            }
-            return super.visitFile(file, attrs);
-        }
+    private ClientLauncher() {
     }
 }
 

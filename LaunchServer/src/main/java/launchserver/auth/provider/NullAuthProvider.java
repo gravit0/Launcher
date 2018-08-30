@@ -22,17 +22,16 @@ public final class NullAuthProvider extends AuthProvider {
     @Override
     public void close() throws IOException {
         AuthProvider provider = this.provider;
-        if (provider != null) {
-            provider.close();
-        }
+        if (provider != null)
+			provider.close();
+    }
+
+    private AuthProvider getProvider() {
+        return VerifyHelper.verify(provider, Objects::nonNull, "Backend auth provider wasn't set");
     }
 
     @LauncherAPI
     public void setBackend(AuthProvider provider) {
         this.provider = provider;
-    }
-
-    private AuthProvider getProvider() {
-        return VerifyHelper.verify(provider, Objects::nonNull, "Backend auth provider wasn't set");
     }
 }

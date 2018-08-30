@@ -1,10 +1,10 @@
 package launcher.request;
 
+import java.io.IOException;
+
 import launcher.LauncherAPI;
 import launcher.serialize.HInput;
 import launcher.serialize.stream.EnumSerializer;
-
-import java.io.IOException;
 
 public enum RequestType implements EnumSerializer.Itf {
     PING(0), // Ping request
@@ -14,6 +14,11 @@ public enum RequestType implements EnumSerializer.Itf {
     PROFILES(10),
     CUSTOM(255); // Custom requests
     private static final EnumSerializer<RequestType> SERIALIZER = new EnumSerializer<>(RequestType.class);
+    @LauncherAPI
+    public static RequestType read(HInput input) throws IOException {
+        return SERIALIZER.read(input);
+    }
+
     private final int n;
 
     RequestType(int n) {
@@ -23,10 +28,5 @@ public enum RequestType implements EnumSerializer.Itf {
     @Override
     public int getNumber() {
         return n;
-    }
-
-    @LauncherAPI
-    public static RequestType read(HInput input) throws IOException {
-        return SERIALIZER.read(input);
     }
 }

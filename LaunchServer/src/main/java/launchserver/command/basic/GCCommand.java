@@ -2,9 +2,9 @@ package launchserver.command.basic;
 
 import launcher.helper.JVMHelper;
 import launcher.helper.LogHelper;
+import launcher.managers.GarbageManager;
 import launchserver.LaunchServer;
 import launchserver.command.Command;
-import launcher.managers.GarbageManager;
 
 public final class GCCommand extends Command {
     public GCCommand(LaunchServer server) {

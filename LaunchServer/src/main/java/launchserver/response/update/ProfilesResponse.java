@@ -1,5 +1,8 @@
 package launchserver.response.update;
 
+import java.io.IOException;
+import java.util.Collection;
+
 import launcher.helper.LogHelper;
 import launcher.profiles.ClientProfile;
 import launcher.serialize.HInput;
@@ -7,9 +10,6 @@ import launcher.serialize.HOutput;
 import launcher.serialize.signed.SignedObjectHolder;
 import launchserver.LaunchServer;
 import launchserver.response.Response;
-
-import java.io.IOException;
-import java.util.Collection;
 
 public final class ProfilesResponse extends Response {
 

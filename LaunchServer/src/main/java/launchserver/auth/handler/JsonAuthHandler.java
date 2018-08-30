@@ -1,13 +1,5 @@
 package launchserver.auth.handler;
 
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
-import launcher.helper.IOHelper;
-import launcher.helper.VerifyHelper;
-import launcher.serialize.config.entry.BlockConfigEntry;
-import launcher.serialize.config.entry.StringConfigEntry;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -16,6 +8,15 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+
+import launcher.helper.IOHelper;
+import launcher.helper.VerifyHelper;
+import launcher.serialize.config.entry.BlockConfigEntry;
+import launcher.serialize.config.entry.StringConfigEntry;
 
 @SuppressWarnings("unused")
 public class JsonAuthHandler extends CachedAuthHandler {
@@ -60,64 +61,30 @@ public class JsonAuthHandler extends CachedAuthHandler {
     }
 
     @Override
-    public void close() {
-
-    }
-
-    public JsonObject jsonRequest(JsonObject request, URL url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        connection.setRequestProperty("Accept", "application/json");
-        if (TIMEOUT > 0) {
-            connection.setConnectTimeout(TIMEOUT);
-        }
-
-        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), Charset.forName("UTF-8"));
-        writer.write(request.toString());
-        writer.flush();
-        writer.close();
-
-        InputStreamReader reader;
-        int statusCode = connection.getResponseCode();
-
-        if (200 <= statusCode && statusCode < 300) {
-            reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
-        } else {
-            reader = new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8);
-        }
-        JsonValue content = Json.parse(reader);
-        if (!content.isObject()) {
-            authError("Authentication server response is malformed");
-        }
-
-        JsonObject response = content.asObject();
-        String value;
-
-        if ((value = response.getString(responseErrorKeyName, null)) != null) {
-            authError(value);
-        }
-        return response;
-    }
-
-    @Override
     public UUID checkServer(String username, String serverID) throws IOException {
         JsonObject request = Json.object().add(userKeyName, username).add(serverIDKeyName, serverID);
         JsonObject result = jsonRequest(request, urlCheckServer);
         String value;
-        if ((value = result.getString(uuidKeyName, null)) != null) {
-            return UUID.fromString(value);
-        }
+        if ((value = result.getString(uuidKeyName, null)) != null)
+			return UUID.fromString(value);
 		return super.checkServer(username, serverID);
     }
 
     @Override
-    public boolean joinServer(String username, String accessToken, String serverID) throws IOException {
-        JsonObject request = Json.object().add(userKeyName, username).add(serverIDKeyName, serverID).add(accessTokenKeyName, accessToken);
-        jsonRequest(request, urlJoinServer);
-        return super.joinServer(username, accessToken, serverID);
+    public void close() {
+
+    }
+
+    @Override
+    protected Entry fetchEntry(String username) throws IOException {
+        JsonObject request = Json.object().add(userKeyName, username);
+        JsonObject result = jsonRequest(request, urlCheckServer);
+        UUID uuid = UUID.fromString(result.getString(uuidKeyName, null));
+        String accessToken = result.getString(accessTokenKeyName, null);
+        String serverID = result.getString(serverIDKeyName, null);
+        if (accessToken == null || serverID == null) return null;
+
+        return new Entry(uuid, username, accessToken, serverID);
     }
 
     @Override
@@ -133,15 +100,44 @@ public class JsonAuthHandler extends CachedAuthHandler {
     }
 
     @Override
-    protected Entry fetchEntry(String username) throws IOException {
-        JsonObject request = Json.object().add(userKeyName, username);
-        JsonObject result = jsonRequest(request, urlCheckServer);
-        UUID uuid = UUID.fromString(result.getString(uuidKeyName, null));
-        String accessToken = result.getString(accessTokenKeyName, null);
-        String serverID = result.getString(serverIDKeyName, null);
-        if (accessToken == null || serverID == null) return null;
+    public boolean joinServer(String username, String accessToken, String serverID) throws IOException {
+        JsonObject request = Json.object().add(userKeyName, username).add(serverIDKeyName, serverID).add(accessTokenKeyName, accessToken);
+        jsonRequest(request, urlJoinServer);
+        return super.joinServer(username, accessToken, serverID);
+    }
 
-        return new Entry(uuid, username, accessToken, serverID);
+    public JsonObject jsonRequest(JsonObject request, URL url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        connection.setRequestProperty("Accept", "application/json");
+        if (TIMEOUT > 0)
+			connection.setConnectTimeout(TIMEOUT);
+
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), Charset.forName("UTF-8"));
+        writer.write(request.toString());
+        writer.flush();
+        writer.close();
+
+        InputStreamReader reader;
+        int statusCode = connection.getResponseCode();
+
+        if (200 <= statusCode && statusCode < 300)
+			reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
+		else
+			reader = new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8);
+        JsonValue content = Json.parse(reader);
+        if (!content.isObject())
+			authError("Authentication server response is malformed");
+
+        JsonObject response = content.asObject();
+        String value;
+
+        if ((value = response.getString(responseErrorKeyName, null)) != null)
+			authError(value);
+        return response;
     }
 
     @Override

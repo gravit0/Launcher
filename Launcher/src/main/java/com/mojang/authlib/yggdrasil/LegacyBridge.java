@@ -11,9 +11,6 @@ import launcher.request.auth.JoinServerRequest;
 // Used by 1.6.4 and below versions
 @LauncherAPI
 public final class LegacyBridge {
-    private LegacyBridge() {
-    }
-
     @SuppressWarnings("unused")
     public static boolean checkServer(String username, String serverID) throws Exception {
         LogHelper.debug("LegacyBridge.checkServer, Username: '%s', Server ID: %s", username, serverID);
@@ -36,9 +33,8 @@ public final class LegacyBridge {
 
     @SuppressWarnings("unused")
     public static String joinServer(String username, String accessToken, String serverID) {
-        if (!ClientLauncher.isLaunched()) {
-            return "Bad Login (Cheater)";
-        }
+        if (!ClientLauncher.isLaunched())
+			return "Bad Login (Cheater)";
 
         // Join server
         LogHelper.debug("LegacyBridge.joinServer, Username: '%s', Access token: %s, Server ID: %s", username, accessToken, serverID);
@@ -47,5 +43,8 @@ public final class LegacyBridge {
         } catch (Exception e) {
             return e.toString();
         }
+    }
+
+    private LegacyBridge() {
     }
 }

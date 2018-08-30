@@ -53,6 +53,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
@@ -60,17 +61,68 @@ import launcher.Launcher;
 import launcher.LauncherAPI;
 
 public final class IOHelper {
+    private static final class DeleteDirVisitor extends SimpleFileVisitor<Path> {
+        private final Path dir;
+        private final boolean self;
+
+        private DeleteDirVisitor(Path dir, boolean self) {
+            this.dir = dir;
+            this.self = self;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            FileVisitResult result = super.postVisitDirectory(dir, exc);
+            if (self || !this.dir.equals(dir))
+				Files.delete(dir);
+            return result;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Files.delete(file);
+            return super.visitFile(file, attrs);
+        }
+    }
+    private static final class SkipHiddenVisitor implements FileVisitor<Path> {
+        private final FileVisitor<Path> visitor;
+
+        private SkipHiddenVisitor(FileVisitor<Path> visitor) {
+            this.visitor = visitor;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            return Files.isHidden(dir) ? FileVisitResult.CONTINUE : visitor.postVisitDirectory(dir, exc);
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            return Files.isHidden(dir) ? FileVisitResult.SKIP_SUBTREE : visitor.preVisitDirectory(dir, attrs);
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            return Files.isHidden(file) ? FileVisitResult.CONTINUE : visitor.visitFile(file, attrs);
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+            return visitor.visitFileFailed(file, exc);
+        }
+    }
+
     // Charset
     @LauncherAPI
     public static final Charset UNICODE_CHARSET = StandardCharsets.UTF_8;
     @LauncherAPI
     public static final Charset ASCII_CHARSET = StandardCharsets.US_ASCII;
-
     // Constants
     @LauncherAPI
     public static final int SOCKET_TIMEOUT = VerifyHelper.verifyInt(
             Integer.parseUnsignedInt(System.getProperty("launcher.socketTimeout", Integer.toString(30000))),
             VerifyHelper.POSITIVE, "launcher.socketTimeout can't be <= 0");
+
     @LauncherAPI
     public static final int HTTP_TIMEOUT = VerifyHelper.verifyInt(
             Integer.parseUnsignedInt(System.getProperty("launcher.httpTimeout", Integer.toString(5000))),
@@ -79,42 +131,40 @@ public final class IOHelper {
     public static final int BUFFER_SIZE = VerifyHelper.verifyInt(
             Integer.parseUnsignedInt(System.getProperty("launcher.bufferSize", Integer.toString(4096))),
             VerifyHelper.POSITIVE, "launcher.bufferSize can't be <= 0");
-
     // Platform-dependent
     @LauncherAPI
     public static final String CROSS_SEPARATOR = "/";
     @LauncherAPI
     public static final FileSystem FS = FileSystems.getDefault();
+
     @LauncherAPI
     public static final String PLATFORM_SEPARATOR = FS.getSeparator();
     // Увидел исключение на NetBSD beta добавил
     @LauncherAPI
     public static final boolean POSIX = FS.supportedFileAttributeViews().contains("posix") || FS.supportedFileAttributeViews().contains("Posix");
-
     // Paths
     @LauncherAPI
     public static final Path JVM_DIR = Paths.get(System.getProperty("java.home"));
+
     @LauncherAPI
     public static final Path HOME_DIR = Paths.get(System.getProperty("user.home"));
     @LauncherAPI
     public static final Path WORKING_DIR = Paths.get(System.getProperty("user.dir"));
-
     // Open options - as arrays
     private static final OpenOption[] READ_OPTIONS = {StandardOpenOption.READ};
+
     private static final OpenOption[] WRITE_OPTIONS = {StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING};
     private static final OpenOption[] APPEND_OPTIONS = {StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND};
-
     // Other options
     private static final LinkOption[] LINK_OPTIONS = {};
+
     private static final CopyOption[] COPY_OPTIONS = {StandardCopyOption.REPLACE_EXISTING};
     private static final Set<FileVisitOption> WALK_OPTIONS = Collections.singleton(FileVisitOption.FOLLOW_LINKS);
 
     // Other constants
     private static final Pattern CROSS_SEPARATOR_PATTERN = Pattern.compile(CROSS_SEPARATOR, Pattern.LITERAL);
-    private static final Pattern PLATFORM_SEPARATOR_PATTERN = Pattern.compile(PLATFORM_SEPARATOR, Pattern.LITERAL);
 
-    private IOHelper() {
-    }
+    private static final Pattern PLATFORM_SEPARATOR_PATTERN = Pattern.compile(PLATFORM_SEPARATOR, Pattern.LITERAL);
 
     @LauncherAPI
     public static void close(AutoCloseable closeable) {
@@ -122,6 +172,32 @@ public final class IOHelper {
             closeable.close();
         } catch (Exception exc) {
             LogHelper.error(exc);
+        }
+    }
+
+    @LauncherAPI
+    public static void close(InputStream in) {
+        try {
+            in.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    @LauncherAPI
+    public static void close(OutputStream out) {
+        try {
+            out.flush();
+            out.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    @LauncherAPI
+    public static URL convertToURL(String url) {
+        try {
+            return new URL(url);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL", e);
         }
     }
 
@@ -134,9 +210,8 @@ public final class IOHelper {
     @LauncherAPI
     public static void createParentDirs(Path path) throws IOException {
         Path parent = path.getParent();
-        if (parent != null && !isDir(parent)) {
-            Files.createDirectories(parent);
-        }
+        if (parent != null && !isDir(parent))
+			Files.createDirectories(parent);
     }
 
     @LauncherAPI
@@ -192,9 +267,8 @@ public final class IOHelper {
     @LauncherAPI
     public static URL getResourceURL(String name) throws NoSuchFileException {
         URL url = Launcher.class.getResource('/' + name);
-        if (url == null) {
-            throw new NoSuchFileException(name);
-        }
+        if (url == null)
+			throw new NoSuchFileException(name);
         return url;
     }
 
@@ -270,9 +344,8 @@ public final class IOHelper {
             connection.setReadTimeout(HTTP_TIMEOUT);
             connection.setConnectTimeout(HTTP_TIMEOUT);
             connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)"); // Fix for stupid servers
-        } else {
-            connection.setUseCaches(false);
-        }
+        } else
+			connection.setUseCaches(false);
         connection.setDoInput(true);
         connection.setDoOutput(false);
         return connection;
@@ -299,13 +372,13 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static InputStream newInput(URL url) throws IOException {
-        return newConnection(url).getInputStream();
+    public static InputStream newInput(Path file) throws IOException {
+        return Files.newInputStream(file, READ_OPTIONS);
     }
 
     @LauncherAPI
-    public static InputStream newInput(Path file) throws IOException {
-        return Files.newInputStream(file, READ_OPTIONS);
+    public static InputStream newInput(URL url) throws IOException {
+        return newConnection(url).getInputStream();
     }
 
     @LauncherAPI
@@ -330,6 +403,11 @@ public final class IOHelper {
     }
 
     @LauncherAPI
+    public static BufferedReader newReader(Path file) throws IOException {
+        return Files.newBufferedReader(file, UNICODE_CHARSET);
+    }
+
+    @LauncherAPI
     public static BufferedReader newReader(URL url) throws IOException {
         URLConnection connection = newConnection(url);
         String charset = connection.getContentEncoding();
@@ -337,15 +415,15 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static BufferedReader newReader(Path file) throws IOException {
-        return Files.newBufferedReader(file, UNICODE_CHARSET);
-    }
-
-    @LauncherAPI
     public static Socket newSocket() throws SocketException {
         Socket socket = new Socket();
         setSocketFlags(socket);
         return socket;
+    }
+
+    @LauncherAPI
+    public static BufferedWriter newWriter(FileDescriptor fd) {
+        return newWriter(new FileOutputStream(fd));
     }
 
     @LauncherAPI
@@ -362,11 +440,6 @@ public final class IOHelper {
     public static BufferedWriter newWriter(Path file, boolean append) throws IOException {
         createParentDirs(file);
         return Files.newBufferedWriter(file, UNICODE_CHARSET, append ? APPEND_OPTIONS : WRITE_OPTIONS);
-    }
-
-    @LauncherAPI
-    public static BufferedWriter newWriter(FileDescriptor fd) {
-        return newWriter(new FileOutputStream(fd));
     }
 
     @LauncherAPI
@@ -387,21 +460,39 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static ZipInputStream newZipInput(URL url) throws IOException {
-        return newZipInput(newInput(url));
-    }
-
-    @LauncherAPI
     public static ZipInputStream newZipInput(Path file) throws IOException {
         return newZipInput(newInput(file));
     }
 
     @LauncherAPI
+    public static ZipInputStream newZipInput(URL url) throws IOException {
+        return newZipInput(newInput(url));
+    }
+
+    @LauncherAPI
+    public static byte[] read(InputStream input) throws IOException {
+        try (ByteArrayOutputStream output = newByteArrayOutput()) {
+            transfer(input, output);
+            return output.toByteArray();
+        }
+    }
+
+    @LauncherAPI
+    public static void read(InputStream input, byte[] bytes) throws IOException {
+        int offset = 0;
+        while (offset < bytes.length) {
+            int length = input.read(bytes, offset, bytes.length - offset);
+            if (length < 0)
+				throw new EOFException(String.format("%d bytes remaining", bytes.length - offset));
+            offset += length;
+        }
+    }
+
+    @LauncherAPI
     public static byte[] read(Path file) throws IOException {
         long size = readAttributes(file).size();
-        if (size > Integer.MAX_VALUE) {
-            throw new IOException("File too big");
-        }
+        if (size > Integer.MAX_VALUE)
+			throw new IOException("File too big");
 
         // Read bytes from file
         byte[] bytes = new byte[(int) size];
@@ -421,26 +512,6 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static void read(InputStream input, byte[] bytes) throws IOException {
-        int offset = 0;
-        while (offset < bytes.length) {
-            int length = input.read(bytes, offset, bytes.length - offset);
-            if (length < 0) {
-                throw new EOFException(String.format("%d bytes remaining", bytes.length - offset));
-            }
-            offset += length;
-        }
-    }
-
-    @LauncherAPI
-    public static byte[] read(InputStream input) throws IOException {
-        try (ByteArrayOutputStream output = newByteArrayOutput()) {
-            transfer(input, output);
-            return output.toByteArray();
-        }
-    }
-
-    @LauncherAPI
     public static BasicFileAttributes readAttributes(Path path) throws IOException {
         return Files.readAttributes(path, BasicFileAttributes.class, LINK_OPTIONS);
     }
@@ -454,9 +525,8 @@ public final class IOHelper {
             // Verify texture bounds
             int width = reader.getWidth(0);
             int height = reader.getHeight(0);
-            if (!isValidTextureBounds(width, height, cloak)) {
-                throw new IOException(String.format("Invalid texture bounds: %dx%d", width, height));
-            }
+            if (!isValidTextureBounds(width, height, cloak))
+				throw new IOException(String.format("Invalid texture bounds: %dx%d", width, height));
 
             // Read image
             return reader.read(0);
@@ -472,18 +542,16 @@ public final class IOHelper {
 
     @LauncherAPI
     public static InetSocketAddress resolve(InetSocketAddress address) {
-        if (address.isUnresolved()) { // Create resolved address
-            return new InetSocketAddress(address.getHostString(), address.getPort());
-        }
+        if (address.isUnresolved())
+			return new InetSocketAddress(address.getHostString(), address.getPort());
         return address;
     }
 
     @LauncherAPI
     public static Path resolveIncremental(Path dir, String name, String extension) {
         Path original = dir.resolve(name + '.' + extension);
-        if (!exists(original)) { // Not need to increment
-            return original;
-        }
+        if (!exists(original))
+			return original;
 
         // Incremental resolve
         int counter = 1;
@@ -505,22 +573,19 @@ public final class IOHelper {
         // Verify has "javaw.exe" file
         if (!LogHelper.isDebugEnabled()) {
             Path javawExe = javaBinDir.resolve("javaw.exe");
-            if (isFile(javawExe)) {
-                return javawExe;
-            }
+            if (isFile(javawExe))
+				return javawExe;
         }
 
         // Verify has "java.exe" file
         Path javaExe = javaBinDir.resolve("java.exe");
-        if (isFile(javaExe)) {
-            return javaExe;
-        }
+        if (isFile(javaExe))
+			return javaExe;
 
         // Verify has "java" file
         Path java = javaBinDir.resolve("java");
-        if (isFile(java)) {
-            return java;
-        }
+        if (isFile(java))
+			return java;
 
         // Throw exception as no runnable found
         throw new RuntimeException("Java binary wasn't found");
@@ -540,6 +605,23 @@ public final class IOHelper {
         // socket.setSendBufferSize(0x100000);
         // socket.setReceiveBufferSize(0x100000);
         socket.setPerformancePreferences(1, 0, 2);
+    }
+
+    @LauncherAPI
+	public static String toAbs(Path path) {
+		return toAbsPath(path).toFile().getAbsolutePath();
+	}
+
+    @LauncherAPI
+	public static Path toAbsPath(Path path) {
+		return path.normalize().toAbsolutePath();
+	}
+
+    @LauncherAPI
+    public static byte[] toByteArray(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
+        IOHelper.transfer(in, out);
+        return out.toByteArray();
     }
 
     @LauncherAPI
@@ -571,6 +653,13 @@ public final class IOHelper {
     }
 
     @LauncherAPI
+    public static void transfer(byte[] write, Path file, boolean append) throws IOException {
+        try (OutputStream out = newOutput(file, append)) {
+            out.write(write);
+        }
+    }
+
+    @LauncherAPI
     public static long transfer(InputStream input, OutputStream output) throws IOException {
         long transferred = 0;
         byte[] buffer = newBuffer();
@@ -582,13 +671,6 @@ public final class IOHelper {
     }
 
     @LauncherAPI
-    public static void transfer(Path file, OutputStream output) throws IOException {
-        try (InputStream input = newInput(file)) {
-            transfer(input, output);
-        }
-    }
-
-    @LauncherAPI
     public static long transfer(InputStream input, Path file) throws IOException {
         return transfer(input, file, false);
     }
@@ -597,6 +679,13 @@ public final class IOHelper {
     public static long transfer(InputStream input, Path file, boolean append) throws IOException {
         try (OutputStream output = newOutput(file, append)) {
             return transfer(input, output);
+        }
+    }
+
+    @LauncherAPI
+    public static void transfer(Path file, OutputStream output) throws IOException {
+        try (InputStream input = newInput(file)) {
+            transfer(input, output);
         }
     }
 
@@ -625,9 +714,8 @@ public final class IOHelper {
 
     @LauncherAPI
     public static int verifyLength(int length, int max) throws IOException {
-        if (length < 0 || max < 0 && length != -max || max > 0 && length > max) {
-            throw new IOException("Illegal length: " + length);
-        }
+        if (length < 0 || max < 0 && length != -max || max > 0 && length > max)
+			throw new IOException("Illegal length: " + length);
         return length;
     }
 
@@ -658,106 +746,6 @@ public final class IOHelper {
         Files.write(file, bytes, WRITE_OPTIONS);
     }
 
-    private static final class DeleteDirVisitor extends SimpleFileVisitor<Path> {
-        private final Path dir;
-        private final boolean self;
-
-        private DeleteDirVisitor(Path dir, boolean self) {
-            this.dir = dir;
-            this.self = self;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            FileVisitResult result = super.postVisitDirectory(dir, exc);
-            if (self || !this.dir.equals(dir)) {
-                Files.delete(dir);
-            }
-            return result;
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            Files.delete(file);
-            return super.visitFile(file, attrs);
-        }
+    private IOHelper() {
     }
-
-    private static final class SkipHiddenVisitor implements FileVisitor<Path> {
-        private final FileVisitor<Path> visitor;
-
-        private SkipHiddenVisitor(FileVisitor<Path> visitor) {
-            this.visitor = visitor;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            return Files.isHidden(dir) ? FileVisitResult.CONTINUE : visitor.postVisitDirectory(dir, exc);
-        }
-
-        @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-            return Files.isHidden(dir) ? FileVisitResult.SKIP_SUBTREE : visitor.preVisitDirectory(dir, attrs);
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            return Files.isHidden(file) ? FileVisitResult.CONTINUE : visitor.visitFile(file, attrs);
-        }
-
-        @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            return visitor.visitFileFailed(file, exc);
-        }
-    }
-
-    @LauncherAPI
-    public static URL convertToURL(String url) {
-        try {
-            return new URL(url);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL", e);
-        }
-    }
-
-    @LauncherAPI
-    public static void close(InputStream in) {
-        try {
-            in.close();
-        } catch (Exception ignored) {
-        }
-    }
-
-    @LauncherAPI
-    public static void close(OutputStream out) {
-        try {
-            out.flush();
-            out.close();
-        } catch (Exception ignored) {
-        }
-    }
-
-    @LauncherAPI
-    public static byte[] toByteArray(InputStream in) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
-        IOHelper.transfer(in, out);
-        return out.toByteArray();
-    }
-
-    @LauncherAPI
-    public static void transfer(byte[] write, Path file, boolean append) throws IOException {
-        try (OutputStream out = newOutput(file, append)) {
-            out.write(write);
-        }
-    }
-
-    @LauncherAPI
-	public static String toAbs(Path path) {
-		return toAbsPath(path).toFile().getAbsolutePath();
-	}
-
-    @LauncherAPI
-	public static Path toAbsPath(Path path) {
-		return path.normalize().toAbsolutePath();
-	}
 }

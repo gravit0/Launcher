@@ -28,8 +28,7 @@ public final class BatchProfileByUsernameResponse extends Response {
         debug("Usernames: " + Arrays.toString(usernames));
 
         // Respond with profiles array
-        for (int i = 0; i < usernames.length; i++) {
-            ProfileByUsernameResponse.writeProfile(server, output, usernames[i], clients[i]);
-        }
+        for (int i = 0; i < usernames.length; i++)
+			ProfileByUsernameResponse.writeProfile(server, output, usernames[i], clients[i]);
     }
 }

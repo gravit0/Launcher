@@ -51,9 +51,9 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
 	private final LaunchServerModuleContext context;
 
 	public ModulesManager(LaunchServer lsrv) {
-		this.modules = new ArrayList<>(1);
-		this.classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
-		this.context = new LaunchServerModuleContext(lsrv, classloader);
+		modules = new ArrayList<>(1);
+		classloader = new LauncherClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
+		context = new LaunchServerModuleContext(lsrv, classloader);
 	}
 
 	@LauncherAPI
@@ -69,7 +69,7 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
 
 	@Override
 	public void close() {
-		for (Module m : modules) {
+		for (Module m : modules)
 			try {
 				m.close();
 			} catch (Throwable t) {
@@ -79,7 +79,6 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
 					LogHelper.error("Error in stopping one of modules");
 				LogHelper.error(t);
 			}
-		}
 	}
 
 	@Override
@@ -150,9 +149,8 @@ public class ModulesManager implements AutoCloseable, ModulesManagerInterface {
 	@Override
 	@LauncherAPI
 	public void printModules() {
-		for (Module m : modules) {
+		for (Module m : modules)
 			LogHelper.info("Module %s version: %s", m.getName(), m.getVersion());
-		}
 		LogHelper.info("Loaded %d modules", modules.size());
 	}
 

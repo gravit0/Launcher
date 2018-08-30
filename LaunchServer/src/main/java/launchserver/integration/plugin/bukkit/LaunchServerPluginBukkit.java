@@ -1,9 +1,9 @@
 package launchserver.integration.plugin.bukkit;
 
-import launchserver.integration.plugin.LaunchServerPluginBridge;
-
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import launchserver.integration.plugin.LaunchServerPluginBridge;
 
 public final class LaunchServerPluginBukkit extends JavaPlugin {
     public volatile LaunchServerPluginBridge bridge = null;

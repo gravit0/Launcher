@@ -42,8 +42,7 @@ public final class CheckServerResponse extends Response {
 
         // Write profile and UUID
         output.writeBoolean(uuid != null);
-        if (uuid != null) {
-            ProfileByUUIDResponse.getProfile(server, uuid, username, client).write(output);
-        }
+        if (uuid != null)
+			ProfileByUUIDResponse.getProfile(server, uuid, username, client).write(output);
     }
 }

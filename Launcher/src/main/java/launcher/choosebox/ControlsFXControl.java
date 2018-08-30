@@ -5,11 +5,11 @@ import launcher.LauncherAPI;
 
 abstract class ControlsFXControl extends Control {
 
+	private String stylesheet;
+
 	public ControlsFXControl() {
 
 	}
-
-	private String stylesheet;
 
 	@LauncherAPI
 	protected final String getUserAgentStylesheet(Class<?> clazz, String fileName) {

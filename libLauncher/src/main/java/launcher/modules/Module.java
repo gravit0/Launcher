@@ -10,7 +10,7 @@ public interface Module extends AutoCloseable {
 
     void init(ModuleContext context);
   
-    void preInit(ModuleContext context);
-    
     void postInit(ModuleContext context);
+    
+    void preInit(ModuleContext context);
 }

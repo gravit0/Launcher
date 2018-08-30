@@ -61,9 +61,8 @@ public final class HOutput implements AutoCloseable, Flushable {
     @LauncherAPI
     public void writeLength(int length, int max) throws IOException {
         IOHelper.verifyLength(length, max);
-        if (max >= 0) {
-            writeVarInt(length);
-        }
+        if (max >= 0)
+			writeVarInt(length);
     }
 
     @LauncherAPI
@@ -84,14 +83,14 @@ public final class HOutput implements AutoCloseable, Flushable {
     }
 
     @LauncherAPI
-    public void writeUUID(UUID uuid) throws IOException {
-        writeLong(uuid.getMostSignificantBits());
-        writeLong(uuid.getLeastSignificantBits());
+    public void writeUnsignedByte(int b) throws IOException {
+        stream.write(b);
     }
 
     @LauncherAPI
-    public void writeUnsignedByte(int b) throws IOException {
-        stream.write(b);
+    public void writeUUID(UUID uuid) throws IOException {
+        writeLong(uuid.getMostSignificantBits());
+        writeLong(uuid.getLeastSignificantBits());
     }
 
     @LauncherAPI

@@ -5,23 +5,23 @@ import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import launcher.Launcher;
-import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.LauncherConfig;
 import launcher.helper.IOHelper;
 import launcher.helper.SecurityHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 
 public abstract class Request<R> {
+    private static final long session = SecurityHelper.secureRandom.nextLong();
+    @LauncherAPI
+    public static void requestError(String message) throws RequestException {
+        throw new RequestException(message);
+    }
     @LauncherAPI
     protected final LauncherConfig config;
-    private final AtomicBoolean started = new AtomicBoolean(false);
-    private static final long session = SecurityHelper.secureRandom.nextLong();
 
-    @LauncherAPI
-    protected Request(LauncherConfig config) {
-        this.config = config == null ? Launcher.getConfig() : config;
-    }
+    private final AtomicBoolean started = new AtomicBoolean(false);
 
     @LauncherAPI
     protected Request() {
@@ -29,17 +29,25 @@ public abstract class Request<R> {
     }
 
     @LauncherAPI
+    protected Request(LauncherConfig config) {
+        this.config = config == null ? Launcher.getConfig() : config;
+    }
+
+    @LauncherAPI
     public abstract Integer getType();
 
     @LauncherAPI
-    protected abstract R requestDo(HInput input, HOutput output) throws Exception;
+    protected final void readError(HInput input) throws IOException {
+        String error = input.readString(0);
+        if (!error.isEmpty())
+			requestError(error);
+    }
 
     @LauncherAPI
     @SuppressWarnings("DesignForExtension")
     public R request() throws Exception {
-        if (!started.compareAndSet(false, true)) {
-            throw new IllegalStateException("Request already started");
-        }
+        if (!started.compareAndSet(false, true))
+			throw new IllegalStateException("Request already started");
 
         // Make request to LaunchServer
         try (Socket socket = IOHelper.newSocket()) {
@@ -53,12 +61,7 @@ public abstract class Request<R> {
     }
 
     @LauncherAPI
-    protected final void readError(HInput input) throws IOException {
-        String error = input.readString(0);
-        if (!error.isEmpty()) {
-            requestError(error);
-        }
-    }
+    protected abstract R requestDo(HInput input, HOutput output) throws Exception;
 
     private void writeHandshake(HInput input, HOutput output) throws IOException {
         // Write handshake
@@ -69,14 +72,8 @@ public abstract class Request<R> {
         output.flush();
 
         // Verify is accepted
-        if (!input.readBoolean()) {
-            requestError("Serverside not accepted this connection");
-        }
-    }
-
-    @LauncherAPI
-    public static void requestError(String message) throws RequestException {
-        throw new RequestException(message);
+        if (!input.readBoolean())
+			requestError("Serverside not accepted this connection");
     }
 
 }

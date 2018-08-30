@@ -5,13 +5,7 @@ import launcher.LauncherAPI;
 
 public interface IndexedCheckModel<T> extends CheckModel<T> {
 	@LauncherAPI
-	public T getItem(int index);
-
-	@LauncherAPI
-	public int getItemIndex(T item);
-
-	@LauncherAPI
-	public ObservableList<Integer> getCheckedIndices();
+	public void check(int index);
 
 	@LauncherAPI
 	public void checkIndices(int... indices);
@@ -20,10 +14,16 @@ public interface IndexedCheckModel<T> extends CheckModel<T> {
 	public void clearCheck(int index);
 
 	@LauncherAPI
-	public boolean isChecked(int index);
+	public ObservableList<Integer> getCheckedIndices();
 
 	@LauncherAPI
-	public void check(int index);
+	public T getItem(int index);
+
+	@LauncherAPI
+	public int getItemIndex(T item);
+
+	@LauncherAPI
+	public boolean isChecked(int index);
 
 	@LauncherAPI
 	public void toggleCheckState(int index);

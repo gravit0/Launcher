@@ -1,7 +1,12 @@
 package launchserver.auth.hwid;
 
 public class HWIDException extends Exception {
-    public HWIDException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5307315891121889972L;
+
+	public HWIDException() {
     }
 
     public HWIDException(String s) {

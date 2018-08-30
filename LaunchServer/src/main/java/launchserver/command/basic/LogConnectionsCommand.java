@@ -25,9 +25,8 @@ public final class LogConnectionsCommand extends Command {
         if (args.length >= 1) {
             newValue = Boolean.parseBoolean(args[0]);
             server.serverSocketHandler.logConnections = newValue;
-        } else {
-            newValue = server.serverSocketHandler.logConnections;
-        }
+        } else
+			newValue = server.serverSocketHandler.logConnections;
         LogHelper.subInfo("Log connections: " + newValue);
     }
 }

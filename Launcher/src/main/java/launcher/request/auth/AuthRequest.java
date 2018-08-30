@@ -2,13 +2,13 @@ package launcher.request.auth;
 
 import java.io.IOException;
 
-import launcher.LauncherConfig;
 import launcher.LauncherAPI;
+import launcher.LauncherConfig;
 import launcher.client.ClientLauncher;
-import launcher.profiles.PlayerProfile;
 import launcher.helper.JVMHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
+import launcher.profiles.PlayerProfile;
 import launcher.request.Request;
 import launcher.request.RequestType;
 import launcher.request.auth.AuthRequest.Result;
@@ -18,7 +18,19 @@ import launcher.serialize.SerializeLimits;
 import ru.zaxar163.GuardBind;
 
 public final class AuthRequest extends Request<Result> {
+    public static final class Result {
+        @LauncherAPI
+        public final PlayerProfile pp;
+        @LauncherAPI
+        public final String accessToken;
+
+        private Result(PlayerProfile pp, String accessToken) {
+            this.pp = pp;
+            this.accessToken = accessToken;
+        }
+    }
     private final String login;
+
     private final byte[] encryptedPassword;
 
     @LauncherAPI
@@ -53,17 +65,5 @@ public final class AuthRequest extends Request<Result> {
         PlayerProfile pp = new PlayerProfile(input);
         String accessToken = input.readASCII(-SecurityHelper.TOKEN_STRING_LENGTH);
         return new Result(pp, accessToken);
-    }
-
-    public static final class Result {
-        @LauncherAPI
-        public final PlayerProfile pp;
-        @LauncherAPI
-        public final String accessToken;
-
-        private Result(PlayerProfile pp, String accessToken) {
-            this.pp = pp;
-            this.accessToken = accessToken;
-        }
     }
 }

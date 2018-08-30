@@ -2,11 +2,11 @@ package launcher.request.uuid;
 
 import java.io.IOException;
 
-import launcher.LauncherConfig;
 import launcher.LauncherAPI;
-import launcher.profiles.PlayerProfile;
+import launcher.LauncherConfig;
 import launcher.helper.IOHelper;
 import launcher.helper.VerifyHelper;
+import launcher.profiles.PlayerProfile;
 import launcher.request.Request;
 import launcher.request.RequestType;
 import launcher.serialize.HInput;
@@ -21,9 +21,8 @@ public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]
         super(config);
         this.usernames = usernames.clone();
         IOHelper.verifyLength(this.usernames.length, SerializeLimits.MAX_BATCH_SIZE);
-        for (String username : this.usernames) {
-            VerifyHelper.verifyUsername(username);
-        }
+        for (String username : this.usernames)
+			VerifyHelper.verifyUsername(username);
     }
 
     @LauncherAPI
@@ -47,9 +46,8 @@ public final class BatchProfileByUsernameRequest extends Request<PlayerProfile[]
 
         // Read profiles response
         PlayerProfile[] profiles = new PlayerProfile[usernames.length];
-        for (int i = 0; i < profiles.length; i++) {
-            profiles[i] = input.readBoolean() ? new PlayerProfile(input) : null;
-        }
+        for (int i = 0; i < profiles.length; i++)
+			profiles[i] = input.readBoolean() ? new PlayerProfile(input) : null;
 
         // Return result
         return profiles;

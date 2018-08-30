@@ -16,11 +16,6 @@ public class SignedBytesHolder extends StreamObject {
     private final byte[] sign;
 
     @LauncherAPI
-    public SignedBytesHolder(HInput input, RSAPublicKey publicKey) throws IOException, SignatureException {
-        this(input.readByteArray(0), input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH), publicKey);
-    }
-
-    @LauncherAPI
     public SignedBytesHolder(byte[] bytes, byte[] sign, RSAPublicKey publicKey) throws SignatureException {
         SecurityHelper.verifySign(bytes, sign, publicKey);
         this.bytes = bytes.clone();
@@ -33,10 +28,9 @@ public class SignedBytesHolder extends StreamObject {
         sign = SecurityHelper.sign(bytes, privateKey);
     }
 
-    @Override
-    public final void write(HOutput output) throws IOException {
-        output.writeByteArray(bytes, 0);
-        output.writeByteArray(sign, -SecurityHelper.RSA_KEY_LENGTH);
+    @LauncherAPI
+    public SignedBytesHolder(HInput input, RSAPublicKey publicKey) throws IOException, SignatureException {
+        this(input.readByteArray(0), input.readByteArray(-SecurityHelper.RSA_KEY_LENGTH), publicKey);
     }
 
     @LauncherAPI
@@ -47,5 +41,11 @@ public class SignedBytesHolder extends StreamObject {
     @LauncherAPI
     public final byte[] getSign() {
         return sign.clone();
+    }
+
+    @Override
+    public final void write(HOutput output) throws IOException {
+        output.writeByteArray(bytes, 0);
+        output.writeByteArray(sign, -SecurityHelper.RSA_KEY_LENGTH);
     }
 }

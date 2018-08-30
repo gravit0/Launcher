@@ -8,6 +8,19 @@ import launcher.helper.LogHelper.Output;
 import launchserver.LaunchServer;
 
 public final class JLineCommandHandler extends CommandHandler {
+    private final class JLineOutput implements Output {
+        @Override
+        public void println(String message) {
+            try {
+                reader.println(ConsoleReader.RESET_LINE + message);
+                reader.drawLine();
+                reader.flush();
+            } catch (IOException ignored) {
+                // Ignored
+            }
+        }
+    }
+
     private final ConsoleReader reader;
 
     public JLineCommandHandler(LaunchServer server) throws IOException {
@@ -35,18 +48,5 @@ public final class JLineCommandHandler extends CommandHandler {
     @Override
     public String readLine() throws IOException {
         return reader.readLine();
-    }
-
-    private final class JLineOutput implements Output {
-        @Override
-        public void println(String message) {
-            try {
-                reader.println(ConsoleReader.RESET_LINE + message);
-                reader.drawLine();
-                reader.flush();
-            } catch (IOException ignored) {
-                // Ignored
-            }
-        }
     }
 }

@@ -3,9 +3,9 @@ package launchserver.response.profile;
 import java.io.IOException;
 import java.util.UUID;
 
+import launcher.helper.LogHelper;
 import launcher.profiles.PlayerProfile;
 import launcher.profiles.Texture;
-import launcher.helper.LogHelper;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
@@ -13,27 +13,6 @@ import launchserver.LaunchServer;
 import launchserver.response.Response;
 
 public final class ProfileByUUIDResponse extends Response {
-
-    public ProfileByUUIDResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
-        super(server, session, input, output, ip);
-    }
-
-    @Override
-    public void reply() throws IOException {
-        UUID uuid = input.readUUID();
-        debug("UUID: " + uuid);
-        String client = input.readString(SerializeLimits.MAX_CLIENT);
-        // Verify has such profile
-        String username = server.config.authHandler.uuidToUsername(uuid);
-        if (username == null) {
-            output.writeBoolean(false);
-            return;
-        }
-
-        // Write profile
-        output.writeBoolean(true);
-        getProfile(server, uuid, username, client).write(output);
-    }
 
     public static PlayerProfile getProfile(LaunchServer server, UUID uuid, String username, String client) {
         // Get skin texture
@@ -56,5 +35,26 @@ public final class ProfileByUUIDResponse extends Response {
 
         // Return combined profile
         return new PlayerProfile(uuid, username, skin, cloak);
+    }
+
+    public ProfileByUUIDResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
+        super(server, session, input, output, ip);
+    }
+
+    @Override
+    public void reply() throws IOException {
+        UUID uuid = input.readUUID();
+        debug("UUID: " + uuid);
+        String client = input.readString(SerializeLimits.MAX_CLIENT);
+        // Verify has such profile
+        String username = server.config.authHandler.uuidToUsername(uuid);
+        if (username == null) {
+            output.writeBoolean(false);
+            return;
+        }
+
+        // Write profile
+        output.writeBoolean(true);
+        getProfile(server, uuid, username, client).write(output);
     }
 }

@@ -25,16 +25,6 @@ public class EnvHelper {
     }
 
     @LauncherAPI
-    public static boolean hasOptsVar() {
-        return TST;
-    }
-
-    @LauncherAPI
-    public static boolean hasMemPreDef() {
-        return HASXM;
-    }
-
-    @LauncherAPI
     public static void addEnv(ProcessBuilder builder) {
         if (hasOptsVar()) {
             Map<String, String> repl = new HashMap<>();
@@ -46,24 +36,33 @@ public class EnvHelper {
         }
     }
 
+    private static boolean check0() {
+        for (String test : toTest) if (System.getProperty(test) != null) return true;
+        return false;
+    }
+
     /**
      * Вынужденное решение ибо тест на наличие -Xm* этакой нужен.
      */
     private static boolean check1() {
-        if (hasOptsVar()) {
-            for (String testStr : toTest)
+        if (hasOptsVar())
+			for (String testStr : toTest)
                 if (System.getProperty(testStr) != null) {
                     String str = System.getenv(testStr);
                     StringTokenizer st = new StringTokenizer(str);
                     while (st.hasMoreTokens())
                         if (CommonHelper.multiMatches(test, st.nextToken())) return true;
                 }
-        }
         return false;
     }
 
-    private static boolean check0() {
-        for (String test : toTest) if (System.getProperty(test) != null) return true;
-        return false;
+    @LauncherAPI
+    public static boolean hasMemPreDef() {
+        return HASXM;
+    }
+
+    @LauncherAPI
+    public static boolean hasOptsVar() {
+        return TST;
     }
 }

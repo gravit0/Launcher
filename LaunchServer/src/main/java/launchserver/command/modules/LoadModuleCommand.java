@@ -1,10 +1,10 @@
 package launchserver.command.modules;
 
-import launchserver.LaunchServer;
-import launchserver.command.Command;
-
 import java.net.URI;
 import java.nio.file.Paths;
+
+import launchserver.LaunchServer;
+import launchserver.command.Command;
 
 public class LoadModuleCommand extends Command {
     public LoadModuleCommand(LaunchServer server) {

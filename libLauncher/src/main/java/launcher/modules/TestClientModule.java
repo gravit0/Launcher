@@ -2,10 +2,13 @@ package launcher.modules;
 
 
 import launcher.LauncherVersion;
-import launcher.modules.Module;
-import launcher.modules.ModuleContext;
 
 public class TestClientModule implements Module {
+    @Override
+    public void close() throws Exception {
+
+    }
+
     @Override
     public String getName() {
         return "TestClientModule";
@@ -22,17 +25,12 @@ public class TestClientModule implements Module {
     }
 
     @Override
-    public void preInit(ModuleContext context) {
-
-    }
-
-    @Override
     public void postInit(ModuleContext context) {
 
     }
 
     @Override
-    public void close() throws Exception {
+    public void preInit(ModuleContext context) {
 
     }
 }

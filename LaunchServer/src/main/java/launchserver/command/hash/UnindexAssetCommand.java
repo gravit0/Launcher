@@ -8,6 +8,7 @@ import java.util.Collections;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonObject.Member;
+
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launchserver.LaunchServer;
@@ -37,9 +38,8 @@ public final class UnindexAssetCommand extends Command {
         String outputAssetDirName = IOHelper.verifyFileName(args[2]);
         Path inputAssetDir = server.updatesDir.resolve(inputAssetDirName);
         Path outputAssetDir = server.updatesDir.resolve(outputAssetDirName);
-        if (outputAssetDir.equals(inputAssetDir)) {
-            throw new CommandException("Indexed and unindexed asset dirs can't be same");
-        }
+        if (outputAssetDir.equals(inputAssetDir))
+			throw new CommandException("Indexed and unindexed asset dirs can't be same");
 
         // Create new asset dir
         LogHelper.subInfo("Creating unindexed asset dir: '%s'", outputAssetDirName);
