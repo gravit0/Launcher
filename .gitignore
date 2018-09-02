@@ -12,6 +12,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+tst/
 
 # External tool builders
 .externalToolBuilders/

@@ -177,8 +177,8 @@ public class LauncherEngine {
         bindings.put("VerifyHelperClass", VerifyHelper.class);
 
         // Load JS API if available
-        bindings.put("RingProgressIndicator", RingProgressIndicator.class);
-        bindings.put("RingProgressIndicatorSkin", RingProgressIndicatorSkin.class);
+        bindings.put("RingProgressIndicatorClass", RingProgressIndicator.class);
+        bindings.put("RingProgressIndicatorSkinClass", RingProgressIndicatorSkin.class);
         try {
             Class.forName("javafx.application.Application");
             bindings.put("JSApplicationClass", JSApplication.class);
