@@ -1,5 +1,7 @@
 package launcher;
 
+import launcher.buttons.RingProgressIndicator;
+import launcher.buttons.RingProgressIndicatorSkin;
 import launcher.client.*;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
@@ -175,6 +177,8 @@ public class LauncherEngine {
         bindings.put("VerifyHelperClass", VerifyHelper.class);
 
         // Load JS API if available
+        bindings.put("RingProgressIndicator", RingProgressIndicator.class);
+        bindings.put("RingProgressIndicatorSkin", RingProgressIndicatorSkin.class);
         try {
             Class.forName("javafx.application.Application");
             bindings.put("JSApplicationClass", JSApplication.class);
