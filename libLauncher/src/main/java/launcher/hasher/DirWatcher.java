@@ -57,8 +57,7 @@ public final class DirWatcher implements Runnable, AutoCloseable {
         }
     }
 
-    @SuppressWarnings("unused")
-    private static final boolean FILE_TREE_SUPPORTED = JVMHelper.OS_TYPE == OS.MUSTDIE;
+    public static final boolean FILE_TREE_SUPPORTED = JVMHelper.OS_TYPE == OS.MUSTDIE;
 
     // Constants
     private static final Kind<?>[] KINDS = {

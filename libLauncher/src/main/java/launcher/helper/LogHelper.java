@@ -6,9 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,9 +68,6 @@ public final class LogHelper {
     public static final String NO_JANSI_PROPERTY = "launcher.noJAnsi";
     @LauncherAPI
     public static final boolean JANSI;
-    // Output settings
-    @SuppressWarnings("unused")
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss", Locale.US);
 
     private static final AtomicBoolean DEBUG_ENABLED = new AtomicBoolean(Boolean.getBoolean(DEBUG_PROPERTY));
 

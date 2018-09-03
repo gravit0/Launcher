@@ -7,19 +7,47 @@ import org.objectweb.asm.commons.AdviceAdapter;
 
 public class AntiDecompileMethodVisitor extends AdviceAdapter implements Opcodes {
 
-	protected AntiDecompileMethodVisitor(int access, MethodVisitor mw, String name, String desc) {
+	private final boolean context;
+
+	protected AntiDecompileMethodVisitor(int access, MethodVisitor mw, String name, String desc, boolean context) {
 		super(ASM5, mw, access, name, desc);
+		this.context = context;
 	}
 
 	// в начале каждого метода
 	// убивает декомпиляторы
 	@Override
 	public void onMethodEnter() {
+		if (context) expAntiDecomp();
 		antiDecomp();		
 	}
 	
-	private void antiDecomp() {
-		Label lbl1 = this.newLabel(), lbl15 = this.newLabel(), lbl2 = this.newLabel(), lbl3 = this.newLabel(), lbl35 = this.newLabel(), lbl4 = this.newLabel();
+	public void expAntiDecomp() {
+		Label lbl1 = this.newLabel(), lbl15 = this.newLabel(), 
+				lbl2 = this.newLabel(), lbl25 = this.newLabel();
+		
+		// try-catch блок с lbl1 до lbl2 с переходом на lbl2 при java/lang/Exception
+		this.visitException(lbl1, lbl2, lbl2);
+		
+		// lbl1: iconst_0
+		this.visitLabel(lbl1);
+		this.visitInsn(ICONST_0);
+		// lbl15: pop; goto lbl25 
+		this.visitLabel(lbl15);
+		this.visitInsn(POP);
+		this.jumpLabel(lbl25);
+		// lbl2: pop; pop2
+		this.visitLabel(lbl2);
+		this.visitInsn(POP);
+		this.visitInsn(POP);
+		// lbl25:
+		this.visitLabel(lbl25);
+	}
+	
+	public void antiDecomp() {
+		Label lbl1 = this.newLabel(), lbl15 = this.newLabel(), 
+				lbl2 = this.newLabel(), lbl3 = this.newLabel(), 
+				lbl35 = this.newLabel(), lbl4 = this.newLabel();
 		
 		// try-catch блок с lbl1 до lbl2 с переходом на lbl15 при java/lang/Exception
 		this.visitException(lbl1, lbl2, lbl15);
@@ -46,25 +74,10 @@ public class AntiDecompileMethodVisitor extends AdviceAdapter implements Opcodes
 		this.visitInsn(NOP);
 	}
 	
-	private void visitException(Label st, Label en, Label h) {
+	public void visitException(Label st, Label en, Label h) {
 		this.visitTryCatchBlock(st, en, h, "java/lang/Exception");
 	}
 
-	// experemental
-	@Override
-	public void visitInsn(int opcode) {
-		super.visitInsn(POP);
-		super.visitInsn(NOP);
-		super.visitInsn(opcode);
-	}
-
-	// experemental
-	@Override
-	public void onMethodExit(int opcode) {
-		super.onMethodExit(opcode);
-		antiDecomp();
-	}
-	
 	public void jumpLabel(Label to) {
 		this.visitJumpInsn(GOTO, to);
 	}

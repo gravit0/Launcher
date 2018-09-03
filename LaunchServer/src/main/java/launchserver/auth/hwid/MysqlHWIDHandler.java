@@ -160,7 +160,7 @@ public class MysqlHWIDHandler extends HWIDHandler {
                 cpu = set.getLong(cpuName);
                 bios = set.getLong(biosName);
             }
-            ArrayList list = new ArrayList();
+            ArrayList<HWID> list = new ArrayList<>();
             list.add(HWID.gen(hdd,bios,cpu));
             return list;
         } catch (SQLException e) {

@@ -1,13 +1,15 @@
 package launchserver;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import launcher.helper.IOHelper;
@@ -37,8 +39,7 @@ public class ProguardConf {
 		mappings = proguard.resolve("mappings.pro");
 		words = proguard.resolve("random.pro");
 		confStrs = new HashSet<>();
-		checkDirs();
-		if (!IOHelper.exists(proguard)) prepare(false);
+		prepare(false);
 		confStrs.add(readConf());
 		if (this.srv.config.genMappings) confStrs.add("-printmapping \'" + mappings.toFile().getName() + "\'");
 		confStrs.add("-obfuscationdictionary \'" + words.toFile().getName() + "\'");
@@ -46,26 +47,32 @@ public class ProguardConf {
 
 	}
 
-	private void checkDirs() {
-		try {
-			IOHelper.createParentDirs(config);
-		} catch (IOException ign) {
-			
-		}
+	public ProguardConf() {
+		srv = null;
+		proguard =  Paths.get("proguard");
+		config = proguard.resolve("proguard.config");
+		mappings = proguard.resolve("mappings.pro");
+		words = proguard.resolve("random.pro");
+		confStrs = new HashSet<>();
+		prepare(true);
+		confStrs.add(readConf());
+		confStrs.add("-obfuscationdictionary \'" + words.toFile().getName() + "\'");
+		confStrs.add("-classobfuscationdictionary \'" + words.toFile().getName() + "\'");
 	}
 
 	private void genConfig(boolean force) throws IOException {
-		if (IOHelper.exists(config) || !force) return;
+		if (IOHelper.exists(config) && !force) return;
 		Files.deleteIfExists(config);
-		List<String> lines = Files.readAllLines(config, IOHelper.UNICODE_CHARSET);
-		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(IOHelper.newOutput(config), IOHelper.UNICODE_CHARSET))) {
-			lines.forEach(out::println);
+		config.toFile().createNewFile();
+		try (OutputStream out = IOHelper.newOutput(config); InputStream in = IOHelper.newInput(IOHelper.getResourceURL("launchserver/proguard.cfg"))) {
+			IOHelper.transfer(in, out);
 		}
 	}
 
-	private void genWords(boolean force) throws IOException {
-		if (IOHelper.exists(words) || !force) return;
+	public void genWords(boolean force) throws IOException {
+		if (IOHelper.exists(words) && !force) return;
 		Files.deleteIfExists(words);
+		words.toFile().createNewFile();
 		SecureRandom rand = SecurityHelper.newRandom();
 		rand.setSeed(SecureRandom.getSeed(32));
 		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(IOHelper.newOutput(words), IOHelper.UNICODE_CHARSET))) {
@@ -74,16 +81,20 @@ public class ProguardConf {
 	}
 
 	public void prepare(boolean force) {
-		if (IOHelper.exists(config) && IOHelper.exists(words) && !force) return; 
 		try {
-			genConfig(force);
+			IOHelper.createParentDirs(config);
 			genWords(force);
+			genConfig(force);
 		} catch (IOException e) {
 			LogHelper.error(e);
 		}
 	}
 
 	private String readConf() {
-		return "@".concat(config.toString());
+		return "@".concat(config.toFile().getName());
+	}
+	
+	public static void main(String[] args) {
+		new ProguardConf();
 	}
 }
