@@ -63,6 +63,8 @@ var EnvHelper = EnvHelperClass.static;
 var SecurityHelper = SecurityHelperClass.static;
 var DigestAlgorithm = DigestAlgorithmClass.static;
 var VerifyHelper = VerifyHelperClass.static;
+var RingProgressIndicator = RingProgressIndicatorClass.static
+var RingProgressIndicatorSkin = RingProgressIndicatorSkinClass.static
 
 // Helper JS class API imports
 var JSApplication = null;

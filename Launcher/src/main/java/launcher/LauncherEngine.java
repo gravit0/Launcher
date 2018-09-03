@@ -22,6 +22,8 @@ import launcher.client.ClientLauncher;
 import launcher.client.ClientModuleManager;
 import launcher.client.JSApplication;
 import launcher.client.ServerPinger;
+import launcher.buttons.RingProgressIndicator;
+import launcher.buttons.RingProgressIndicatorSkin;
 import launcher.hasher.FileNameMatcher;
 import launcher.hasher.HashedDir;
 import launcher.hasher.HashedEntry;
@@ -136,6 +138,8 @@ public class LauncherEngine {
         bindings.put("VerifyHelperClass", VerifyHelper.class);
 
         // Load JS API if available
+        bindings.put("RingProgressIndicatorClass", RingProgressIndicator.class);
+        bindings.put("RingProgressIndicatorSkinClass", RingProgressIndicatorSkin.class);
         try {
             Class.forName("javafx.application.Application");
             bindings.put("JSApplicationClass", JSApplication.class);
