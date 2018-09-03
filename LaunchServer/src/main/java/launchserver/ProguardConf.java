@@ -47,19 +47,6 @@ public class ProguardConf {
 
 	}
 
-	public ProguardConf() {
-		srv = null;
-		proguard =  Paths.get("proguard");
-		config = proguard.resolve("proguard.config");
-		mappings = proguard.resolve("mappings.pro");
-		words = proguard.resolve("random.pro");
-		confStrs = new HashSet<>();
-		prepare(true);
-		confStrs.add(readConf());
-		confStrs.add("-obfuscationdictionary \'" + words.toFile().getName() + "\'");
-		confStrs.add("-classobfuscationdictionary \'" + words.toFile().getName() + "\'");
-	}
-
 	private void genConfig(boolean force) throws IOException {
 		if (IOHelper.exists(config) && !force) return;
 		Files.deleteIfExists(config);
@@ -92,9 +79,5 @@ public class ProguardConf {
 
 	private String readConf() {
 		return "@".concat(config.toFile().getName());
-	}
-	
-	public static void main(String[] args) {
-		new ProguardConf();
 	}
 }

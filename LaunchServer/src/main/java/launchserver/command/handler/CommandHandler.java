@@ -30,6 +30,8 @@ import launchserver.command.basic.HelpCommand;
 import launchserver.command.basic.LogConnectionsCommand;
 import launchserver.command.basic.ProguardCleanCommand;
 import launchserver.command.basic.RebindCommand;
+import launchserver.command.basic.RegenProguardDictCommand;
+import launchserver.command.basic.RemoveMappingsProguardCommand;
 import launchserver.command.basic.StopCommand;
 import launchserver.command.basic.VersionCommand;
 import launchserver.command.hash.DownloadAssetCommand;
@@ -105,6 +107,8 @@ public abstract class CommandHandler implements Runnable {
         registerCommand("clear", new ClearCommand(server));
         registerCommand("gc", new GCCommand(server));
         registerCommand("proguardClean", new ProguardCleanCommand(server));
+        registerCommand("proguardDictRegen", new RegenProguardDictCommand(server));
+        registerCommand("proguardMappingsRemove", new RemoveMappingsProguardCommand(server));
         registerCommand("logConnections", new LogConnectionsCommand(server));
         registerCommand("loadModule", new LoadModuleCommand(server));
         registerCommand("modules", new ModulesCommand(server));
