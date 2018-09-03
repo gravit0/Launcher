@@ -4,6 +4,7 @@ import launcher.LauncherVersion;
 import launcher.modules.Module;
 import launcher.modules.ModuleContext;
 import launcher.neverdecomp.asm.TransformerClass;
+import launcher.serialize.config.entry.BooleanConfigEntry;
 import launchserver.modules.LaunchServerModuleContext;
 
 public class NeverDecompModule implements Module {
@@ -25,8 +26,10 @@ public class NeverDecompModule implements Module {
 	@Override
 	public void init(ModuleContext context1) {
 		if (context1.getType().equals(ModuleContext.Type.LAUNCHSERVER)) {
+			// Config may has boolean variable "hardAntiDecomp", which enables hard mode (needs -noverify to JVM)
 			LaunchServerModuleContext context = (LaunchServerModuleContext) context1;
-			context.launchServer.buildHookManager.registerClassTransformer(new TransformerClass());
+			boolean hobf = context.launchServer.config.block.hasEntry("hardAntiDecomp") ? context.launchServer.config.block.getEntryValue("hardAntiDecomp", BooleanConfigEntry.class) : false;
+			context.launchServer.buildHookManager.registerClassTransformer(new TransformerClass(hobf));
 		}
 	}
 
