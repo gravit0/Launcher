@@ -29,14 +29,22 @@ public final class NullAuthHandler extends AuthHandler {
     @Override
     public void close() throws IOException {
         AuthHandler handler = this.handler;
-        if (handler != null) {
-            handler.close();
-        }
+        if (handler != null)
+			handler.close();
+    }
+
+    private AuthHandler getHandler() {
+        return VerifyHelper.verify(handler, Objects::nonNull, "Backend auth handler wasn't set");
     }
 
     @Override
     public boolean joinServer(String username, String accessToken, String serverID) throws IOException {
         return getHandler().joinServer(username, accessToken, serverID);
+    }
+
+    @LauncherAPI
+    public void setBackend(AuthHandler handler) {
+        this.handler = handler;
     }
 
     @Override
@@ -47,14 +55,5 @@ public final class NullAuthHandler extends AuthHandler {
     @Override
     public String uuidToUsername(UUID uuid) throws IOException {
         return getHandler().uuidToUsername(uuid);
-    }
-
-    @LauncherAPI
-    public void setBackend(AuthHandler handler) {
-        this.handler = handler;
-    }
-
-    private AuthHandler getHandler() {
-        return VerifyHelper.verify(handler, Objects::nonNull, "Backend auth handler wasn't set");
     }
 }

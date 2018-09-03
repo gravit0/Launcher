@@ -8,10 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 
-import launcher.profiles.ClientProfile;
-import launcher.profiles.ClientProfile.Version;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
+import launcher.profiles.ClientProfile;
+import launcher.profiles.ClientProfile.Version;
 import launcher.serialize.config.TextConfigReader;
 import launcher.serialize.config.TextConfigWriter;
 import launcher.serialize.config.entry.StringConfigEntry;

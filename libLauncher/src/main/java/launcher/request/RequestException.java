@@ -13,13 +13,13 @@ public final class RequestException extends IOException {
     }
 
     @LauncherAPI
-    public RequestException(Throwable exc) {
-        super(exc);
+    public RequestException(String message, Throwable exc) {
+        super(message, exc);
     }
 
     @LauncherAPI
-    public RequestException(String message, Throwable exc) {
-        super(message, exc);
+    public RequestException(Throwable exc) {
+        super(exc);
     }
 
     @Override

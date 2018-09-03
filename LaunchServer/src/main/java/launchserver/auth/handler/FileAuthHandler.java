@@ -11,13 +11,12 @@ import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import launcher.LauncherAPI;
-import launcher.profiles.PlayerProfile;
 import launcher.helper.CommonHelper;
 import launcher.helper.IOHelper;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
-import launcher.request.auth.JoinServerRequest;
+import launcher.profiles.PlayerProfile;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.config.entry.BlockConfigEntry;
@@ -27,19 +26,97 @@ import launcher.serialize.stream.StreamObject;
 import launchserver.auth.provider.AuthProviderResult;
 
 public abstract class FileAuthHandler extends AuthHandler {
+    public static final class Entry extends StreamObject {
+        private String username;
+        private String accessToken;
+        private String serverID;
+
+        @LauncherAPI
+        public Entry(HInput input) throws IOException {
+            username = VerifyHelper.verifyUsername(input.readString(64));
+            if (input.readBoolean()) {
+                accessToken = SecurityHelper.verifyToken(input.readASCII(-SecurityHelper.TOKEN_STRING_LENGTH));
+                if (input.readBoolean())
+					serverID = VerifyHelper.verifyServerID(input.readASCII(41));
+            }
+        }
+
+        @LauncherAPI
+        public Entry(String username) {
+            this.username = VerifyHelper.verifyUsername(username);
+        }
+
+        @LauncherAPI
+        public Entry(String username, String accessToken, String serverID) {
+            this(username);
+            if (accessToken == null && serverID != null)
+				throw new IllegalArgumentException("Can't set access token while server ID is null");
+
+            // Set and verify access token
+            this.accessToken = accessToken == null ? null : SecurityHelper.verifyToken(accessToken);
+            this.serverID = serverID == null ? null : VerifyHelper.verifyServerID(serverID);
+        }
+
+        private void auth(String username, String accessToken) {
+            this.username = username; // Update username case
+            this.accessToken = accessToken;
+            serverID = null;
+        }
+
+        private boolean checkServer(String username, String serverID) {
+            return username.equals(this.username) && serverID.equals(this.serverID);
+        }
+
+        @LauncherAPI
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        @LauncherAPI
+        public String getServerID() {
+            return serverID;
+        }
+
+        @LauncherAPI
+        public String getUsername() {
+            return username;
+        }
+
+        private boolean joinServer(String username, String accessToken, String serverID) {
+            if (!username.equals(this.username) || !accessToken.equals(this.accessToken))
+				return false; // Username or access token mismatch
+
+            // Update server ID
+            this.serverID = serverID;
+            return true;
+        }
+
+        @Override
+        public void write(HOutput output) throws IOException {
+            output.writeString(username, 64);
+            output.writeBoolean(accessToken != null);
+            if (accessToken != null) {
+                output.writeASCII(accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
+                output.writeBoolean(serverID != null);
+                if (serverID != null)
+					output.writeASCII(serverID, 41);
+            }
+        }
+    }
     @LauncherAPI
     public final Path file;
     @LauncherAPI
     public final Path fileTmp;
+
     @LauncherAPI
     public final boolean offlineUUIDs;
-
     // Instance
     private final SecureRandom random = SecurityHelper.newRandom();
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     // Storage
     private final Map<UUID, Entry> entryMap = new HashMap<>(256);
+
     private final Map<String, UUID> usernamesMap = new HashMap<>(256);
 
     @LauncherAPI
@@ -57,6 +134,19 @@ public abstract class FileAuthHandler extends AuthHandler {
             } catch (IOException e) {
                 LogHelper.error(e);
             }
+        }
+    }
+
+    @LauncherAPI
+    protected final void addAuth(UUID uuid, Entry entry) {
+        lock.writeLock().lock();
+        try {
+            Entry previous = entryMap.put(uuid, entry);
+            if (previous != null)
+				usernamesMap.remove(CommonHelper.low(previous.username));
+            usernamesMap.put(CommonHelper.low(entry.username), uuid);
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -111,6 +201,27 @@ public abstract class FileAuthHandler extends AuthHandler {
         }
     }
 
+    @LauncherAPI
+    protected final Set<Map.Entry<UUID, Entry>> entrySet() {
+        return Collections.unmodifiableMap(entryMap).entrySet();
+    }
+
+    private UUID genUUIDFor(String username) {
+        if (offlineUUIDs) {
+            UUID md5UUID = PlayerProfile.offlineUUID(username);
+            if (!entryMap.containsKey(md5UUID))
+				return md5UUID;
+            LogHelper.warning("Offline UUID collision, using random: '%s'", username);
+        }
+
+        // Pick random UUID
+        UUID uuid;
+        do
+			uuid = new UUID(random.nextLong(), random.nextLong());
+		while (entryMap.containsKey(uuid));
+        return uuid;
+    }
+
     @Override
     public final boolean joinServer(String username, String accessToken, String serverID) {
         lock.writeLock().lock();
@@ -121,6 +232,9 @@ public abstract class FileAuthHandler extends AuthHandler {
             lock.writeLock().unlock();
         }
     }
+
+    @LauncherAPI
+    protected abstract void readAuthFile() throws IOException;
 
     @Override
     public final UUID usernameToUUID(String username) {
@@ -144,126 +258,5 @@ public abstract class FileAuthHandler extends AuthHandler {
     }
 
     @LauncherAPI
-    protected abstract void readAuthFile() throws IOException;
-
-    @LauncherAPI
     protected abstract void writeAuthFileTmp() throws IOException;
-
-    @LauncherAPI
-    protected final void addAuth(UUID uuid, Entry entry) {
-        lock.writeLock().lock();
-        try {
-            Entry previous = entryMap.put(uuid, entry);
-            if (previous != null) { // In case of username changing
-                usernamesMap.remove(CommonHelper.low(previous.username));
-            }
-            usernamesMap.put(CommonHelper.low(entry.username), uuid);
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
-    @LauncherAPI
-    protected final Set<Map.Entry<UUID, Entry>> entrySet() {
-        return Collections.unmodifiableMap(entryMap).entrySet();
-    }
-
-    private UUID genUUIDFor(String username) {
-        if (offlineUUIDs) {
-            UUID md5UUID = PlayerProfile.offlineUUID(username);
-            if (!entryMap.containsKey(md5UUID)) {
-                return md5UUID;
-            }
-            LogHelper.warning("Offline UUID collision, using random: '%s'", username);
-        }
-
-        // Pick random UUID
-        UUID uuid;
-        do {
-            uuid = new UUID(random.nextLong(), random.nextLong());
-        } while (entryMap.containsKey(uuid));
-        return uuid;
-    }
-
-    public static final class Entry extends StreamObject {
-        private String username;
-        private String accessToken;
-        private String serverID;
-
-        @LauncherAPI
-        public Entry(String username) {
-            this.username = VerifyHelper.verifyUsername(username);
-        }
-
-        @LauncherAPI
-        public Entry(String username, String accessToken, String serverID) {
-            this(username);
-            if (accessToken == null && serverID != null) {
-                throw new IllegalArgumentException("Can't set access token while server ID is null");
-            }
-
-            // Set and verify access token
-            this.accessToken = accessToken == null ? null : SecurityHelper.verifyToken(accessToken);
-            this.serverID = serverID == null ? null : JoinServerRequest.verifyServerID(serverID);
-        }
-
-        @LauncherAPI
-        public Entry(HInput input) throws IOException {
-            username = VerifyHelper.verifyUsername(input.readString(64));
-            if (input.readBoolean()) {
-                accessToken = SecurityHelper.verifyToken(input.readASCII(-SecurityHelper.TOKEN_STRING_LENGTH));
-                if (input.readBoolean()) {
-                    serverID = JoinServerRequest.verifyServerID(input.readASCII(41));
-                }
-            }
-        }
-
-        @Override
-        public void write(HOutput output) throws IOException {
-            output.writeString(username, 64);
-            output.writeBoolean(accessToken != null);
-            if (accessToken != null) {
-                output.writeASCII(accessToken, -SecurityHelper.TOKEN_STRING_LENGTH);
-                output.writeBoolean(serverID != null);
-                if (serverID != null) {
-                    output.writeASCII(serverID, 41);
-                }
-            }
-        }
-
-        @LauncherAPI
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        @LauncherAPI
-        public String getServerID() {
-            return serverID;
-        }
-
-        @LauncherAPI
-        public String getUsername() {
-            return username;
-        }
-
-        private void auth(String username, String accessToken) {
-            this.username = username; // Update username case
-            this.accessToken = accessToken;
-            serverID = null;
-        }
-
-        private boolean checkServer(String username, String serverID) {
-            return username.equals(this.username) && serverID.equals(this.serverID);
-        }
-
-        private boolean joinServer(String username, String accessToken, String serverID) {
-            if (!username.equals(this.username) || !accessToken.equals(this.accessToken)) {
-                return false; // Username or access token mismatch
-            }
-
-            // Update server ID
-            this.serverID = serverID;
-            return true;
-        }
-    }
 }

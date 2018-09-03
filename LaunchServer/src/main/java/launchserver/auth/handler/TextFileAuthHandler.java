@@ -18,6 +18,13 @@ import launcher.serialize.config.entry.ConfigEntry.Type;
 import launcher.serialize.config.entry.StringConfigEntry;
 
 public final class TextFileAuthHandler extends FileAuthHandler {
+    private static StringConfigEntry cc(String value) {
+        StringConfigEntry entry = new StringConfigEntry(value, true, 4);
+        entry.setComment(0, "\n\t"); // Pre-name
+        entry.setComment(2, " "); // Pre-value
+        return entry;
+    }
+
     public TextFileAuthHandler(BlockConfigEntry block) {
         super(block);
     }
@@ -64,21 +71,18 @@ public final class TextFileAuthHandler extends FileAuthHandler {
             Map<String, ConfigEntry<?>> authMap = new LinkedHashMap<>(entrySet.size());
             authMap.put("username", cc(auth.getUsername()));
             String accessToken = auth.getAccessToken();
-            if (accessToken != null) {
-                authMap.put("accessToken", cc(accessToken));
-            }
+            if (accessToken != null)
+				authMap.put("accessToken", cc(accessToken));
             String serverID = auth.getServerID();
-            if (serverID != null) {
-                authMap.put("serverID", cc(serverID));
-            }
+            if (serverID != null)
+				authMap.put("serverID", cc(serverID));
 
             // Create and add auth block
             BlockConfigEntry authBlock = new BlockConfigEntry(authMap, true, 5);
-            if (next) {
-                authBlock.setComment(0, "\n"); // Pre-name
-            } else {
-                next = true;
-            }
+            if (next)
+				authBlock.setComment(0, "\n"); // Pre-name
+			else
+				next = true;
             authBlock.setComment(2, " "); // Pre-value
             authBlock.setComment(4, "\n"); // Post-comment
             map.put(uuid.toString(), authBlock);
@@ -90,12 +94,5 @@ public final class TextFileAuthHandler extends FileAuthHandler {
             authFile.setComment(0, "\n");
             TextConfigWriter.write(authFile, writer, true);
         }
-    }
-
-    private static StringConfigEntry cc(String value) {
-        StringConfigEntry entry = new StringConfigEntry(value, true, 4);
-        entry.setComment(0, "\n\t"); // Pre-name
-        entry.setComment(2, " "); // Pre-value
-        return entry;
     }
 }

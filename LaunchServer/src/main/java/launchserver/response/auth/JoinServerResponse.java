@@ -5,7 +5,6 @@ import java.io.IOException;
 import launcher.helper.LogHelper;
 import launcher.helper.SecurityHelper;
 import launcher.helper.VerifyHelper;
-import launcher.request.auth.JoinServerRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
@@ -23,7 +22,7 @@ public final class JoinServerResponse extends Response {
     public void reply() throws IOException {
         String username = VerifyHelper.verifyUsername(input.readString(SerializeLimits.MAX_LOGIN));
         String accessToken = SecurityHelper.verifyToken(input.readASCII(-SecurityHelper.TOKEN_STRING_LENGTH));
-        String serverID = JoinServerRequest.verifyServerID(input.readASCII(SerializeLimits.MAX_SERVERID)); // With minus sign
+        String serverID = VerifyHelper.verifyServerID(input.readASCII(SerializeLimits.MAX_SERVERID)); // With minus sign
 
         // Try join server with auth handler
         debug("Username: '%s', Access token: %s, Server ID: %s", username, accessToken, serverID);

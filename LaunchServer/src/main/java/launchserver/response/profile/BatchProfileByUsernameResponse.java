@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import launcher.helper.VerifyHelper;
-import launcher.request.uuid.BatchProfileByUsernameRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.SerializeLimits;
@@ -19,7 +18,7 @@ public final class BatchProfileByUsernameResponse extends Response {
 
     @Override
     public void reply() throws IOException {
-        int length = input.readLength(BatchProfileByUsernameRequest.MAX_BATCH_SIZE);
+        int length = input.readLength(SerializeLimits.MAX_BATCH_SIZE);
         String[] usernames = new String[length];
         String[] clients = new String[length];
         for (int i = 0; i < usernames.length; i++) {
@@ -29,8 +28,7 @@ public final class BatchProfileByUsernameResponse extends Response {
         debug("Usernames: " + Arrays.toString(usernames));
 
         // Respond with profiles array
-        for (int i = 0; i < usernames.length; i++) {
-            ProfileByUsernameResponse.writeProfile(server, output, usernames[i], clients[i]);
-        }
+        for (int i = 0; i < usernames.length; i++)
+			ProfileByUsernameResponse.writeProfile(server, output, usernames[i], clients[i]);
     }
 }

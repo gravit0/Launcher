@@ -11,8 +11,11 @@ import launcher.serialize.HOutput;
 public abstract class StreamObject {
     /* public StreamObject(HInput input) */
 
-    @LauncherAPI
-    public abstract void write(HOutput output) throws IOException;
+    @FunctionalInterface
+    public interface Adapter<O extends StreamObject> {
+        @LauncherAPI
+        O convert(HInput input) throws IOException;
+    }
 
     @LauncherAPI
     public final byte[] write() throws IOException {
@@ -24,9 +27,6 @@ public abstract class StreamObject {
         }
     }
 
-    @FunctionalInterface
-    public interface Adapter<O extends StreamObject> {
-        @LauncherAPI
-        O convert(HInput input) throws IOException;
-    }
+    @LauncherAPI
+    public abstract void write(HOutput output) throws IOException;
 }

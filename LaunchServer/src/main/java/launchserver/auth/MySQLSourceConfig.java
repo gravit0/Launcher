@@ -2,11 +2,13 @@ package launchserver.auth;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import launcher.LauncherAPI;
 import launcher.helper.LogHelper;
 import launcher.helper.VerifyHelper;
@@ -64,9 +66,8 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
 
     @Override
     public synchronized void close() {
-        if (hikari) { // Shutdown hikari pool
-            ((HikariDataSource) source).close();
-        }
+        if (hikari)
+			((HikariDataSource) source).close();
     }
 
     @LauncherAPI

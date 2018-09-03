@@ -1,13 +1,6 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:6.0.1'
-    }
-}
-
 String mainClassName = "launcher.LauncherEngine"
+String mainAgentName = "launcher.LauncherAgent"
+
 
 repositories {
     maven {
@@ -15,46 +8,24 @@ repositories {
     }
 }
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 jar {
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-    manifest.attributes("Main-Class": mainClassName)
+    manifest.attributes("Main-Class": mainClassName,
+		"Premain-Class": mainAgentName,
+		"Can-Redefine-Classes": "true",
+		"Can-Retransform-Classes": "true",
+		"Can-Set-Native-Method-Prefix": "true")
 }
 
 dependencies {
     compile project(':libLauncher')
+	compile 'org.javassist:javassist:3.23.1-GA'
+	apt 'org.apache.logging.log4j:log4j-core:2.9.0'
     compileOnly 'com.google.code.gson:gson:2.8.5'
     compileOnly 'com.google.guava:guava:26.0-jre'
-}
-
-task obfTask(type: proguard.gradle.ProGuardTask) {
-    dependsOn tasks.jar
-    configuration new File('proguard/Launcher.pro')
-    injars tasks.jar.archivePath
-    outjars new File(buildDir, 'libs/Launcher-obf.jar')
-}
-
-def ini = parent.file('sign/info.ini')
-Map<String, String> map = parseIni(ini)
-def keystoreFile = parent.file("sign/" + map.get("keyname"))
-def keystorepass = map.get("keystorepass")
-def keyalias = map.get("keyalias")
-
-task signJar(group: 'Build', overwrite: true){
-    dependsOn tasks.obfTask
-    doLast{
-        def signdir  = new File("$buildDir/jars/signed")
-        signdir.mkdirs()
-        ant.signjar(
-        destDir: "${signdir.absolutePath}",
-                jar: new File(buildDir, 'libs/Launcher-obf.jar').getAbsolutePath(),
-                alias:keyalias,
-                storetype:"jks",
-                keystore:"${keystoreFile.absolutePath}",
-                storepass:keystorepass,
-                verbose:true,
-                preservelastmodified:"true"
-        )
-    }
 }
 
 task genRuntimeJS(type: Zip) {
@@ -63,4 +34,4 @@ task genRuntimeJS(type: Zip) {
     from "runtime/"
 }
 
-build.dependsOn tasks.obfTask, tasks.signJar, tasks.genRuntimeJS
+build.dependsOn tasks.genRuntimeJS

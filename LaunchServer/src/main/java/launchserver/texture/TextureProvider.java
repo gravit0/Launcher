@@ -7,28 +7,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import launcher.LauncherAPI;
-import launcher.profiles.Texture;
 import launcher.helper.VerifyHelper;
+import launcher.profiles.Texture;
 import launcher.serialize.config.ConfigObject;
 import launcher.serialize.config.entry.BlockConfigEntry;
 
 public abstract class TextureProvider extends ConfigObject implements AutoCloseable {
     private static final Map<String, Adapter<TextureProvider>> TEXTURE_PROVIDERS = new ConcurrentHashMap<>(2);
     private static boolean registredProv = false;
-
-    @LauncherAPI
-    protected TextureProvider(BlockConfigEntry block) {
-        super(block);
-    }
-
-    @Override
-    public abstract void close() throws IOException;
-
-    @LauncherAPI
-    public abstract Texture getCloakTexture(UUID uuid, String username, String client) throws IOException;
-
-    @LauncherAPI
-    public abstract Texture getSkinTexture(UUID uuid, String username, String client) throws IOException;
 
     @LauncherAPI
     public static TextureProvider newProvider(String name, BlockConfigEntry block) {
@@ -54,4 +40,18 @@ public abstract class TextureProvider extends ConfigObject implements AutoClosea
             registredProv = true;
         }
     }
+
+    @LauncherAPI
+    protected TextureProvider(BlockConfigEntry block) {
+        super(block);
+    }
+
+    @Override
+    public abstract void close() throws IOException;
+
+    @LauncherAPI
+    public abstract Texture getCloakTexture(UUID uuid, String username, String client) throws IOException;
+
+    @LauncherAPI
+    public abstract Texture getSkinTexture(UUID uuid, String username, String client) throws IOException;
 }

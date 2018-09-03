@@ -18,29 +18,6 @@ public abstract class AuthHandler extends ConfigObject implements AutoCloseable 
     private static boolean registredHandl = false;
 
     @LauncherAPI
-    protected AuthHandler(BlockConfigEntry block) {
-        super(block);
-    }
-
-    @Override
-    public abstract void close() throws IOException;
-
-    @LauncherAPI
-    public abstract UUID auth(AuthProviderResult authResult) throws IOException;
-
-    @LauncherAPI
-    public abstract UUID checkServer(String username, String serverID) throws IOException;
-
-    @LauncherAPI
-    public abstract boolean joinServer(String username, String accessToken, String serverID) throws IOException;
-
-    @LauncherAPI
-    public abstract UUID usernameToUUID(String username) throws IOException;
-
-    @LauncherAPI
-    public abstract String uuidToUsername(UUID uuid) throws IOException;
-
-    @LauncherAPI
     public static UUID authError(String message) throws AuthException {
         throw new AuthException(message);
     }
@@ -71,4 +48,27 @@ public abstract class AuthHandler extends ConfigObject implements AutoCloseable 
             registredHandl = true;
         }
     }
+
+    @LauncherAPI
+    protected AuthHandler(BlockConfigEntry block) {
+        super(block);
+    }
+
+    @LauncherAPI
+    public abstract UUID auth(AuthProviderResult authResult) throws IOException;
+
+    @LauncherAPI
+    public abstract UUID checkServer(String username, String serverID) throws IOException;
+
+    @Override
+    public abstract void close() throws IOException;
+
+    @LauncherAPI
+    public abstract boolean joinServer(String username, String accessToken, String serverID) throws IOException;
+
+    @LauncherAPI
+    public abstract UUID usernameToUUID(String username) throws IOException;
+
+    @LauncherAPI
+    public abstract String uuidToUsername(UUID uuid) throws IOException;
 }

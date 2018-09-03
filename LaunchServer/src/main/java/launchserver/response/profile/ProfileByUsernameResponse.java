@@ -12,6 +12,18 @@ import launchserver.response.Response;
 
 public final class ProfileByUsernameResponse extends Response {
 
+    public static void writeProfile(LaunchServer server, HOutput output, String username, String client) throws IOException {
+        UUID uuid = server.config.authHandler.usernameToUUID(username);
+        if (uuid == null) {
+            output.writeBoolean(false);
+            return;
+        }
+
+        // Write profile
+        output.writeBoolean(true);
+        ProfileByUUIDResponse.getProfile(server, uuid, username, client).write(output);
+    }
+
     public ProfileByUsernameResponse(LaunchServer server, long session, HInput input, HOutput output, String ip) {
         super(server, session, input, output, ip);
     }
@@ -23,17 +35,5 @@ public final class ProfileByUsernameResponse extends Response {
         String client = input.readString(SerializeLimits.MAX_CLIENT);
         // Write response
         writeProfile(server, output, username, client);
-    }
-
-    public static void writeProfile(LaunchServer server, HOutput output, String username, String client) throws IOException {
-        UUID uuid = server.config.authHandler.usernameToUUID(username);
-        if (uuid == null) {
-            output.writeBoolean(false);
-            return;
-        }
-
-        // Write profile
-        output.writeBoolean(true);
-        ProfileByUUIDResponse.getProfile(server, uuid, username, client).write(output);
     }
 }

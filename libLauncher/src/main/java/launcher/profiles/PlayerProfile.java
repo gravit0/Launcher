@@ -13,9 +13,19 @@ import launcher.serialize.stream.StreamObject;
 
 public final class PlayerProfile extends StreamObject {
     @LauncherAPI
+    public static PlayerProfile newOfflineProfile(String username) {
+        return new PlayerProfile(offlineUUID(username), username, null, null);
+    }
+    @LauncherAPI
+    public static UUID offlineUUID(String username) {
+        return UUID.nameUUIDFromBytes(IOHelper.encodeASCII("OfflinePlayer:" + username));
+    }
+    @LauncherAPI
     public final UUID uuid;
+
     @LauncherAPI
     public final String username;
+
     @LauncherAPI
     public final Texture skin, cloak;
 
@@ -42,23 +52,11 @@ public final class PlayerProfile extends StreamObject {
 
         // Write textures
         output.writeBoolean(skin != null);
-        if (skin != null) {
-            skin.write(output);
-        }
+        if (skin != null)
+			skin.write(output);
         output.writeBoolean(cloak != null);
-        if (cloak != null) {
-            cloak.write(output);
-        }
-    }
-
-    @LauncherAPI
-    public static PlayerProfile newOfflineProfile(String username) {
-        return new PlayerProfile(offlineUUID(username), username, null, null);
-    }
-
-    @LauncherAPI
-    public static UUID offlineUUID(String username) {
-        return UUID.nameUUIDFromBytes(IOHelper.encodeASCII("OfflinePlayer:" + username));
+        if (cloak != null)
+			cloak.write(output);
     }
 
 }

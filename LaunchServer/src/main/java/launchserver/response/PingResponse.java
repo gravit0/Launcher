@@ -2,9 +2,9 @@ package launchserver.response;
 
 import java.io.IOException;
 
-import launcher.request.PingRequest;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
+import launcher.serialize.SerializeLimits;
 import launchserver.LaunchServer;
 
 public final class PingResponse extends Response {
@@ -14,6 +14,6 @@ public final class PingResponse extends Response {
 
     @Override
     public void reply() throws IOException {
-        output.writeUnsignedByte(PingRequest.EXPECTED_BYTE);
+        output.writeUnsignedByte(SerializeLimits.EXPECTED_BYTE);
     }
 }

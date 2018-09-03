@@ -4,26 +4,34 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.NoSuchFileException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-import launcher.helper.*;
+import launcher.helper.IOHelper;
+import launcher.helper.SecurityHelper;
+import launcher.modules.ModulesManagerInterface;
 import launcher.serialize.HInput;
 
 public final class Launcher {
     private static final AtomicReference<LauncherConfig> CONFIG = new AtomicReference<>();
-
     // Version info
     //Все версии оригинального Sashok Launcher v3 считаются как 3.xx.xx, например 3.15.3 3.15.4
     //Все версии модификации считаются так: 3.16.xx Например 3.16.5 для коммита от 20 Августа
+    @Deprecated
     @LauncherAPI
-    public static final String VERSION = "3.17.0";
+    public static final String VERSION = LauncherVersion.getVersion().getVersionString();
+    @Deprecated
     @LauncherAPI
-    public static final String BUILD = readBuildNumber();
+    public static final String BUILD = String.valueOf(LauncherVersion.readBuildNumber());
     //Начиная с 4.0.0 PROTOCOL_MAGIC изменит свою форму
     @LauncherAPI
-    public static final int PROTOCOL_MAGIC = 0x724724_00 + 24;
+    public static ModulesManagerInterface modulesManager = null;
+    @LauncherAPI
+    public static final int PROTOCOL_MAGIC_LEGACY = 0x724724_00 + 24;
+    @LauncherAPI
+    public static final int PROTOCOL_MAGIC = 0xA205B064; // e = 2.718281828
 
     // Constants
     @LauncherAPI
@@ -34,11 +42,6 @@ public final class Launcher {
     public static final String INIT_SCRIPT_FILE = "init.js";
 
     private static final Pattern UUID_PATTERN = Pattern.compile("-", Pattern.LITERAL);
-
-    @LauncherAPI
-    public static String toHash(UUID uuid) {
-        return UUID_PATTERN.matcher(uuid.toString()).replaceAll("");
-    }
 
     @LauncherAPI
     public static LauncherConfig getConfig() {
@@ -58,15 +61,13 @@ public final class Launcher {
     public static URL getResourceURL(String name) throws IOException {
         LauncherConfig config = getConfig();
         byte[] validDigest = config.runtime.get(name);
-        if (validDigest == null) { // No such resource digest
-            throw new NoSuchFileException(name);
-        }
+        if (validDigest == null)
+			throw new NoSuchFileException(name);
 
         // Resolve URL and verify digest
         URL url = IOHelper.getResourceURL(RUNTIME_DIR + '/' + name);
-        if (!Arrays.equals(validDigest, SecurityHelper.digest(SecurityHelper.DigestAlgorithm.MD5, url))) {
-            throw new NoSuchFileException(name); // Digest mismatch
-        }
+        if (!Arrays.equals(validDigest, SecurityHelper.digest(SecurityHelper.DigestAlgorithm.MD5, url)))
+			throw new NoSuchFileException(name); // Digest mismatch
 
         // Return verified URL
         return url;
@@ -78,12 +79,9 @@ public final class Launcher {
         return VERSION; // Because Java constants are known at compile-time
     }
 
-    private static String readBuildNumber() {
-        try {
-            return IOHelper.request(IOHelper.getResourceURL("buildnumber"));
-        } catch (IOException ignored) {
-            return "dev"; // Maybe dev env?
-        }
+    @LauncherAPI
+    public static String toHash(UUID uuid) {
+        return UUID_PATTERN.matcher(uuid.toString()).replaceAll("");
     }
 
 }

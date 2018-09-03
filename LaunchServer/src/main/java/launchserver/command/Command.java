@@ -8,6 +8,24 @@ import launchserver.LaunchServer;
 
 public abstract class Command {
     @LauncherAPI
+    protected static String parseUsername(String username) throws CommandException {
+        try {
+            return VerifyHelper.verifyUsername(username);
+        } catch (IllegalArgumentException e) {
+            throw new CommandException(e.getMessage());
+        }
+    }
+
+    @LauncherAPI
+    protected static UUID parseUUID(String s) throws CommandException {
+        try {
+            return UUID.fromString(s);
+        } catch (IllegalArgumentException ignored) {
+            throw new CommandException(String.format("Invalid UUID: '%s'", s));
+        }
+    }
+
+    @LauncherAPI
     protected final LaunchServer server;
 
     @LauncherAPI
@@ -26,26 +44,7 @@ public abstract class Command {
 
     @LauncherAPI
     protected final void verifyArgs(String[] args, int min) throws CommandException {
-        if (args.length < min) {
-            throw new CommandException("Command usage: " + getArgsDescription());
-        }
-    }
-
-    @LauncherAPI
-    protected static UUID parseUUID(String s) throws CommandException {
-        try {
-            return UUID.fromString(s);
-        } catch (IllegalArgumentException ignored) {
-            throw new CommandException(String.format("Invalid UUID: '%s'", s));
-        }
-    }
-
-    @LauncherAPI
-    protected static String parseUsername(String username) throws CommandException {
-        try {
-            return VerifyHelper.verifyUsername(username);
-        } catch (IllegalArgumentException e) {
-            throw new CommandException(e.getMessage());
-        }
+        if (args.length < min)
+			throw new CommandException("Command usage: " + getArgsDescription());
     }
 }

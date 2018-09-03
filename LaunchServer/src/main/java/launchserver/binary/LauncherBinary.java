@@ -13,12 +13,20 @@ public abstract class LauncherBinary {
     protected final LaunchServer server;
     @LauncherAPI
     protected final Path binaryFile;
+    protected final Path syncBinaryFile;
     private volatile SignedBytesHolder binary;
 
     @LauncherAPI
     protected LauncherBinary(LaunchServer server, Path binaryFile) {
         this.server = server;
         this.binaryFile = binaryFile;
+        syncBinaryFile = binaryFile;
+    }
+    @LauncherAPI
+    protected LauncherBinary(LaunchServer server, Path binaryFile, Path syncBinaryFile) {
+        this.server = server;
+        this.binaryFile = binaryFile;
+        this.syncBinaryFile = syncBinaryFile;
     }
 
     @LauncherAPI
@@ -26,7 +34,7 @@ public abstract class LauncherBinary {
 
     @LauncherAPI
     public final boolean exists() {
-        return IOHelper.isFile(binaryFile);
+        return IOHelper.isFile(syncBinaryFile);
     }
 
     @LauncherAPI
@@ -35,9 +43,9 @@ public abstract class LauncherBinary {
     }
 
     @LauncherAPI
-    public boolean sync() throws IOException {
+    public final boolean sync() throws IOException {
         boolean exists = exists();
-        binary = exists ? new SignedBytesHolder(IOHelper.read(binaryFile), server.privateKey) : null;
+        binary = exists ? new SignedBytesHolder(IOHelper.read(syncBinaryFile), server.privateKey) : null;
         return exists;
     }
 }

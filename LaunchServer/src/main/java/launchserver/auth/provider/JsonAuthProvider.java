@@ -1,14 +1,5 @@
 package launchserver.auth.provider;
 
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
-import launcher.helper.IOHelper;
-import launcher.helper.SecurityHelper;
-import launcher.helper.VerifyHelper;
-import launcher.serialize.config.entry.BlockConfigEntry;
-import launcher.serialize.config.entry.StringConfigEntry;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -16,6 +7,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+
+import launcher.helper.IOHelper;
+import launcher.helper.SecurityHelper;
+import launcher.helper.VerifyHelper;
+import launcher.serialize.config.entry.BlockConfigEntry;
+import launcher.serialize.config.entry.StringConfigEntry;
 
 public final class JsonAuthProvider extends AuthProvider {
     private static final int TIMEOUT = Integer.parseInt(
@@ -53,9 +54,8 @@ public final class JsonAuthProvider extends AuthProvider {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         connection.setRequestProperty("Accept", "application/json");
-        if (TIMEOUT > 0) {
-            connection.setConnectTimeout(TIMEOUT);
-        }
+        if (TIMEOUT > 0)
+			connection.setConnectTimeout(TIMEOUT);
 
         OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), Charset.forName("UTF-8"));
         writer.write(request.toString());
@@ -65,26 +65,23 @@ public final class JsonAuthProvider extends AuthProvider {
         InputStreamReader reader;
         int statusCode = connection.getResponseCode();
 
-        if (200 <= statusCode && statusCode < 300) {
-            reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
-        } else {
-            reader = new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8);
-        }
+        if (200 <= statusCode && statusCode < 300)
+			reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
+		else
+			reader = new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8);
         JsonValue content = Json.parse(reader);
-        if (!content.isObject()) {
-            return authError("Authentication server response is malformed");
-        }
+        if (!content.isObject())
+			return authError("Authentication server response is malformed");
 
         JsonObject response = content.asObject();
         String value;
 
-        if ((value = response.getString(responseUserKeyName, null)) != null) {
-            return new AuthProviderResult(value, SecurityHelper.randomStringToken());
-        } else if ((value = response.getString(responseErrorKeyName, null)) != null) {
-            return authError(value);
-        } else {
-            return authError("Authentication server response is malformed");
-        }
+        if ((value = response.getString(responseUserKeyName, null)) != null)
+			return new AuthProviderResult(value, SecurityHelper.randomStringToken());
+		else if ((value = response.getString(responseErrorKeyName, null)) != null)
+			return authError(value);
+		else
+			return authError("Authentication server response is malformed");
     }
 
     @Override

@@ -8,6 +8,11 @@ import launchserver.command.Command;
 import launchserver.command.CommandException;
 
 public final class HelpCommand extends Command {
+    private static void printCommand(String name, Command command) {
+        String args = command.getArgsDescription();
+        LogHelper.subInfo("%s %s - %s", name, args == null ? "[nothing]" : args, command.getUsageDescription());
+    }
+
     public HelpCommand(LaunchServer server) {
         super(server);
     }
@@ -38,13 +43,7 @@ public final class HelpCommand extends Command {
     }
 
     private void printCommands() {
-        for (Entry<String, Command> entry : server.commandHandler.commandsMap().entrySet()) {
-            printCommand(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private static void printCommand(String name, Command command) {
-        String args = command.getArgsDescription();
-        LogHelper.subInfo("%s %s - %s", name, args == null ? "[nothing]" : args, command.getUsageDescription());
+        for (Entry<String, Command> entry : server.commandHandler.commandsMap().entrySet())
+			printCommand(entry.getKey(), entry.getValue());
     }
 }

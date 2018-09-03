@@ -21,6 +21,11 @@ public final class HashedFile extends HashedEntry {
     private final byte[] digest;
 
     @LauncherAPI
+    public HashedFile(HInput input) throws IOException {
+        this(input.readVarLong(), input.readBoolean() ? input.readByteArray(-DIGEST_ALGO.bytes) : null);
+    }
+
+    @LauncherAPI
     public HashedFile(long size, byte[] digest) {
         this.size = VerifyHelper.verifyLong(size, VerifyHelper.L_NOT_NEGATIVE, "Illegal size: " + size);
         this.digest = digest == null ? null : DIGEST_ALGO.verify(digest).clone();
@@ -31,14 +36,31 @@ public final class HashedFile extends HashedEntry {
         this(size, digest ? SecurityHelper.digest(DIGEST_ALGO, file) : null);
     }
 
-    @LauncherAPI
-    public HashedFile(HInput input) throws IOException {
-        this(input.readVarLong(), input.readBoolean() ? input.readByteArray(-DIGEST_ALGO.bytes) : null);
-    }
-
     @Override
     public Type getType() {
         return Type.FILE;
+    }
+
+    @LauncherAPI
+    public boolean isSame(HashedFile o) {
+        return size == o.size && (digest == null || o.digest == null || Arrays.equals(digest, o.digest));
+    }
+
+    @LauncherAPI
+    public boolean isSame(Path file, boolean digest) throws IOException {
+        if (size != IOHelper.readAttributes(file).size())
+			return false;
+        if (!digest || this.digest == null)
+			return true;
+
+        // Create digest
+        byte[] actualDigest = SecurityHelper.digest(DIGEST_ALGO, file);
+        return Arrays.equals(this.digest, actualDigest);
+    }
+
+    @LauncherAPI
+    public boolean isSameDigest(byte[] digest) {
+        return this.digest == null || digest == null || Arrays.equals(this.digest, digest);
     }
 
     @Override
@@ -50,32 +72,7 @@ public final class HashedFile extends HashedEntry {
     public void write(HOutput output) throws IOException {
         output.writeVarLong(size);
         output.writeBoolean(digest != null);
-        if (digest != null) {
-            output.writeByteArray(digest, -DIGEST_ALGO.bytes);
-        }
-    }
-
-    @LauncherAPI
-    public boolean isSame(HashedFile o) {
-        return size == o.size && (digest == null || o.digest == null || Arrays.equals(digest, o.digest));
-    }
-
-    @LauncherAPI
-    public boolean isSame(Path file, boolean digest) throws IOException {
-        if (size != IOHelper.readAttributes(file).size()) {
-            return false;
-        }
-        if (!digest || this.digest == null) {
-            return true;
-        }
-
-        // Create digest
-        byte[] actualDigest = SecurityHelper.digest(DIGEST_ALGO, file);
-        return Arrays.equals(this.digest, actualDigest);
-    }
-
-    @LauncherAPI
-    public boolean isSameDigest(byte[] digest) {
-        return this.digest == null || digest == null || Arrays.equals(this.digest, digest);
+        if (digest != null)
+			output.writeByteArray(digest, -DIGEST_ALGO.bytes);
     }
 }

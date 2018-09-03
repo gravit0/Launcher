@@ -10,18 +10,13 @@ import launcher.serialize.stream.StreamObject;
 
 public abstract class HashedEntry extends StreamObject {
     @LauncherAPI
-    public boolean flag; // For external usage
-
-    @LauncherAPI
-    public abstract Type getType();
-
-    @LauncherAPI
-    public abstract long size();
-
-    @LauncherAPI
     public enum Type implements Itf {
         DIR(1), FILE(2);
         private static final EnumSerializer<Type> SERIALIZER = new EnumSerializer<>(Type.class);
+        public static Type read(HInput input) throws IOException {
+            return SERIALIZER.read(input);
+        }
+
         private final int n;
 
         Type(int n) {
@@ -32,9 +27,14 @@ public abstract class HashedEntry extends StreamObject {
         public int getNumber() {
             return n;
         }
-
-        public static Type read(HInput input) throws IOException {
-            return SERIALIZER.read(input);
-        }
     }
+
+    @LauncherAPI
+    public boolean flag; // For external usage
+
+    @LauncherAPI
+    public abstract Type getType();
+
+    @LauncherAPI
+    public abstract long size();
 }

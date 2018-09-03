@@ -23,32 +23,70 @@ import launcher.serialize.stream.StreamObject;
 public final class
 ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
     @LauncherAPI
+    public enum Version {
+        MC147("1.4.7", 51),
+        MC152("1.5.2", 61),
+        MC164("1.6.4", 78),
+        MC172("1.7.2", 4),
+        MC1710("1.7.10", 5),
+        MC189("1.8.9", 47),
+        MC194("1.9.4", 110),
+        MC1102("1.10.2", 210),
+        MC1112("1.11.2", 316),
+        MC1122("1.12.2", 340);
+        private static final Map<String, Version> VERSIONS;
+        static {
+            Version[] versionsValues = values();
+            VERSIONS = new HashMap<>(versionsValues.length);
+            for (Version version : versionsValues)
+				VERSIONS.put(version.name, version);
+        }
+        public static Version byName(String name) {
+            return VerifyHelper.getMapValue(VERSIONS, name, String.format("Unknown client version: '%s'", name));
+        }
+
+        public final String name;
+
+        public final int protocol;
+
+        Version(String name, int protocol) {
+            this.name = name;
+            this.protocol = protocol;
+        }
+
+        @Override
+        public String toString() {
+            return "Minecraft " + name;
+        }
+    }
+    @LauncherAPI
     public static final StreamObject.Adapter<ClientProfile> RO_ADAPTER = input -> new ClientProfile(input, true);
+
     private static final FileNameMatcher ASSET_MATCHER = new FileNameMatcher(
             new String[0], new String[]{"indexes", "objects"}, new String[0]);
-
     // Version
     private final StringConfigEntry version;
-    private final StringConfigEntry assetIndex;
 
+    private final StringConfigEntry assetIndex;
     // Client
     private final IntegerConfigEntry sortIndex;
     private final StringConfigEntry title;
     private final StringConfigEntry serverAddress;
-    private final IntegerConfigEntry serverPort;
 
+    private final IntegerConfigEntry serverPort;
     //  Updater and client watch service
     private final ListConfigEntry update;
     private final ListConfigEntry updateExclusions;
     private final ListConfigEntry updateVerify;
     private final BooleanConfigEntry updateFastCheck;
-    private final BooleanConfigEntry useWhitelist;
 
+    private final BooleanConfigEntry useWhitelist;
     // Client launcher
     private final StringConfigEntry mainClass;
     private final ListConfigEntry jvmArgs;
     private final ListConfigEntry classPath;
     private final ListConfigEntry clientArgs;
+
     private final ListConfigEntry whitelist;
 
     @LauncherAPI
@@ -90,11 +128,6 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
         return Integer.compare(getSortIndex(), o.getSortIndex());
     }
 
-    @Override
-    public String toString() {
-        return title.getValue();
-    }
-
     @LauncherAPI
     public String getAssetIndex() {
         return assetIndex.getValue();
@@ -128,15 +161,6 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
         return jvmArgs.stream(StringConfigEntry.class).toArray(String[]::new);
     }
     @LauncherAPI
-    public boolean isWhitelistContains(String username)
-    {
-        if(!useWhitelist.getValue()) return true;
-        else {
-            return whitelist.stream(StringConfigEntry.class).anyMatch(e -> e.equals(username));
-        }
-    }
-
-    @LauncherAPI
     public String getMainClass() {
         return mainClass.getValue();
     }
@@ -167,13 +191,25 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
     }
 
     @LauncherAPI
-    public void setTitle(String title) {
-        this.title.setValue(title);
+    public Version getVersion() {
+        return Version.byName(version.getValue());
     }
 
     @LauncherAPI
-    public Version getVersion() {
-        return Version.byName(version.getValue());
+    public boolean isUpdateFastCheck() {
+        return updateFastCheck.getValue();
+    }
+
+    @LauncherAPI
+    public boolean isWhitelistContains(String username)
+    {
+        if(!useWhitelist.getValue()) return true;
+		return whitelist.stream(StringConfigEntry.class).anyMatch(e -> e.equals(username));
+    }
+
+    @LauncherAPI
+    public void setTitle(String title) {
+        this.title.setValue(title);
     }
 
     @LauncherAPI
@@ -181,9 +217,9 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
         this.version.setValue(version.name);
     }
 
-    @LauncherAPI
-    public boolean isUpdateFastCheck() {
-        return updateFastCheck.getValue();
+    @Override
+    public String toString() {
+        return title.getValue();
     }
 
     @LauncherAPI
@@ -207,44 +243,5 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
         classPath.verifyOfType(Type.STRING);
         clientArgs.verifyOfType(Type.STRING);
         VerifyHelper.verify(getTitle(), VerifyHelper.NOT_EMPTY, "Main class can't be empty");
-    }
-
-    @LauncherAPI
-    public enum Version {
-        MC147("1.4.7", 51),
-        MC152("1.5.2", 61),
-        MC164("1.6.4", 78),
-        MC172("1.7.2", 4),
-        MC1710("1.7.10", 5),
-        MC189("1.8.9", 47),
-        MC194("1.9.4", 110),
-        MC1102("1.10.2", 210),
-        MC1112("1.11.2", 316),
-        MC1122("1.12.2", 340);
-        private static final Map<String, Version> VERSIONS;
-        public final String name;
-        public final int protocol;
-
-        Version(String name, int protocol) {
-            this.name = name;
-            this.protocol = protocol;
-        }
-
-        @Override
-        public String toString() {
-            return "Minecraft " + name;
-        }
-
-        public static Version byName(String name) {
-            return VerifyHelper.getMapValue(VERSIONS, name, String.format("Unknown client version: '%s'", name));
-        }
-
-        static {
-            Version[] versionsValues = values();
-            VERSIONS = new HashMap<>(versionsValues.length);
-            for (Version version : versionsValues) {
-                VERSIONS.put(version.name, version);
-            }
-        }
     }
 }

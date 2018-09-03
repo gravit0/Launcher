@@ -3,8 +3,8 @@ package launchserver.response.update;
 import java.io.IOException;
 import java.util.Collection;
 
-import launcher.profiles.ClientProfile;
 import launcher.helper.SecurityHelper;
+import launcher.profiles.ClientProfile;
 import launcher.serialize.HInput;
 import launcher.serialize.HOutput;
 import launcher.serialize.signed.SignedBytesHolder;
@@ -39,8 +39,7 @@ public final class LauncherResponse extends Response {
         // Write clients profiles list
         Collection<SignedObjectHolder<ClientProfile>> profiles = server.getProfiles();
         output.writeLength(profiles.size(), 0);
-        for (SignedObjectHolder<ClientProfile> profile : profiles) {
-            profile.write(output);
-        }
+        for (SignedObjectHolder<ClientProfile> profile : profiles)
+			profile.write(output);
     }
 }
