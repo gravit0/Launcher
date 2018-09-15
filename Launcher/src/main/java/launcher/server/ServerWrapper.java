@@ -26,7 +26,6 @@ public class ServerWrapper {
             } catch (Exception e) {
                 System.setProperty("log4j.configurationFile", "launcher/log4j2.xml");
             }
-        LogHelper.logInit(false);
         ServerWrapper wrapper = new ServerWrapper();
         modulesManager = new ModulesManager(wrapper);
         modulesManager.autoload(Paths.get("modules"));

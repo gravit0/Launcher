@@ -381,7 +381,6 @@ public final class ClientLauncher {
 
     @LauncherAPI
     public static void main(String... args) throws Throwable {
-        LogHelper.logInit(true);
         Launcher.modulesManager = new ClientModuleManager(null);
         LauncherConfig.getAutogenConfig(); //INIT
         Launcher.modulesManager.preInitModules();

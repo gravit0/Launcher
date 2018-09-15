@@ -6,12 +6,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import launcher.Launcher;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,81 +32,17 @@ import launcher.LauncherAPI;
 import launcher.LauncherVersion;
 
 public final class LogHelper {
-    private static final class JAnsiOutput extends WriterOutput {
-        private JAnsiOutput(OutputStream output) {
-            super(IOHelper.newWriter(new AnsiOutputStream(output)));
-        }
-    }
-    @LauncherAPI
-    @FunctionalInterface
-    public interface Output {
-        void println(String message);
-    }
-    private static class WriterOutput implements Output, AutoCloseable {
-        private final Writer writer;
+    @LauncherAPI public static final String DEBUG_PROPERTY = "launcher.debug";
+    @LauncherAPI public static final String NO_JANSI_PROPERTY = "launcher.noJAnsi";
+    @LauncherAPI public static final boolean JANSI;
 
-        private WriterOutput(Writer writer) {
-            this.writer = writer;
-        }
-
-        @Override
-        public void close() throws IOException {
-            writer.close();
-        }
-
-        @Override
-        public void println(String message) {
-            try {
-                writer.write(message + System.lineSeparator());
-                writer.flush();
-            } catch (IOException ignored) {
-                // Do nothing?
-            }
-        }
-    }
-    private static Logger logger = LogManager.getLogger("LogHelper");
-
-    @LauncherAPI
-    public static final String DEBUG_PROPERTY = "launcher.debug";
-    @LauncherAPI
-    public static final String NO_JANSI_PROPERTY = "launcher.noJAnsi";
-    @LauncherAPI
-    public static final boolean JANSI;
-
+    // Output settings
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss", Locale.US);
     private static final AtomicBoolean DEBUG_ENABLED = new AtomicBoolean(Boolean.getBoolean(DEBUG_PROPERTY));
-
     private static final Set<Output> OUTPUTS = Collections.newSetFromMap(new ConcurrentHashMap<>(2));
-
     private static final Output STD_OUTPUT;
 
-    static {
-        // Use JAnsi if available
-        boolean jansi;
-        try {
-            if (Boolean.getBoolean(NO_JANSI_PROPERTY))
-				jansi = false;
-			else {
-                Class.forName("org.fusesource.jansi.Ansi");
-                AnsiConsole.systemInstall();
-                jansi = true;
-            }
-        } catch (ClassNotFoundException ignored) {
-            jansi = false;
-        }
-        JANSI = jansi;
-
-        // Add std writer
-        STD_OUTPUT = System.out::println;
-        addOutput(STD_OUTPUT);
-
-        // Add file log writer
-        String logFile = System.getProperty("launcher.logFile");
-        if (logFile != null)
-			try {
-                addOutput(IOHelper.toPath(logFile));
-            } catch (IOException e) {
-                error(e);
-            }
+    private LogHelper() {
     }
 
     @LauncherAPI
@@ -112,36 +52,33 @@ public final class LogHelper {
 
     @LauncherAPI
     public static void addOutput(Path file) throws IOException {
-        if (JANSI)
-			addOutput(new JAnsiOutput(IOHelper.newOutput(file, true)));
-		else
-			addOutput(IOHelper.newWriter(file, true));
+        if (JANSI) {
+            addOutput(new JAnsiOutput(IOHelper.newOutput(file, true)));
+        } else {
+            addOutput(IOHelper.newWriter(file, true));
+        }
     }
 
     @LauncherAPI
-    public static void addOutput(Writer writer) {
+    public static void addOutput(Writer writer) throws IOException {
         addOutput(new WriterOutput(writer));
-    }
-
-    private static String ansiFormatVersion(String product) {
-        return new Ansi().bold(). // Setup
-                fgBright(Color.MAGENTA).a("sashok724's "). // sashok724's
-                fgBright(Color.CYAN).a(product). // Product
-                fgBright(Color.WHITE).a(" v").fgBright(Color.BLUE).a(Integer.toString(LauncherVersion.BUILD)). // Version
-                fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(LauncherVersion.getVersion().getVersionString()).fgBright(Color.WHITE).a(')'). // Build#
-                fgBright(Color.WHITE).a(" mod by ").fgBright(Color.RED).a("Gravit").
-                reset().toString(); // To string
     }
 
     @LauncherAPI
     public static void debug(String message) {
-        if (isDebugEnabled())
-			log(Level.DEBUG, message, false);
+        if (isDebugEnabled()) {
+            log(Level.DEBUG, message, false);
+        }
     }
 
     @LauncherAPI
     public static void debug(String format, Object... args) {
         debug(String.format(format, args));
+    }
+
+    @LauncherAPI
+    public static void error(Throwable exc) {
+        error(isDebugEnabled() ? toString(exc) : exc.toString());
     }
 
     @LauncherAPI
@@ -152,15 +89,6 @@ public final class LogHelper {
     @LauncherAPI
     public static void error(String format, Object... args) {
         error(String.format(format, args));
-    }
-
-    @LauncherAPI
-    public static void error(Throwable exc) {
-        error(isDebugEnabled() ? toString(exc) : exc.toString());
-    }
-
-    private static String formatVersion(String product) {
-        return String.format("sashok724's %s v%s (build #%s) mod by Gravit", product, LauncherVersion.getVersion().getVersionString(), Integer.toString(LauncherVersion.BUILD));
     }
 
     @LauncherAPI
@@ -179,33 +107,27 @@ public final class LogHelper {
     }
 
     @LauncherAPI
-    public static void log(Level level, String message, boolean sub) {
-        logger.log(level,message);
-    }
-
-    public static void logInit(boolean isClientMode)
-    {
-        LoggerContext context = (LoggerContext) LogManager.getContext(false);
-        Configuration cfg = context.getConfiguration();
-        LoggerConfig config = cfg.getRootLogger();
-        config.removeAppender("SimpleConsole");
-        Appender appender = cfg.getAppender("Console");
-        if(!isClientMode)
-        if(JVMHelper.OS_TYPE == JVMHelper.OS.LINUX || JVMHelper.OS_TYPE == JVMHelper.OS.MACOSX)
-        config.addAppender(appender,Level.DEBUG, cfg.getFilter());
-        context.updateLoggers();
-        //context.reconfigure();
+    public static void setDebugEnabled(boolean debugEnabled) {
+        DEBUG_ENABLED.set(debugEnabled);
     }
 
     @LauncherAPI
-    public static synchronized void println(String message) {
-        for (Output output : OUTPUTS)
-			output.println(message);
+    public static void log(Level level, String message, boolean sub) {
+        String dateTime = DATE_TIME_FORMATTER.format(LocalDateTime.now());
+        println(JANSI ? ansiFormatLog(level, dateTime, message, sub) :
+                formatLog(level, message, dateTime, sub));
     }
 
     @LauncherAPI
     public static void printVersion(String product) {
         println(JANSI ? ansiFormatVersion(product) : formatVersion(product));
+    }
+
+    @LauncherAPI
+    public static synchronized void println(String message) {
+        for (Output output : OUTPUTS) {
+            output.println(message);
+        }
     }
 
     @LauncherAPI
@@ -219,14 +141,10 @@ public final class LogHelper {
     }
 
     @LauncherAPI
-    public static void setDebugEnabled(boolean debugEnabled) {
-        DEBUG_ENABLED.set(debugEnabled);
-    }
-
-    @LauncherAPI
     public static void subDebug(String message) {
-        if (isDebugEnabled())
-			log(Level.DEBUG, message, true);
+        if (isDebugEnabled()) {
+            log(Level.DEBUG, message, true);
+        }
     }
 
     @LauncherAPI
@@ -246,7 +164,7 @@ public final class LogHelper {
 
     @LauncherAPI
     public static void subWarning(String message) {
-        log(Level.WARN, message, true);
+        log(Level.WARNING, message, true);
     }
 
     @LauncherAPI
@@ -268,7 +186,7 @@ public final class LogHelper {
 
     @LauncherAPI
     public static void warning(String message) {
-        log(Level.WARN, message, false);
+        log(Level.WARNING, message, false);
     }
 
     @LauncherAPI
@@ -276,6 +194,147 @@ public final class LogHelper {
         warning(String.format(format, args));
     }
 
-    private LogHelper() {
+    private static String ansiFormatLog(Level level, String dateTime, String message, boolean sub) {
+        Color levelColor;
+        boolean bright = level != Level.DEBUG;
+        switch (level) {
+            case WARNING:
+                levelColor = Color.YELLOW;
+                break;
+            case ERROR:
+                levelColor = Color.RED;
+                break;
+            default: // INFO, DEBUG, Unknown
+                levelColor = Color.WHITE;
+                break;
+        }
+
+        // Date-time
+        Ansi ansi = new Ansi();
+        ansi.fg(Color.WHITE).a(dateTime);
+
+        // Level
+        ansi.fgBright(Color.WHITE).a(" [").bold();
+        if (bright) {
+            ansi.fgBright(levelColor);
+        } else {
+            ansi.fg(levelColor);
+        }
+        ansi.a(level).boldOff().fgBright(Color.WHITE).a("] ");
+
+        // Message
+        if (bright) {
+            ansi.fgBright(levelColor);
+        } else {
+            ansi.fg(levelColor);
+        }
+        if (sub) {
+            ansi.a(' ').a(Ansi.Attribute.ITALIC);
+        }
+        ansi.a(message);
+
+        // Finish with reset code
+        return ansi.reset().toString();
+    }
+
+    private static String ansiFormatVersion(String product) {
+        return new Ansi().bold(). // Setup
+                fgBright(Color.MAGENTA).a("sashok724's "). // sashok724's
+                fgBright(Color.CYAN).a(product). // Product
+                fgBright(Color.WHITE).a(" v").fgBright(Color.BLUE).a(Launcher.VERSION). // Version
+                fgBright(Color.WHITE).a(" (build #").fgBright(Color.RED).a(Launcher.BUILD).fgBright(Color.WHITE).a(')'). // Build#
+                reset().toString(); // To string
+    }
+
+    private static String formatLog(Level level, String message, String dateTime, boolean sub) {
+        if (sub) {
+            message = ' ' + message;
+        }
+        return dateTime + " [" + level.name + "] " + message;
+    }
+
+    private static String formatVersion(String product) {
+        return String.format("sashok724's %s v%s (build #%s)", product, Launcher.VERSION, Launcher.BUILD);
+    }
+
+    static {
+        // Use JAnsi if available
+        boolean jansi;
+        try {
+            if (Boolean.getBoolean(NO_JANSI_PROPERTY)) {
+                jansi = false;
+            } else {
+                Class.forName("org.fusesource.jansi.Ansi");
+                AnsiConsole.systemInstall();
+                jansi = true;
+            }
+        } catch (ClassNotFoundException ignored) {
+            jansi = false;
+        }
+        JANSI = jansi;
+
+        // Add std writer
+        STD_OUTPUT = System.out::println;
+        addOutput(STD_OUTPUT);
+
+        // Add file log writer
+        String logFile = System.getProperty("launcher.logFile");
+        if (logFile != null) {
+            try {
+                addOutput(IOHelper.toPath(logFile));
+            } catch (IOException e) {
+                error(e);
+            }
+        }
+    }
+
+    @LauncherAPI
+    @FunctionalInterface
+    public interface Output {
+        void println(String message);
+    }
+
+    @LauncherAPI
+    public enum Level {
+        DEBUG("DEBUG"), INFO("INFO"), WARNING("WARN"), ERROR("ERROR");
+        public final String name;
+
+        Level(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    private static final class JAnsiOutput extends WriterOutput {
+        private JAnsiOutput(OutputStream output) throws IOException {
+            super(IOHelper.newWriter(new AnsiOutputStream(output)));
+        }
+    }
+
+    private static class WriterOutput implements Output, AutoCloseable {
+        private final Writer writer;
+
+        private WriterOutput(Writer writer) {
+            this.writer = writer;
+        }
+
+        @Override
+        public void close() throws IOException {
+            writer.close();
+        }
+
+        @Override
+        public void println(String message) {
+            try {
+                writer.write(message + System.lineSeparator());
+                writer.flush();
+            } catch (IOException ignored) {
+                // Do nothing?
+            }
+        }
     }
 }

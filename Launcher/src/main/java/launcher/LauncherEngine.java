@@ -151,7 +151,6 @@ public class LauncherEngine {
     public static void main(String... args) throws Throwable {
         if(System.getProperty("log4j.configurationFile") == null)
             System.setProperty("log4j.configurationFile","launcher/log4j2.xml");
-        LogHelper.logInit(false);
         JVMHelper.verifySystemProperties(Launcher.class, true);
         LogHelper.printVersion("Launcher");
         // Start Launcher
