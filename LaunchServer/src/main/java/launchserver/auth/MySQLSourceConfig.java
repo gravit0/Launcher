@@ -97,6 +97,7 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
             mysqlSource.setUser(username);
             mysqlSource.setPassword(password);
             mysqlSource.setDatabaseName(database);
+            mysqlSource.setTcpNoDelay(true);
             if (timeZone != null) mysqlSource.setServerTimezone(timeZone);
             hikari = false;
             // Try using HikariCP

@@ -33,7 +33,9 @@ ClientProfile extends ConfigObject implements Comparable<ClientProfile> {
         MC194("1.9.4", 110),
         MC1102("1.10.2", 210),
         MC1112("1.11.2", 316),
-        MC1122("1.12.2", 340);
+        MC1122("1.12.2", 340),
+        MC113("1.13", 393),
+        MC1131("1.13.1", 401);
         private static final Map<String, Version> VERSIONS;
         static {
             Version[] versionsValues = values();
