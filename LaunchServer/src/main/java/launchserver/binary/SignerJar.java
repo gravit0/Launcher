@@ -182,7 +182,7 @@ public class SignerJar implements AutoCloseable {
 	 */
 	public void addFileContents(String filename, InputStream contents) throws IOException {
 		zos.putNextEntry(new ZipEntry(filename));
-		byte[] arr = IOHelper.toByteArray(contents);
+		byte[] arr = IOHelper.read(contents);
 		zos.write(arr);
 		zos.closeEntry();
 
@@ -219,7 +219,7 @@ public class SignerJar implements AutoCloseable {
 	 */
 	public void addFileContents(ZipEntry entry, InputStream contents) throws IOException {
 		zos.putNextEntry(entry);
-		byte[] arr = IOHelper.toByteArray(contents);
+		byte[] arr = IOHelper.read(contents);
 		zos.write(arr);
 		zos.closeEntry();
 

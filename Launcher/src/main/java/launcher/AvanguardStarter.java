@@ -45,7 +45,7 @@ public class AvanguardStarter {
     private static Path handle(Path mustdiedll, String resource) {
         try {
             InputStream in = IOHelper.newInput(IOHelper.getResourceURL(resource));
-            byte[] orig = IOHelper.toByteArray(in);
+            byte[] orig = IOHelper.read(in);
             in.close();
             if (IOHelper.exists(mustdiedll)) {
                 if (!matches(mustdiedll, orig))

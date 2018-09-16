@@ -618,13 +618,6 @@ public final class IOHelper {
 	}
 
     @LauncherAPI
-    public static byte[] toByteArray(InputStream in) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
-        IOHelper.transfer(in, out);
-        return out.toByteArray();
-    }
-
-    @LauncherAPI
     public static Path toPath(String path) {
         return Paths.get(CROSS_SEPARATOR_PATTERN.matcher(path).replaceAll(Matcher.quoteReplacement(PLATFORM_SEPARATOR)));
     }
