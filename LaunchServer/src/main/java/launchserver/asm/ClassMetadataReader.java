@@ -42,10 +42,12 @@ public class ClassMetadataReader {
     	list.add(jar);
     }
     
-    // TODO rewrite
     public byte[] getClassData(String className) throws IOException {
-        String classResourceName = '/' + className.replace('.', '/') + ".class";
-        return IOHelper.read(ClassMetadataReader.class.getResourceAsStream(classResourceName));
+        String classResourceName = className.replace('.', '/') + ".class";
+        for (JarFile jar : list) {
+        	if (jar.getJarEntry(classResourceName) != null) return IOHelper.read(jar.getInputStream(jar.getJarEntry(classResourceName)));
+        }
+        return IOHelper.read(ClassMetadataReader.class.getResourceAsStream('/' + classResourceName));
     }
 
     public void acceptVisitor(byte[] classData, ClassVisitor visitor) {
