@@ -74,7 +74,8 @@ public class RingProgressIndicator extends ProgressCircleIndicator {
                 return n.ringWidth == null || !n.ringWidth.isBound();
             }
 
-            @Override
+            @SuppressWarnings("unchecked")
+			@Override
             public StyleableProperty<Number> getStyleableProperty(RingProgressIndicator n) {
                 return (StyleableProperty<Number>) n.ringWidth;
             }

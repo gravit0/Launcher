@@ -22,5 +22,4 @@ public class ProguardCleanCommand extends Command {
 	public void invoke(String... args) {
 		server.proguardConf.prepare(true);
 	}
-
 }
