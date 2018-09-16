@@ -44,7 +44,6 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT' // api
     compileOnly 'net.md-5:bungeecord-api:1.8-SNAPSHOT' // api
 	
-	aptOnly 'org.apache.logging.log4j:log4j-core:2.9.0'
 	compileOnly 'org.ow2.asm:asm-debug-all:5.0.4'
 	bundleOnly 'org.ow2.asm:asm-all:5.0.4'
 	bundle 'org.apache.logging.log4j:log4j-core:2.9.0'
@@ -55,8 +54,6 @@ dependencies {
 	bundle 'org.fusesource.jansi:jansi:1.17.1'
 	bundle 'commons-io:commons-io:2.6'
 	bundle 'org.javassist:javassist:3.23.1-GA'
-	bundle 'org.slf4j:slf4j-simple:1.7.25'
-	bundle 'org.slf4j:slf4j-api:1.7.25'
 	
 	hikari 'io.micrometer:micrometer-core:1.0.6'
 	hikari('hikari-cp:hikari-cp:2.6.0') {
