@@ -51,7 +51,7 @@ public class ProguardConf {
 		if (IOHelper.exists(config) && !force) return;
 		Files.deleteIfExists(config);
 		config.toFile().createNewFile();
-		try (OutputStream out = IOHelper.newOutput(config); InputStream in = IOHelper.newInput(IOHelper.getResourceURL("launchserver/proguard.cfg"))) {
+		try (OutputStream out = IOHelper.newOutput(config); InputStream in = IOHelper.newInput(IOHelper.getResourceURL("launchserver/defaults/proguard.cfg"))) {
 			IOHelper.transfer(in, out);
 		}
 	}
