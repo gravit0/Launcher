@@ -115,7 +115,7 @@ public final class JARLauncherBinary extends LauncherBinary {
 	}
 
 	private void signBuild() throws IOException {
-		try (SignerJar output = new SignerJar(IOHelper.newOutput(binaryFile),
+		try (SignerJar output = new SignerJar(IOHelper.newOutput(syncBinaryFile),
 				SignerJar.getStore(server.config.sign.key, server.config.sign.storepass, server.config.sign.algo),
 				server.config.sign.keyalias, server.config.sign.pass);
 				ZipInputStream input = new ZipInputStream(IOHelper.newInput(obfJar))) {
