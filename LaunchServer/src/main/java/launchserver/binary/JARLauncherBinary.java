@@ -13,6 +13,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.jar.Attributes.Name;
+import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
@@ -118,10 +120,11 @@ public final class JARLauncherBinary extends LauncherBinary {
 		try (SignerJar output = new SignerJar(IOHelper.newOutput(syncBinaryFile),
 				SignerJar.getStore(server.config.sign.key, server.config.sign.storepass, server.config.sign.algo),
 				server.config.sign.keyalias, server.config.sign.pass);
-				ZipInputStream input = new ZipInputStream(IOHelper.newInput(obfJar))) {
+				JarInputStream input = new JarInputStream(IOHelper.newInput(obfJar))) {
 			ZipEntry e = input.getNextEntry();
+			input.getManifest().getMainAttributes().forEach((Object k, Object v) -> output.addManifestAttribute(((Name)k).toString(), (String)v));
 			while (e != null) {
-				output.addFileContents(e, input);
+				if (!"META-INF/MANIFEST.MF".equals(e.getName())) output.addFileContents(e, input);
 				e = input.getNextEntry();
 			}
 		}
