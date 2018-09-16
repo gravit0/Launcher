@@ -110,9 +110,9 @@ public final class MySQLSourceConfig extends ConfigObject implements AutoCloseab
                 cfg.setPassword(password);
                 cfg.setDataSource(mysqlSource);
                 cfg.setPoolName(poolName);
-                //cfg.setMinimumIdle(0);
+                cfg.setMinimumIdle(0);
                 cfg.setMaximumPoolSize(MAX_POOL_SIZE);
-                //cfg.setIdleTimeout(TIMEOUT * 1000L);
+                cfg.setIdleTimeout(TIMEOUT * 1000L);
                 // Set HikariCP pool
                 HikariDataSource hikariSource = new HikariDataSource(cfg);
                 // Replace source with hds
