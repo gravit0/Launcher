@@ -33,6 +33,7 @@ public abstract class HWIDHandler extends ConfigObject implements AutoCloseable 
         if (!registredHandl) {
             registerHandler("accept", AcceptHWIDHandler::new);
             registerHandler("mysql",MysqlHWIDHandler::new);
+            registerHandler("json",JsonHWIDHandler::new);
             registredHandl = true;
         }
     }
