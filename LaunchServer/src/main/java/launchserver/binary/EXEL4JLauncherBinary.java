@@ -107,7 +107,7 @@ public final class EXEL4JLauncherBinary extends LauncherBinary {
 
 		// Set JAR wrapping options
 		config.setDontWrapJar(false);
-		config.setJar(server.launcherBinary.binaryFile.toFile());
+		config.setJar(server.launcherBinary.syncBinaryFile.toFile());
 		config.setOutfile(binaryFile.toFile());
 
 		// Return prepared config

@@ -1,6 +1,5 @@
 package launchserver.auth.hwid;
 
-
 import launcher.helper.CommonHelper;
 import launcher.helper.VerifyHelper;
 import launcher.serialize.config.entry.BlockConfigEntry;
@@ -15,23 +14,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import launcher.helper.CommonHelper;
 import launcher.helper.LogHelper;
-import launcher.helper.VerifyHelper;
-import launcher.serialize.config.entry.BlockConfigEntry;
-import launcher.serialize.config.entry.ListConfigEntry;
-import launcher.serialize.config.entry.StringConfigEntry;
-import launchserver.auth.MySQLSourceConfig;
 import launchserver.auth.hwid.HWID;
 import launchserver.auth.hwid.HWIDException;
 import launchserver.auth.hwid.HWIDHandler;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MysqlHWIDHandler extends HWIDHandler {
     private final MySQLSourceConfig mySQLHolder;

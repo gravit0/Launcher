@@ -55,6 +55,9 @@ dependencies {
 	bundle 'commons-io:commons-io:2.6'
 	bundle 'org.javassist:javassist:3.23.1-GA'
 	
+	bundle 'org.slf4j:slf4j-simple:1.7.25'
+	bundle 'org.slf4j:slf4j-api:1.7.25'
+
 	hikari 'io.micrometer:micrometer-core:1.0.6'
 	hikari('hikari-cp:hikari-cp:2.6.0') {
 		exclude group: 'javassist'
