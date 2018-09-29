@@ -21,6 +21,7 @@
 -repackageclasses 'launcher'
 -keep class ru.zaxar163.*
 -keep class cpw.mods.fml.*
+-keep class net.minecraftforge.fml.*
 -keepattributes SourceFile,LineNumberTable,*Annotation*
 -renamesourcefileattribute SourceFile
 -adaptresourcefilecontents META-INF/MANIFEST.MF
