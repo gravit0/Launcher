@@ -15,12 +15,14 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 
+import cpw.mods.fml.SafeExitJVMLegacy;
 import launcher.LauncherAPI;
 import launcher.hasher.HashedEntry.Type;
 import launcher.helper.IOHelper;
 import launcher.helper.JVMHelper;
 import launcher.helper.JVMHelper.OS;
 import launcher.helper.LogHelper;
+import net.minecraftforge.fml.SafeExitJVM;
 
 public final class DirWatcher implements Runnable, AutoCloseable {
     @SuppressWarnings("unused")
@@ -110,6 +112,12 @@ public final class DirWatcher implements Runnable, AutoCloseable {
 
     private static void handleError(Throwable e) {
         LogHelper.error(e);
+        try {
+            SafeExitJVMLegacy.exit(-123);
+        } catch (Throwable ignored)
+        {
+            SafeExitJVM.exit(-123);
+        }
     }
 
     private static Deque<String> toPath(Iterable<Path> path) {

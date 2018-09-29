@@ -20,6 +20,7 @@
 -overloadaggressively
 -repackageclasses 'launcher'
 -keep class ru.zaxar163.*
+-keep class cpw.mods.fml.*
 -keepattributes SourceFile,LineNumberTable,*Annotation*
 -renamesourcefileattribute SourceFile
 -adaptresourcefilecontents META-INF/MANIFEST.MF
